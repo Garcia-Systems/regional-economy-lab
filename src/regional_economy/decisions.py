@@ -13,7 +13,8 @@ from enum import StrEnum
 
 from regional_economy.dashboards import Dashboard, Indicator, build_dashboard
 from regional_economy.engine import run_scenario
-from regional_economy.money import format_money
+from regional_economy.indicators import LEGACY_INDICATOR_KEYS, IndicatorValue, indicator_definition
+from regional_economy.report_formatting import format_comparison, format_value
 from regional_economy.scenarios import load_scenario
 
 
@@ -206,7 +207,8 @@ _PUBLIC_KEYS = (
 
 
 def _indicator(board: Dashboard, key: str) -> Indicator:
-    return next(item for item in board.current.indicators if item.metadata.key == key)
+    canonical = LEGACY_INDICATOR_KEYS.get(key, key)
+    return next(item for item in board.current.indicators if item.metadata.key == canonical)
 
 
 def create_report(key: str, expected_kind: DecisionKind | None = None) -> DecisionReport:
@@ -222,19 +224,15 @@ def create_report(key: str, expected_kind: DecisionKind | None = None) -> Decisi
         raise ValueError("decision comparison requires matching reporting periods")
     keys = _BUSINESS_KEYS if definition.kind == DecisionKind.BUSINESS else _PUBLIC_KEYS
     effects = tuple(
-        IndicatorEffect(key, item.metadata.name, item.metadata.units, item.value, _indicator(alternative, key).value)
+        IndicatorEffect(item.metadata.key, item.metadata.name, item.metadata.units, item.value, _indicator(alternative, key).value)
         for key in keys
         for item in (_indicator(baseline, key),)
     )
     return DecisionReport(definition, baseline.current.scenario_name, baseline.current.month, effects)
 
 
-def _display(value: int | Decimal, units: str) -> str:
-    if units == "USD cents":
-        return format_money(int(value))
-    if units == "ratio":
-        return f"{Decimal(value) * 100:.1f}%"
-    return f"{value:,}"
+def _display(value: int | Decimal, key: str) -> str:
+    return format_value(IndicatorValue(indicator_definition(key), value))
 
 
 def format_report(report: DecisionReport) -> str:
@@ -251,15 +249,15 @@ def format_report(report: DecisionReport) -> str:
         "Indicator | Baseline | Scenario | Change",
     ]
     for effect in report.effects:
-        change = _display(effect.change, effect.units)
-        if effect.change > 0:
-            change = "+" + change
-        lines.append(f"{effect.name} | {_display(effect.baseline, effect.units)} | {_display(effect.alternative, effect.units)} | {change}")
+        indicator = indicator_definition(effect.key)
+        lines.append(
+            f"{effect.name} | {_display(effect.baseline, effect.key)} | {_display(effect.alternative, effect.key)} | "
+            f"{format_comparison(indicator, effect.baseline, effect.alternative)}"
+        )
     lines.extend(
         (
             "",
-            f"Deterministic scenario score: {report.scenario_score}/{len(report.effects)} "
-            "referenced indicators changed (descriptive, not a rank)",
+            "Indicator changes are presented individually; no composite score or recommendation is produced.",
             "",
             "BENEFITS",
             *(f"- {item}" for item in definition.benefits),
@@ -290,9 +288,9 @@ def comparison_report(first_key: str, second_key: str) -> str:
         f"- Choosing {second.definition.title} generally means resources are unavailable for {first.definition.title}.",
         "- Compare affected dashboard indicators and stated assumptions; not every tradeoff has a supported monetary value.",
         "",
-        f"{first.definition.title}: {first.scenario_score}/{len(first.effects)} referenced indicators changed.",
-        f"{second.definition.title}: {second.scenario_score}/{len(second.effects)} referenced indicators changed.",
-        "These descriptive counts are not comparable value scores and do not identify a preferred alternative.",
+        f"{first.definition.title}: review its {len(first.effects)} disclosed indicators and assumptions.",
+        f"{second.definition.title}: review its {len(second.effects)} disclosed indicators and assumptions.",
+        "The indicators are not combined into a value score and do not identify a preferred alternative.",
     ]
     return "\n".join(lines)
 

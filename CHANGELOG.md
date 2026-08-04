@@ -119,3 +119,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added Chapter 20 narrative, validation/debugging laboratory, reproducibility documentation, and end-to-end deterministic template tests.
 
 - Added immutable, source-attributed transaction stages, adjacent constraint transitions, canonical sector summaries, and recorded-revenue attribution; general, Explain, and Trace reports consume these records.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`docs/indicators.md`](docs/indicators.md) and the canonical `regional_economy.indicators` registry.

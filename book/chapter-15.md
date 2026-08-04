@@ -97,3 +97,7 @@ There is no forecasting, statistical inference, machine learning, predictive ana
 ## Chapter summary
 
 Good dashboards join values to definitions, units, periods, assumptions, limitations, and quality notes. Immutable snapshots enable transparent historical trends and year-to-date summaries. Scenario comparisons reveal model differences without predicting outcomes. Deterministic console, Markdown, and CSV output turns the simulation into an inspectable decision-support laboratory while preserving the boundary between measurement and prediction.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.

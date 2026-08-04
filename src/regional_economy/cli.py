@@ -14,7 +14,7 @@ from regional_economy.annual import (
     compare_years,
     run_annual_scenario,
 )
-from regional_economy.dashboards import build_dashboard, csv_export, indicator_trace, markdown_export, shock_dashboard
+from regional_economy.dashboards import build_dashboard, canonical_csv_export, indicator_trace, markdown_export, shock_dashboard
 from regional_economy.dashboards import comparison_report as dashboard_comparison
 from regional_economy.dashboards import console_report as dashboard_report
 from regional_economy.decisions import DecisionKind, decision_explanation, decision_trace
@@ -198,7 +198,7 @@ def _dashboard_compare(args):
 
 def _dashboard_export(args):
     board = build_dashboard((_result(args.scenario),))
-    rendered = markdown_export(board) if args.format == "markdown" else csv_export(board)
+    rendered = markdown_export(board) if args.format == "markdown" else canonical_csv_export(board)
     if args.output is None:
         return _emit(rendered)
     target = Path(args.output)

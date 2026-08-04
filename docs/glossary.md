@@ -219,3 +219,7 @@ employment, household income, or tax collections.
 - **Institutional procurement:** a descriptive budget classified into local procurement (internal business demand) and external procurement (external outflow). Permits and fees are not procurement.
 - **Lodging-tax base:** recorded visitor-derived lodging revenue; lodging tax is added to government collections.
 - **Sales-tax base:** total recorded business revenue; sales tax is extracted during business allocation.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`indicators.md`](indicators.md) and the canonical `regional_economy.indicators` registry.

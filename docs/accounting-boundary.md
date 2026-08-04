@@ -163,3 +163,7 @@ Sales tax is **extracted** from the complete canonical recorded-business-revenue
 University and healthcare procurement budgets are descriptive totals. Local shares become internal business-demand transfers after constraints; external shares are classified external procurement after the same constraints. Permits and fees are government revenue, not procurement. No government procurement budget is configured, so government local and external procurement are zero.
 
 Classified external outflows contain only household nonlocal purchases, household deductions outside modeled local government, business external procurement, and institutional external procurement. Interrupted, inaccessible, utility-constrained, unmet, capacity-constrained, or supply-constrained demand, deposits, credit, reserves, and retained funds never enter that total.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`indicators.md`](indicators.md) and the canonical `regional_economy.indicators` registry.

@@ -81,3 +81,7 @@ Payment resilience complements the **Digital Banking Systems Laboratory**; suppl
 ## Chapter summary
 
 Resilience emerges from interacting economic, workforce, infrastructure, supplier, institutional, and financial systems. Diversity creates alternatives, redundancy preserves functions, and adaptive capacity supports change. Compare components and paths; never mistake the composite for certainty.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.

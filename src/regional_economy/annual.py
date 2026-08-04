@@ -9,7 +9,9 @@ from decimal import Decimal
 
 from regional_economy.dashboards import MonthlySnapshot, snapshot
 from regional_economy.engine import SimulationResult, run_scenario
+from regional_economy.indicators import aggregate_values, indicator_definition
 from regional_economy.money import format_money
+from regional_economy.report_formatting import FICTIONALIZATION_NOTICE
 from regional_economy.scenarios import Scenario, load_scenario
 
 MONTHS = (
@@ -70,10 +72,10 @@ def _average(values: tuple[int | Decimal, ...]) -> Decimal:
 
 def _summary(months: tuple[SimulationResult, ...]) -> AnnualSummary:
     return AnnualSummary(
-        sum(month.metrics.gross_household_income for month in months),
-        sum(month.metrics.tourism_revenue for month in months),
-        sum(month.metrics.government_revenue for month in months),
-        _average(tuple(month.metrics.workforce.employed for month in months)),
+        aggregate_values(indicator_definition("household.gross_income"), tuple(month.metrics.gross_household_income for month in months)),
+        aggregate_values(indicator_definition("tourism.recorded_revenue"), tuple(month.metrics.tourism_revenue for month in months)),
+        aggregate_values(indicator_definition("government.total_revenue"), tuple(month.metrics.government_revenue for month in months)),
+        aggregate_values(indicator_definition("workforce.employment"), tuple(month.metrics.workforce.employed for month in months)),
         _average(tuple(month.metrics.housing_occupancy_rate for month in months)),
         _average(tuple(month.metrics.transportation.utilization for month in months)),
         _average(tuple(_average(tuple(service.utilization for service in month.metrics.utilities.services)) for month in months)),
@@ -154,7 +156,7 @@ def annual_report(result: AnnualResult) -> str:
             f"Average transportation utilization: {summary.average_transportation_utilization:.1%}",
             f"Average utility utilization: {summary.average_utility_utilization:.1%}",
             f"Average resilience: {summary.average_resilience:.1%}",
-            "Educational deterministic results; not a forecast.",
+            FICTIONALIZATION_NOTICE,
         )
     )
     return "\n".join(lines)

@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
 from regional_economy.engine import SimulationResult
+from regional_economy.indicators import IndicatorValue, indicator_definition
 from regional_economy.money import format_money
+from regional_economy.report_formatting import FICTIONALIZATION_NOTICE, format_value
 from regional_economy.scenarios import Scenario
 
 INDICATOR_NAMES = (
@@ -54,11 +56,15 @@ def format_resilience_report(report: ResilienceReport) -> str:
     lines = [
         "REGIONAL RESILIENCE REPORT",
         f"Scenario: {report.scenario_label} ({report.scenario_name})",
-        "Educational indicators—not an official rating, prediction, or emergency plan.",
+        FICTIONALIZATION_NOTICE + " These indicators are not an official rating or emergency plan.",
         "",
         "[Resilience indicators]",
     ]
-    lines.extend(f"  {name.replace('_', ' ').title()}: {value:.1%}" for name, value in report.indicators)
+    lines.extend(
+        f"  {definition.label}: {format_value(IndicatorValue(definition, value))}"
+        for name, value in report.indicators
+        for definition in (indicator_definition(f"resilience.{name}"),)
+    )
     lines.extend(
         (
             "",
@@ -68,8 +74,9 @@ def format_resilience_report(report: ResilienceReport) -> str:
             f"  Reserve funding: {format_money(report.reserve_funding)}",
             "",
             "[Recovery comparison]",
-            f"  Illustrative recovery periods: {report.recovery_periods}",
-            f"  Composite summary: {report.composite_summary:.1%}",
+            f"  Illustrative model-path periods (not a recovery forecast): {report.recovery_periods}",
+            f"  Equal-weight educational summary: {report.composite_summary:.1%}",
+            "  Assumption: the summary weights each displayed component equally.",
             "  Interpret indicators together; resilience cannot be reduced to one number.",
         )
     )

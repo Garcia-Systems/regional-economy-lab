@@ -4,6 +4,7 @@ from collections.abc import Iterable
 
 from regional_economy.engine import SimulationResult
 from regional_economy.money import format_money
+from regional_economy.report_formatting import FICTIONALIZATION_NOTICE, format_percentage
 
 LABEL_WIDTH = 38
 VALUE_WIDTH = 20
@@ -14,7 +15,7 @@ def _section(title: str, rows: Iterable[tuple[str, str]]) -> list[str]:
 
 
 def _percent(value) -> str:
-    return f"{value * 100:.1f}%"
+    return format_percentage(value)
 
 
 def dashboard(result: SimulationResult) -> str:
@@ -201,7 +202,7 @@ def dashboard(result: SimulationResult) -> str:
     lines = [
         f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD",
         f"Scenario: {result.scenario_label} ({result.scenario_name})",
-        "Educational simulation using fictional assumptions; not an official forecast.",
+        FICTIONALIZATION_NOTICE,
     ]
     for title, rows in sections:
         lines.extend(("", *_section(title, rows)))
