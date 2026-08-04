@@ -65,6 +65,19 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Workforce and Skills",
+            (
+                ("Labor-force participation", _percent(m.workforce.participation_rate)),
+                ("Labor-force size", f"{m.workforce.labor_force:,}"),
+                ("Employment", f"{m.workforce.employed:,}"),
+                ("Unemployment", f"{m.workforce.unemployed:,}"),
+                ("Workforce utilization", _percent(m.workforce.utilization)),
+                ("Unfilled positions", f"{m.workforce.unfilled_positions:,}"),
+                ("Commuters in / out", f"{m.workforce.commuters_in:,} / {m.workforce.commuters_out:,}"),
+                ("Skill availability", ", ".join(f"{x.skill.value.replace('_', ' ')}: {x.available:,}" for x in m.workforce.skills)),
+            ),
+        ),
+        (
             "Visitors",
             (
                 ("Visitors", f"{m.visitor_count:,}"),
@@ -251,6 +264,10 @@ def explanation(result):
         "Affordability differs from income because configured housing costs compete with other required expenses. "
         "Construction adds capacity and can improve vacancy, but it does not instantly change incomes or erase cost burdens. "
         "No real housing market is modeled.",
+        "Labor shortages can coexist with unemployment when available workers do not have the demanded aggregate skills. "
+        "Population and participation set the labor pool, while commuting changes who is locally available and who earns income outside.",
+        "Training deterministically expands selected skill capacity over time in this educational model; it does not model students, "
+        "recruiting, guaranteed placement, or education policy.",
     )
     return "\n".join(lines)
 
@@ -505,6 +522,11 @@ def comparison(first, second):
             (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}") if attr == "healthcare_employment" else format_money
         )
         lines.append(f"{label:<29}{formatter(a):>20}{formatter(b):>20}{formatter(b - a, signed=True):>20}")
+    workforce_rows = (("Labor-force size", "labor_force"), ("Employment", "employed"),
+                      ("Unemployment", "unemployed"), ("Unfilled positions", "unfilled_positions"))
+    for label, attr in workforce_rows:
+        a, b = getattr(first.metrics.workforce, attr), getattr(second.metrics.workforce, attr)
+        lines.append(f"{label:<29}{a:>20,}{b:>20,}{b - a:>+20,}")
     for label, attr in (
         ("Housing units", "housing_units"),
         ("Occupied housing units", "occupied_housing_units"),
@@ -517,3 +539,34 @@ def comparison(first, second):
         a, b = getattr(first.metrics, attr), getattr(second.metrics, attr)
         lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
     return "\n".join(lines)
+
+
+def workforce_report(result):
+    m = result.metrics.workforce
+    lines = [
+        f"WORKFORCE REPORT — {result.scenario_label}",
+        "Aggregate fictional workforce groups; deterministic educational model, not a labor-market forecast.",
+        f"Working-age population: {m.working_age_population:,}",
+        f"Labor-force participation: {_percent(m.participation_rate)}",
+        f"Labor-force size: {m.labor_force:,}",
+        f"Employment: {m.employed:,}; unemployment: {m.unemployed:,}; utilization: {_percent(m.utilization)}",
+        f"Commuting: {m.commuters_in:,} nonresidents working inside; {m.commuters_out:,} residents working outside",
+        f"Training capacity: {m.training_capacity:,}",
+        "Skill availability and constraints:",
+    ]
+    lines.extend(
+        f"  {x.skill.value.replace('_', ' ').title()}: available {x.available:,}; demand {x.demand:,}; "
+        f"employed {x.employed:,}; unfilled {x.unfilled:,}"
+        for x in m.skills
+    )
+    lines.append(f"Unfilled positions: {m.unfilled_positions:,}")
+    return "\n".join(lines)
+
+
+def workforce_trace(result):
+    return "\n".join((
+        f"WORKFORCE EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
+        "Population ↓ Labor Force ↓ Skills ↓ Employer Demand ↓ Employment",
+        "↓ Household Income ↓ Regional Spending",
+        "This is an educational systems trace rather than a prediction of labor-market outcomes.",
+    ))

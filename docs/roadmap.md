@@ -29,3 +29,7 @@ Aggregate retail, restaurants, personal services, and entertainment now share re
 ## Chapter 9 — complete
 
 Aggregate owner, rental, and workforce housing supply, cohort demand, capacity-safe occupancy, vacancy, construction, affordability indicators, reports, traces, and three deterministic scenarios are implemented. Mortgage markets, property valuation, landlords, zoning, lending, migration, and individual or commercial properties remain out of scope. Future chapters may add richer aggregate housing behavior without implying a real-market forecast.
+
+## Chapter 10 — complete
+
+Aggregate workforce participation, availability, six simplified skill groups, employer demand, commuting, training capacity, deterministic matching, reports, traces, and three scenarios are implemented. Recruiting, individual workers, detailed occupations, payroll administration, unemployment insurance, immigration, education policy, transportation, wage optimization, and forecasting remain out of scope.

@@ -159,6 +159,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     )
     count = sum(a.count for a in allocations)
     weighted_burden = sum((a.housing_burden * a.count for a in allocations), Decimal(0)) / Decimal(count) if count else Decimal(0)
+    workforce = scenario.workforce.evaluate()
     metrics = RegionalMetrics(
         region.population,
         region.employed_residents,
@@ -247,5 +248,6 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         scenario.housing.pressure_index,
         scenario.housing.construction_units,
         scenario.housing.annual_construction_rate,
+        workforce,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())

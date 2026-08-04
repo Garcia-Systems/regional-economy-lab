@@ -22,6 +22,8 @@ from regional_economy.reporting import (
     trace,
     university_report,
     university_trace,
+    workforce_report,
+    workforce_trace,
 )
 from regional_economy.scenarios import load_scenario
 
@@ -68,6 +70,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             "business-trace",
             "housing-report",
             "housing-trace",
+            "workforce-report",
+            "workforce-trace",
         }:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one scenario name")
@@ -101,6 +105,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if args.command == "housing-report"
                 else housing_trace(result)
                 if args.command == "housing-trace"
+                else workforce_report(result)
+                if args.command == "workforce-report"
+                else workforce_trace(result)
+                if args.command == "workforce-trace"
                 else household_report(result)
             )
             if not result.metrics.reconciled:

@@ -47,3 +47,7 @@ Business sectors are aggregate fictional educational models, not real businesses
 ## Chapter 9 housing assumptions
 
 Housing categories, construction, demand, and costs are fictional educational assumptions. Demand is an aggregate unit count; workforce demand is a utilization lens already included within cohort demand. Occupancy is capped at total supply, vacancy is its residual, and excess demand is explicitly unmet. The bounded pressure index weights occupancy 70% and unmet-demand share 30%; it is not a price or official affordability statistic. Construction adds scenario capacity without changing household income. No real housing market, mortgage, valuation, landlord, zoning, lending, speculation, migration, individual property, or commercial real-estate behavior is modeled. Future chapters may add richer housing behavior.
+
+## Chapter 10 workforce assumptions
+
+Workforce groups are fictional aggregate educational models. Working-age population and a Decimal participation rate determine the resident labor force; out-commuters reduce locally available resident labor and in-commuters add nonresident labor. Six simplified, mutually exclusive skill shares allocate one pool. Configured skill demand is matched deterministically, and deficits become unfilled-position indicators. Training capacity increases selected category availability over the scenario horizon without modeling individual students or guaranteeing jobs. No recruiting, wage adjustment, occupation, immigration, or transportation behavior is implied.

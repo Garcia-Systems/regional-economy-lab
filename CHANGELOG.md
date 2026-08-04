@@ -43,3 +43,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ## Unreleased — Chapter 9
 - Added aggregate housing supply and demand, capacity-safe occupancy, vacancy, construction, workforce-housing utilization, unmet demand, and a transparent pressure index.
 - Added housing-boom, housing-shortage, and workforce-housing-expansion scenarios plus dashboard, report, trace, comparison, documentation, laboratory, and deterministic tests.
+
+## Unreleased — Chapter 10
+- Added aggregate workforce participation, availability, six simplified skill categories, commuting, training capacity, deterministic employment matching, unemployment, and unfilled-position indicators.
+- Added major-employer-arrival, workforce-shortage, and workforce-training-expansion scenarios, dashboard/report/trace output, tests, and the Chapter 10 debugging laboratory.

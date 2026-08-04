@@ -278,3 +278,32 @@ housing:
   demand: {households: 860, students: 600, retirees: 140, seasonal_residents: 50, workforce: 220}
   construction_units: 0
   annual_construction_rate: "0.02"
+
+workforce:
+  working_age_population: 800
+  participation_rate: "0.75"
+  commuters_in: 120
+  commuters_out: 60
+  skill_shares:
+    hospitality: "0.15"
+    healthcare: "0.15"
+    education: "0.15"
+    professional_services: "0.15"
+    trades: "0.15"
+    retail_food_service: "0.25"
+  employment_demand:
+    hospitality: 70
+    healthcare: 125
+    education: 110
+    professional_services: 70
+    trades: 70
+    retail_food_service: 195
+  training:
+    capacity: 30
+    allocation:
+      hospitality: "0.10"
+      healthcare: "0.20"
+      education: "0.10"
+      professional_services: "0.10"
+      trades: "0.25"
+      retail_food_service: "0.25"
