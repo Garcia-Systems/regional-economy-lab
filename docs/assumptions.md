@@ -55,3 +55,7 @@ Workforce groups are fictional aggregate educational models. Working-age populat
 ## Chapter 11 transportation
 
 Transportation is aggregate accessibility, measured with fictional trip-equivalent demand and capacity. Commuter, visitor, and freight rates, average travel efficiency, and a temporary disruption factor are Decimal assumptions. Efficiency and disruption are applied once; a shared capacity factor ensures effective demand never exceeds regional capacity. Freight changes accessible aggregate procurement, not inventories. Reduced access suppresses effective monthly activity without removing population. No roads, vehicles, routes, GIS, transit schedules, travel-time forecast, or logistics optimization are represented.
+
+## Chapter 12 utilities
+
+Electric, water, wastewater, and broadband are aggregate fictional capacity units. Available capacity applies the maintenance reserve and deterministic scenario reliability exactly once. The least-served utility sets a transparent common activity factor. No engineering network or individual customer is represented.

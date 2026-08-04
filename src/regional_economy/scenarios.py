@@ -25,6 +25,7 @@ from regional_economy.entities import (
     TourismSector,
     TransportationSystem,
     University,
+    UtilitySystem,
     Visitor,
     WorkforceSystem,
 )
@@ -50,6 +51,7 @@ ROOT_FIELDS = {
     "housing",
     "workforce",
     "transportation",
+    "utilities",
 }
 
 
@@ -66,6 +68,7 @@ class Scenario:
     housing: HousingSystem
     workforce: WorkforceSystem
     transportation: TransportationSystem
+    utilities: UtilitySystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -527,6 +530,16 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         _rate(transportation_data.get("average_travel_efficiency", "1"), "transportation.average_travel_efficiency"),
         _rate(transportation_data.get("disruption_factor", "1"), "transportation.disruption_factor"),
     )
+    utility_data = raw.get("utilities", {})
+    service_names = ("electric", "water", "wastewater", "broadband")
+    maintenance_reserve = _rate(utility_data.get("maintenance_reserve", "0"), "utilities.maintenance_reserve")
+    capacities, demands, reliabilities = {}, {}, {}
+    for service_name in service_names:
+        service_data = utility_data.get(service_name, {})
+        capacities[service_name] = _nonnegative(int(service_data.get("capacity", "1000000")), f"{service_name} capacity")
+        demands[service_name] = _nonnegative(int(service_data.get("demand", "0")), f"{service_name} demand")
+        reliabilities[service_name] = _rate(service_data.get("reliability", "1"), f"utilities.{service_name}.reliability")
+    utilities = UtilitySystem(capacities, demands, reliabilities, maintenance_reserve)
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -549,4 +562,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         housing=housing,
         workforce=workforce,
         transportation=transportation,
+        utilities=utilities,
     )

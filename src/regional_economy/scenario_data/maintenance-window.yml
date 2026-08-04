@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: maintenance-window
+label: Maintenance Window
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -322,8 +322,8 @@ transportation:
 
 utilities:
   # Aggregate capacity units; no substations, pipes, customers, or network nodes.
-  maintenance_reserve: "0.05"
+  maintenance_reserve: "0.15"
   electric: {capacity: 1200, demand: 900, reliability: "0.99"}
-  water: {capacity: 1000, demand: 720, reliability: "0.99"}
+  water: {capacity: 1000, demand: 720, reliability: "0.90"}
   wastewater: {capacity: 900, demand: 650, reliability: "0.99"}
   broadband: {capacity: 1500, demand: 1050, reliability: "0.98"}

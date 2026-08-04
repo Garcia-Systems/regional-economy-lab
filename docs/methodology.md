@@ -67,3 +67,7 @@ Chapter 10 calculates `labor_force = round_half_up(working_age_population × par
 ## Transportation and accessibility method
 
 Chapter 11 evaluates aggregate transportation before economic demand. Each configured access rate is multiplied once by average travel efficiency and disruption. Accessible commuter, visitor, and freight demand is summed; when it exceeds roadway capacity, the same `capacity / accessible demand` factor is applied to all three rates. This deterministic proportional rationing avoids dependence on sector ordering. Commuter access changes effective workforce participation, commuting, and household-derived demand; visitor access changes reachable visitors and spending; freight access changes aggregate local university and healthcare procurement. Money remains integer cents and rates remain Decimal. The method provides a systems-thinking capacity experiment, not GIS, traffic assignment, routing, logistics, forecasting, or causal impact estimation.
+
+## Utilities and digital infrastructure
+
+For each aggregate service, available capacity is the integer floor of installed capacity × (1 − maintenance reserve) × deterministic reliability. Utilization divides demand by available capacity, and unmet demand is `max(0, demand − available capacity)`. The minimum available-to-demand ratio constrains effective cross-sector demand. Calculations use `Decimal` rates and integer units/cents, fixed service ordering, and no forecasting, optimization, network solver, or engineering-grade simulation.
