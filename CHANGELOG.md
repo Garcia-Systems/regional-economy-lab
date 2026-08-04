@@ -59,3 +59,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added aggregate electric, water, wastewater, and broadband capacity, utilization, reliability, reserve, unmet-demand, and constrained-activity modeling.
 - Added deterministic `power-outage`, `broadband-upgrade`, and `maintenance-window` scenarios, utilities report/trace CLI modes, dashboard metrics, documentation, and tests.
 - Explicitly excludes engineering-grade grids, hydraulics, routing, protocols, cybersecurity, optimization, and individual customers.
+
+## Unreleased — Chapter 13
+
+- Added aggregate fictional banking institutions, deposits, lending capacity, available credit, payment availability, and interrupted-transaction indicators.
+- Added payment-outage, credit-tightening, and expanded-business-lending scenarios, banking report/trace modes, dashboard/comparison integration, documentation, and tests.

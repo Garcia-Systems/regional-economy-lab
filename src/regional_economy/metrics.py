@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from regional_economy.entities.banking import BankingResult
 from regional_economy.entities.business import BusinessSectorResult, Sector
 from regional_economy.entities.government import PublicServiceDepartment
 from regional_economy.entities.healthcare import AgeCohort
@@ -118,6 +119,9 @@ class RegionalMetrics:
     transportation: TransportationResult
     utilities: UtilityResult
     utility_constrained_activity: int
+    banking: BankingResult
+    completed_transactions: int
+    interrupted_transactions: int
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:

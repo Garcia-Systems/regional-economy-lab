@@ -59,3 +59,7 @@ Transportation is aggregate accessibility, measured with fictional trip-equivale
 ## Chapter 12 utilities
 
 Electric, water, wastewater, and broadband are aggregate fictional capacity units. Available capacity applies the maintenance reserve and deterministic scenario reliability exactly once. The least-served utility sets a transparent common activity factor. No engineering network or individual customer is represented.
+
+## Chapter 13 banking assumptions
+
+Bank balances are fictional monthly aggregates in integer cents. Household plus business deposits form total deposits. Lending capacity is total deposits multiplied by a configured Decimal rate; available credit is capacity less outstanding aggregate business and consumer lending, floored at zero. Payment availability applies once to all otherwise accessible local demand. The remainder is interrupted (delayed), not permanently deleted. Reliability is descriptive and deterministic. No account, underwriting, interest, amortization, ACH, card, routing, settlement, message, ledger, or fraud model is implied.

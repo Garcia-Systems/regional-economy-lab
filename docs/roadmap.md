@@ -41,3 +41,7 @@ Aggregate roadway capacity, commuter/visitor/freight accessibility, travel-effic
 ## Chapter 12 — complete
 
 Aggregate electric power, water, wastewater, and broadband capacity; deterministic reliability, maintenance, outage and upgrade scenarios; utilization, unmet demand, reporting, explain/trace content, tests, and the debugging laboratory are implemented. Engineering networks and post-Chapter-12 banking, supply-chain, and shock models remain out of scope.
+
+## Chapter 13 — complete
+
+Fictional aggregate banks, deposits, deposit-based lending capacity, available credit, payment availability, interrupted activity, reports, traces, and three deterministic scenarios are implemented. Payment-network mechanics and individual accounts remain exclusively outside scope; supply chains, shocks, forecasting, and later chapters are not implemented.

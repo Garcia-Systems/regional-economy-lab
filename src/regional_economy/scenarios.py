@@ -10,6 +10,7 @@ import yaml
 
 from regional_economy.entities import (
     AgeCohort,
+    BankingSystem,
     Business,
     DepartmentName,
     Government,
@@ -52,6 +53,7 @@ ROOT_FIELDS = {
     "workforce",
     "transportation",
     "utilities",
+    "banking",
 }
 
 
@@ -69,6 +71,7 @@ class Scenario:
     workforce: WorkforceSystem
     transportation: TransportationSystem
     utilities: UtilitySystem
+    banking: BankingSystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -540,6 +543,20 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         demands[service_name] = _nonnegative(int(service_data.get("demand", "0")), f"{service_name} demand")
         reliabilities[service_name] = _rate(service_data.get("reliability", "1"), f"utilities.{service_name}.reliability")
     utilities = UtilitySystem(capacities, demands, reliabilities, maintenance_reserve)
+    banking_data = raw.get("banking", {})
+    institutions = banking_data.get("institutions", ["Historic Triangle Community Bank", "Colonial Credit Cooperative"])
+    if not isinstance(institutions, list) or not institutions:
+        raise ValueError("banking.institutions must contain at least one fictional aggregate institution.")
+    banking = BankingSystem(
+        len(institutions),
+        _nonnegative(parse_money(banking_data.get("household_deposits", "20000000.00")), "household deposits"),
+        _nonnegative(parse_money(banking_data.get("business_deposits", "10000000.00")), "business deposits"),
+        _rate(banking_data.get("lending_capacity_rate", "0.80"), "banking.lending_capacity_rate"),
+        _nonnegative(parse_money(banking_data.get("business_lending", "12000000.00")), "business lending"),
+        _nonnegative(parse_money(banking_data.get("consumer_lending", "6000000.00")), "consumer lending"),
+        _rate(banking_data.get("payment_availability", "1.00"), "banking.payment_availability"),
+        _rate(banking_data.get("payment_reliability", "0.999"), "banking.payment_reliability"),
+    )
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -563,4 +580,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         workforce=workforce,
         transportation=transportation,
         utilities=utilities,
+        banking=banking,
     )
