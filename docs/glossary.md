@@ -174,3 +174,12 @@ employment, household income, or tax collections.
 - **Economic diversity:** educational measure of reduced dependence on a single economic activity.
 - **Infrastructure redundancy:** alternate capacity that can preserve functions when a primary path is constrained.
 - **Recovery readiness:** configured preparedness for coordinated recovery, not a forecast.
+# Chapter 19 terms
+
+**Annual scenario:** One named set of assumptions executed for twelve ordered deterministic months.
+
+**Annual summary:** Reconciled sums of monthly flows and averages of monthly stock or ratio indicators.
+
+**Seasonal variation:** A configured, repeatable difference among calendar periods; it is not a random event or forecast.
+
+**Monthly snapshot:** An immutable dashboard view made after one month's event queue completes.
