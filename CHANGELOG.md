@@ -33,3 +33,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added fictional local-government revenue, balanced operating/capital budgets, aggregate department capacity and utilization.
 - Added `public-safety-focus`, `parks-investment`, and `balanced-services`, plus government report and trace CLI modes.
 - Added Chapter 7 teaching material and policy-neutral assumptions, tests, and deterministic budget reconciliation.
+
+## Unreleased — Chapter 8
+
+- Added four aggregate downtown business sectors, multi-source demand allocation, capacity, unmet demand, excess capacity, simplified operating surplus, and aggregate openings/closures.
+- Added `downtown-expansion`, `restaurant-boom`, and `retail-decline`, plus business report and trace CLI modes.
+- Added the Chapter 8 lesson, debugging laboratory, documentation, and deterministic tests. No real businesses are represented.

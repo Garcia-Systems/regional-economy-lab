@@ -40,9 +40,15 @@ affordability_thresholds:
   cost_burden: "0.30" # assumed educational threshold
   severe_cost_burden: "0.50" # assumed educational threshold
 household_sector_shares:
-  tourism_hospitality: "0.10" # assumed
-  retail: "0.55" # assumed
-  food_service: "0.35" # assumed
+  retail: "0.40"
+  restaurants: "0.25"
+  personal_services: "0.20"
+  entertainment: "0.15"
+business_demand_shares:
+  households: {retail: "0.40", restaurants: "0.25", personal_services: "0.20", entertainment: "0.15"}
+  visitors: {retail: "0.25", restaurants: "0.40", personal_services: "0.05", entertainment: "0.30"}
+  institutions: {retail: "0.45", restaurants: "0.15", personal_services: "0.30", entertainment: "0.10"}
+  government: {retail: "0.30", restaurants: "0.10", personal_services: "0.50", entertainment: "0.10"}
 household_types:
   - id: lower-income-renter
     label: Lower-Income Renter
@@ -129,24 +135,29 @@ household_types:
     discretionary_local_spending_share: "0.64"
     external_income_share: "0.95"
 businesses:
-  - id: tourism-sector
-    sector: tourism_hospitality
-    employees: 250
-    monthly_capacity: "10000000.00"
+  - id: retail-sector
+    sector: retail
+    employees: 240
+    monthly_capacity: "2800000.00"
     operating_allocation: &operating
       wages: "0.55"
       local_purchases: "0.15"
       external_purchases: "0.20"
       retained: "0.10"
-  - id: retail-sector
-    sector: retail
-    employees: 190
-    monthly_capacity: "10000000.00"
+  - id: restaurant-sector
+    sector: restaurants
+    employees: 210
+    monthly_capacity: "1900000.00"
     operating_allocation: *operating
-  - id: food-sector
-    sector: food_service
-    employees: 180
-    monthly_capacity: "10000000.00"
+  - id: personal-services-sector
+    sector: personal_services
+    employees: 130
+    monthly_capacity: "1400000.00"
+    operating_allocation: *operating
+  - id: entertainment-sector
+    sector: entertainment
+    employees: 100
+    monthly_capacity: "1250000.00"
     operating_allocation: *operating
 tourism:
   # All values are fictional educational assumptions, not official statistics.

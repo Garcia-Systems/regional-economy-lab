@@ -51,3 +51,7 @@ Healthcare cohorts are mutually exclusive and must reconcile exactly to regional
 ## Government budgeting method
 
 The engine collects transaction taxes after business revenue, combines them with configured recurring sources, deterministically allocates the fixed operating budget in stable department order, computes aggregate capacity and utilization, and reconciles allocated cents to the operating appropriation. It then subtracts operating and high-level capital budgets from revenue plus starting reserves. Appropriations above available funds fail rather than create borrowing or a deficit. Scenario comparison is descriptive: it performs no forecasting, optimization, or policy ranking.
+
+## Aggregate business method
+
+Four downtown sectors receive integer-cent demand allocations from households, visitors, university and healthcare procurement, and a government activity proxy. Each source's Decimal shares sum to one. Sector revenue is the lesser of demand and capacity. Sales taxes and operating allocations then reconcile revenue exactly. Stable enum and source order makes remainder allocation and output reproducible. These are simplified profitability indicators; no real businesses or detailed accounts are modeled.

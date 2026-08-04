@@ -99,6 +99,12 @@ def dashboard(result: SimulationResult) -> str:
                 ("Local purchases", format_money(m.local_business_purchases)),
                 ("External purchases", format_money(m.external_business_purchases)),
                 ("Retained operating funds", format_money(m.retained_business_funds)),
+                ("Unmet business demand", format_money(sum(s.unmet_demand for s in m.business_sectors))),
+                ("Excess business capacity", format_money(sum(s.excess_capacity for s in m.business_sectors))),
+                (
+                    "Aggregate openings / closures",
+                    f"{sum(s.openings for s in m.business_sectors)} / {sum(s.closures for s in m.business_sectors)}",
+                ),
             ),
         ),
         (
@@ -218,6 +224,11 @@ def explanation(result):
         "and dependency characteristics.",
         "Healthcare is both an essential service and an employer: institutions meet aggregate demand while payroll reaches households "
         "and procurement reaches businesses. Aging raises configured utilization and spending, which can change employment priorities.",
+        "Business demand from households, visitors, institutions, and government is allocated across the same four aggregate sectors. "
+        "Revenue is capped by operating capacity, so excess demand is reported as unmet rather than becoming impossible sales.",
+        "Strong demand does not become proportional profit because taxes, payroll, local purchases, "
+        "and external purchases use revenue first. "
+        "Retained operating surplus is a simplified educational indicator, not GAAP profit, and no real businesses are represented.",
         "Simplified property, sales, and lodging taxes, fees, and aggregate transfers become government revenue. The operating budget "
         "is fixed, so increasing one department's share reduces funds available to another.",
         "Department allocations change modeled capacity because each service has an assumed cost per capacity unit. Public investment "
@@ -235,6 +246,38 @@ def trace(result):
             "",
             "This conceptual aggregate trace is not an accounting identity or tracking of a literal dollar.",
             "Wages are not spent again in this one-month model.",
+        )
+    )
+
+
+def business_report(result):
+    lines = [
+        f"BUSINESS REPORT — {result.scenario_label}",
+        "Aggregate fictional downtown sectors; simplified educational profitability, not GAAP accounting.",
+        f"{'Sector':<20}{'Revenue':>15}{'Capacity':>15}{'Utilization':>13}{'Unmet':>15}{'Excess':>15}{'Surplus':>15}",
+    ]
+    for sector in result.metrics.business_sectors:
+        lines.append(
+            f"{sector.sector.value.replace('_', ' ').title():<20}{format_money(sector.revenue):>15}"
+            f"{format_money(sector.capacity):>15}{_percent(sector.utilization):>13}"
+            f"{format_money(sector.unmet_demand):>15}{format_money(sector.excess_capacity):>15}"
+            f"{format_money(sector.retained_operating_surplus):>15}"
+        )
+        lines.append(
+            f"  payroll {format_money(sector.payroll)}; operating costs {format_money(sector.operating_costs)}; "
+            f"local purchases {format_money(sector.local_purchases)}; external purchases {format_money(sector.external_purchases)}; "
+            f"taxes {format_money(sector.taxes)}; openings {sector.openings}; closures {sector.closures}"
+        )
+    return "\n".join(lines)
+
+
+def business_trace(result):
+    return "\n".join(
+        (
+            f"BUSINESS CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "Households / Visitors / Institutions ↓ Business Revenue ↓ Payroll ↓ Local Purchases ↓ Taxes",
+            "↓ Retained Operating Surplus ↓ Leakage",
+            "The sources share aggregate sector capacity; this is not a literal tracked dollar or detailed accounting.",
         )
     )
 
@@ -307,26 +350,30 @@ def healthcare_report(result):
         f"  {cohort.label}: {cohort.population:,} (labor-force participation {_percent(cohort.labor_force_participation)})"
         for cohort in m.demographic_cohorts
     )
-    lines.extend((
-        "Healthcare demand:",
-        *(f"  {name.title()}: {value:,.2f}" for name, value in m.healthcare_demand.items()),
-        f"Healthcare spending: {format_money(m.healthcare_spending)}",
-        f"Employment: {m.healthcare_employment:,}",
-        f"Payroll to households: {format_money(m.healthcare_payroll)}",
-        f"Procurement: {format_money(m.healthcare_procurement)}",
-        f"Local procurement: {format_money(m.healthcare_local_procurement)}",
-        f"External procurement (leakage): {format_money(m.healthcare_external_procurement)}",
-        f"Healthcare-related business activity: {format_money(m.healthcare_business_activity)}",
-    ))
+    lines.extend(
+        (
+            "Healthcare demand:",
+            *(f"  {name.title()}: {value:,.2f}" for name, value in m.healthcare_demand.items()),
+            f"Healthcare spending: {format_money(m.healthcare_spending)}",
+            f"Employment: {m.healthcare_employment:,}",
+            f"Payroll to households: {format_money(m.healthcare_payroll)}",
+            f"Procurement: {format_money(m.healthcare_procurement)}",
+            f"Local procurement: {format_money(m.healthcare_local_procurement)}",
+            f"External procurement (leakage): {format_money(m.healthcare_external_procurement)}",
+            f"Healthcare-related business activity: {format_money(m.healthcare_business_activity)}",
+        )
+    )
     return "\n".join(lines)
 
 
 def healthcare_trace(result):
-    return "\n".join((
-        f"HEALTHCARE CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
-        "Population Aging ↓ Healthcare Demand ↓ Healthcare Institutions ↓ Payroll ↓ Households ↓ Businesses ↓ Taxes ↓ Leakage",
-        "This is an educational systems trace, not a literal tracked dollar, patient pathway, or accounting identity.",
-    ))
+    return "\n".join(
+        (
+            f"HEALTHCARE CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "Population Aging ↓ Healthcare Demand ↓ Healthcare Institutions ↓ Payroll ↓ Households ↓ Businesses ↓ Taxes ↓ Leakage",
+            "This is an educational systems trace, not a literal tracked dollar, patient pathway, or accounting identity.",
+        )
+    )
 
 
 def government_report(result):
@@ -344,22 +391,27 @@ def government_report(result):
         f"capacity {department.capacity:,.2f}; demand {department.demand:,.2f}; utilization {_percent(department.utilization)}"
         for department in m.government_departments
     )
-    lines.extend((
-        f"Overall public-service utilization: {_percent(m.public_service_utilization)}",
-        f"Remaining reserves: {format_money(m.government_reserve_balance)}",
-        f"Balanced operating allocation: {'PASS' if m.government_budget_reconciliation.reconciled else 'FAIL'}",
-        "Key tradeoff: a larger share for one department means less modeled capacity elsewhere because total operating funds are fixed.",
-    ))
+    lines.extend(
+        (
+            f"Overall public-service utilization: {_percent(m.public_service_utilization)}",
+            f"Remaining reserves: {format_money(m.government_reserve_balance)}",
+            f"Balanced operating allocation: {'PASS' if m.government_budget_reconciliation.reconciled else 'FAIL'}",
+            "Key tradeoff: a larger share for one department means less modeled capacity elsewhere "
+            "because total operating funds are fixed.",
+        )
+    )
     return "\n".join(lines)
 
 
 def government_trace(result):
-    return "\n".join((
-        f"GOVERNMENT CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
-        "Taxes Collected ↓ Government Revenue ↓ Department Budget ↓ Public Services",
-        "↓ Support for Households and Businesses ↓ Regional Economic Activity",
-        "This is an educational systems trace, not a literal tracked dollar, detailed accounting model, or policy recommendation.",
-    ))
+    return "\n".join(
+        (
+            f"GOVERNMENT CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "Taxes Collected ↓ Government Revenue ↓ Department Budget ↓ Public Services",
+            "↓ Support for Households and Businesses ↓ Regional Economic Activity",
+            "This is an educational systems trace, not a literal tracked dollar, detailed accounting model, or policy recommendation.",
+        )
+    )
 
 
 def comparison(first, second):
@@ -376,6 +428,7 @@ def comparison(first, second):
         ("Tourism wages", "tourism_wages"),
         ("Tourism tax revenue", "tourism_tax_revenue"),
         ("Business revenue", "business_revenue"),
+        ("Business operating surplus", "retained_business_funds"),
         ("Taxes collected", "taxes_collected"),
         ("Economic leakage", "economic_leakage"),
         ("Student spending", "student_spending"),
@@ -397,9 +450,7 @@ def comparison(first, second):
         a = getattr(first.metrics, attr)
         b = getattr(second.metrics, attr)
         formatter = (
-            (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}")
-            if attr == "healthcare_employment"
-            else format_money
+            (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}") if attr == "healthcare_employment" else format_money
         )
         lines.append(f"{label:<29}{formatter(a):>20}{formatter(b):>20}{formatter(b - a, signed=True):>20}")
     return "\n".join(lines)

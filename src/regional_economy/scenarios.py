@@ -33,6 +33,7 @@ ROOT_FIELDS = {
     "government",
     "household_allocation",
     "household_sector_shares",
+    "business_demand_shares",
     "households",
     "household_types",
     "affordability_thresholds",
@@ -51,6 +52,7 @@ class Scenario:
     region: Region
     visitors: Visitor
     household_sector_shares: dict[Sector, Decimal]
+    business_demand_shares: dict[str, dict[Sector, Decimal]]
     university: University
     healthcare: HealthcareSystem
 
@@ -142,9 +144,7 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         {name: _require(values, "allocation_share", f"government.departments.{name}") for name, values in department_data.items()},
         "government department",
     )
-    operating_budget = _nonnegative(
-        parse_money(_require(government_data, "operating_budget", "government")), "government operating budget"
-    )
+    operating_budget = _nonnegative(parse_money(_require(government_data, "operating_budget", "government")), "government operating budget")
     capital_budget = _nonnegative(parse_money(_require(government_data, "capital_budget", "government")), "government capital budget")
     government = Government(
         sales_tax_rate=_rate(_require(government_data, "sales_tax_rate", "government"), "government.sales_tax_rate"),
@@ -272,6 +272,8 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
                 local_purchase_share=allocation["local_purchases"],
                 external_purchase_share=allocation["external_purchases"],
                 retained_share=allocation["retained"],
+                openings=_nonnegative(int(item.get("openings", "0")), "business openings"),
+                closures=_nonnegative(int(item.get("closures", "0")), "business closures"),
             )
         )
     if len({business.business_id for business in businesses}) != len(businesses):
@@ -387,10 +389,16 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     )
     if len({cohort.cohort_id for cohort in cohorts}) != len(cohorts):
         raise ValueError("Duplicate healthcare cohort id. Fix: count each demographic cohort exactly once.")
-    if any(value < 0 for cohort in cohorts for value in (
-        cohort.outpatient_visits_per_person, cohort.inpatient_services_per_person,
-        cohort.pharmacy_units_per_person, cohort.preventive_visits_per_person,
-    )):
+    if any(
+        value < 0
+        for cohort in cohorts
+        for value in (
+            cohort.outpatient_visits_per_person,
+            cohort.inpatient_services_per_person,
+            cohort.pharmacy_units_per_person,
+            cohort.preventive_visits_per_person,
+        )
+    ):
         raise ValueError("Healthcare utilization rates must be nonnegative.")
     if sum(cohort.population for cohort in cohorts) != population:
         raise ValueError("Healthcare cohort populations must sum exactly to region.population; check for missing or duplicate cohorts.")
@@ -411,6 +419,9 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         ),
         cohorts=cohorts,
     )
+    demand_share_data = _require(raw, "business_demand_shares", "scenario")
+    if set(demand_share_data) != {"households", "visitors", "institutions", "government"}:
+        raise ValueError("business_demand_shares must include households, visitors, institutions, and government.")
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -425,6 +436,9 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
             tourism_businesses,
         ),
         household_sector_shares=_sector_shares(_require(raw, "household_sector_shares", "scenario"), "household sector"),
+        business_demand_shares={
+            source: _sector_shares(values, f"business demand {source}") for source, values in demand_share_data.items()
+        },
         university=university,
         healthcare=healthcare,
     )

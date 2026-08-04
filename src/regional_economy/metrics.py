@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from regional_economy.entities.business import BusinessSectorResult, Sector
 from regional_economy.entities.government import PublicServiceDepartment
 from regional_economy.entities.healthcare import AgeCohort
 from regional_economy.entities.household import HouseholdAllocation
@@ -45,6 +46,8 @@ class RegionalMetrics:
     local_household_spending: int
     business_revenue: int
     household_derived_business_revenue: int
+    business_sectors: tuple[BusinessSectorResult, ...]
+    business_demand_by_source: dict[str, dict[Sector, int]]
     wages_paid: int
     local_business_purchases: int
     external_business_purchases: int
