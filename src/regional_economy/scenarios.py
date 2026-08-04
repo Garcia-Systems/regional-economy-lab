@@ -18,10 +18,14 @@ from regional_economy.entities import (
     Household,
     HousingCategory,
     HousingSystem,
+    LeadTime,
     Region,
     Sector,
     SkillCategory,
     StudentCohort,
+    Supplier,
+    SupplierCategory,
+    SupplyChain,
     TourismBusiness,
     TourismSector,
     TransportationSystem,
@@ -54,6 +58,7 @@ ROOT_FIELDS = {
     "transportation",
     "utilities",
     "banking",
+    "supply_chain",
 }
 
 
@@ -72,6 +77,7 @@ class Scenario:
     transportation: TransportationSystem
     utilities: UtilitySystem
     banking: BankingSystem
+    supply_chain: SupplyChain
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -557,6 +563,28 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         _rate(banking_data.get("payment_availability", "1.00"), "banking.payment_availability"),
         _rate(banking_data.get("payment_reliability", "0.999"), "banking.payment_reliability"),
     )
+    supply_data = raw.get("supply_chain", {})
+    mix = _shares(
+        supply_data.get("supplier_mix", {"local": "0.25", "regional": "0.25", "national": "0.35", "international": "0.15"}),
+        "supply-chain supplier mix",
+    )
+    expected_suppliers = {category.value for category in SupplierCategory}
+    if set(mix) != expected_suppliers:
+        raise ValueError(f"Supplier mix must include exactly: {', '.join(sorted(expected_suppliers))}.")
+    availability_data = supply_data.get("availability", {category: "1.00" for category in expected_suppliers})
+    if set(availability_data) != expected_suppliers:
+        raise ValueError(f"Supplier availability must include exactly: {', '.join(sorted(expected_suppliers))}.")
+    try:
+        lead_time = LeadTime(supply_data.get("lead_time", "normal"))
+    except ValueError as error:
+        raise ValueError("supply_chain.lead_time must be normal, moderate_delay, or severe_delay.") from error
+    supply_chain = SupplyChain(
+        tuple(
+            Supplier(category, mix[category.value], _rate(availability_data[category.value], f"supply_chain.availability.{category.value}"))
+            for category in SupplierCategory
+        ),
+        lead_time,
+    )
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -581,4 +609,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         transportation=transportation,
         utilities=utilities,
         banking=banking,
+        supply_chain=supply_chain,
     )

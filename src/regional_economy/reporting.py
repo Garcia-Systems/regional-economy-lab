@@ -156,6 +156,16 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Supply Chains and Regional Commerce",
+            (
+                ("Local procurement", format_money(m.local_business_purchases)),
+                ("External procurement", format_money(m.external_business_purchases)),
+                ("Supplier reliability", _percent(m.supply_chain.procurement_reliability)),
+                ("Lead-time indicator", m.supply_chain.lead_time.value.replace("_", " ").title()),
+                ("Constrained business activity", format_money(m.supply_constrained_business_activity)),
+            ),
+        ),
+        (
             "Government",
             (
                 ("Total government revenue", format_money(m.government_revenue)),
@@ -313,6 +323,12 @@ def explanation(result):
         "A binding electric, water, wastewater, or broadband service reduces effective regional activity across sectors. "
         "Spare capacity and "
         "maintenance reserve can improve resilience, but this deterministic aggregate model is not an engineering simulation.",
+        "Supply chains matter because businesses need reliable inputs before strong customer demand can become sales and payroll. "
+        "Local sourcing keeps more procurement spending circulating in the region; external sourcing is modeled as leakage.",
+        "Supplier availability and deterministic lead-time assumptions constrain business capacity, so disruptions reduce output even "
+        "when customer demand remains strong.",
+        "This chapter intentionally omits inventory, warehouses, barcodes, replenishment, purchase orders, routing, and ERP workflows. "
+        "Those operational implementation details belong in the Inventory Synchronization Laboratory.",
     )
     return "\n".join(lines)
 
@@ -358,6 +374,44 @@ def business_trace(result):
             "Households / Visitors / Institutions ↓ Business Revenue ↓ Payroll ↓ Local Purchases ↓ Taxes",
             "↓ Retained Operating Surplus ↓ Leakage",
             "The sources share aggregate sector capacity; this is not a literal tracked dollar or detailed accounting.",
+        )
+    )
+
+
+def supply_report(result):
+    m = result.metrics
+    lines = [
+        f"SUPPLY-CHAIN REPORT — {result.scenario_label}",
+        "Conceptual regional model; no inventory, warehouse, replenishment, purchase-order, routing, or ERP simulation.",
+        "Supplier mix and availability:",
+    ]
+    lines.extend(
+        f"  {supplier.category.value.title():<15} share {_percent(supplier.procurement_share):>7}; "
+        f"availability {_percent(supplier.availability):>7}"
+        for supplier in m.supply_chain.suppliers
+    )
+    lines.extend(
+        (
+            f"Local procurement: {format_money(m.local_business_purchases)}",
+            f"External procurement: {format_money(m.external_business_purchases)}",
+            f"Procurement reliability: {_percent(m.supply_chain.procurement_reliability)}",
+            f"Lead time: {m.supply_chain.lead_time.value.replace('_', ' ').title()}",
+            f"Business capacity factor: {_percent(m.supply_chain.capacity_factor)}",
+            f"Constrained business activity: {format_money(m.supply_constrained_business_activity)}",
+            "External procurement is economic leakage; classification changes circulation, not the procurement total.",
+        )
+    )
+    return "\n".join(lines)
+
+
+def supply_trace(result):
+    return "\n".join(
+        (
+            f"SUPPLY-CHAIN CONCEPTUAL TRACE — {result.scenario_label}",
+            "Supplier ↓ Business Procurement ↓ Business Capacity ↓ Customer Sales",
+            "↓ Payroll ↓ Regional Economic Activity",
+            "This is a conceptual regional model, not a literal shipment or inventory trace.",
+            "See the Inventory Synchronization Laboratory for operational inventory-system implementation details.",
         )
     )
 
@@ -560,6 +614,9 @@ def comparison(first, second):
         ("Available credit", "banking.available_credit"),
         ("Completed transactions", "completed_transactions"),
         ("Interrupted transactions", "interrupted_transactions"),
+        ("Local procurement", "local_business_purchases"),
+        ("External procurement", "external_business_purchases"),
+        ("Supply-constrained activity", "supply_constrained_business_activity"),
     )
     first_label = first.scenario_label[:20]
     second_label = second.scenario_label[:20]
@@ -603,6 +660,8 @@ def comparison(first, second):
         lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
     a, b = first.metrics.utility_constrained_activity, second.metrics.utility_constrained_activity
     lines.append(f"{'Utility-constrained activity':<29}{format_money(a):>20}{format_money(b):>20}{format_money(b - a, signed=True):>20}")
+    a, b = first.metrics.supply_chain.procurement_reliability, second.metrics.supply_chain.procurement_reliability
+    lines.append(f"{'Supplier reliability':<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
     return "\n".join(lines)
 
 

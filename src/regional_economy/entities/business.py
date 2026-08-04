@@ -63,10 +63,12 @@ class Business:
     external_purchases: int = 0
     taxes: int = 0
     retained_operating_funds: int = 0
+    effective_capacity: int = 0
 
-    def record_and_allocate(self, demand: int, tax_rate: Decimal) -> None:
+    def record_and_allocate(self, demand: int, tax_rate: Decimal, capacity_factor: Decimal = Decimal(1)) -> None:
         self.demand = demand
-        revenue = min(demand, self.monthly_capacity)
+        self.effective_capacity = int(Decimal(self.monthly_capacity) * capacity_factor)
+        revenue = min(demand, self.effective_capacity)
         taxes = int(Decimal(revenue) * tax_rate)
         operating = revenue - taxes
         self.local_revenue, self.taxes = revenue, taxes
@@ -86,7 +88,7 @@ class Business:
         return BusinessSectorResult(
             self.sector,
             self.demand,
-            self.monthly_capacity,
+            self.effective_capacity,
             self.local_revenue,
             self.wages_paid,
             self.local_purchases,

@@ -182,3 +182,9 @@ regional-sim compare baseline payment-outage
 ```
 
 This is not a payment network: accounts, ACH, cards, authorization, routing, settlement, messages, ledgers, and fraud controls belong in the **Digital Banking Systems Laboratory**. The **Inventory Synchronization Laboratory**, **Digital Banking Systems Laboratory**, and **Marketplace Pricing and Solutions Engineering Lab** each teach a subsystem deeply; this laboratory demonstrates how those subsystems conceptually interact in a regional economy. No repository has a runtime dependency on another. See [Chapter 13](book/chapter-13.md).
+
+## Chapter 14 — Supply chains and regional commerce
+
+Chapter 14 adds aggregate local, regional, national, and international suppliers, deterministic availability and lead-time assumptions, procurement classification, and supply-constrained business activity. Try `regional-sim supplier-delay`, `regional-sim local-sourcing`, `regional-sim external-disruption`, `regional-sim supply-report baseline`, `regional-sim supply-trace baseline`, and `regional-sim compare baseline supplier-delay`.
+
+This conceptual regional model intentionally omits inventory, warehouses, barcodes, replenishment, purchase orders, routing, and ERP. Those operational systems belong in the **Inventory Synchronization Laboratory**; the laboratories complement one another without runtime dependencies. See [Chapter 14](book/chapter-14.md).

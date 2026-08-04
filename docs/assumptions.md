@@ -63,3 +63,7 @@ Electric, water, wastewater, and broadband are aggregate fictional capacity unit
 ## Chapter 13 banking assumptions
 
 Bank balances are fictional monthly aggregates in integer cents. Household plus business deposits form total deposits. Lending capacity is total deposits multiplied by a configured Decimal rate; available credit is capacity less outstanding aggregate business and consumer lending, floored at zero. Payment availability applies once to all otherwise accessible local demand. The remainder is interrupted (delayed), not permanently deleted. Reliability is descriptive and deterministic. No account, underwriting, interest, amortization, ACH, card, routing, settlement, message, ledger, or fraud model is implied.
+
+## Chapter 14 supply-chain assumptions
+
+Supplier shares cover exactly local, regional, national, and international categories and sum to 100%. Only local procurement remains in the modeled region; the other three categories are external leakage. Procurement reliability is the share-weighted availability. Normal, moderate-delay, and severe-delay capacity ceilings are 100%, 90%, and 70%; effective business capacity uses the lower of reliability and that ceiling. These deterministic one-month assumptions do not represent inventory or logistics operations.

@@ -7,6 +7,7 @@ from .healthcare import AgeCohort, HealthcareSystem
 from .household import Household, HouseholdAllocation
 from .housing import HousingCategory, HousingSystem
 from .region import Region
+from .supply_chain import LeadTime, Supplier, SupplierCategory, SupplyChain, SupplyChainResult
 from .transportation import TransportationResult, TransportationSystem
 from .university import StudentCohort, University
 from .utility import UtilityResult, UtilityServiceResult, UtilitySystem
@@ -25,12 +26,17 @@ __all__ = [
     "HouseholdAllocation",
     "HousingCategory",
     "HousingSystem",
+    "LeadTime",
     "PublicServiceDepartment",
     "Region",
     "Sector",
     "SkillCategory",
     "SkillResult",
     "StudentCohort",
+    "Supplier",
+    "SupplierCategory",
+    "SupplyChain",
+    "SupplyChainResult",
     "TourismBusiness",
     "TourismSector",
     "TransportationResult",

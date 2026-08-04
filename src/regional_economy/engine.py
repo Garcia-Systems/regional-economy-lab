@@ -107,8 +107,15 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         source: _allocate_total(amount, scenario.business_demand_shares[source]) for source, amount in demand_sources.items()
     }
     revenue_by_sector = {sector: sum(demand_by_source[source][sector] for source in demand_sources) for sector in Sector}
+    supply_chain = scenario.supply_chain.evaluate()
+    unconstrained_business_revenue = sum(
+        min(revenue_by_sector[business.sector], business.monthly_capacity) for business in region.businesses
+    )
     for business in region.businesses:
-        business.record_and_allocate(revenue_by_sector[business.sector], government.sales_tax_rate)
+        procurement_share = business.local_purchase_share + business.external_purchase_share
+        business.local_purchase_share = procurement_share * supply_chain.local_purchasing_share
+        business.external_purchase_share = procurement_share * supply_chain.external_purchasing_share
+        business.record_and_allocate(revenue_by_sector[business.sector], government.sales_tax_rate, supply_chain.capacity_factor)
     business_revenue = sum(b.local_revenue for b in region.businesses)
     # Chapter 2 tourism indicators remain available, but Chapter 8 allocates visitor
     # spending once across the downtown sectors rather than recording it twice.
@@ -289,5 +296,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         banking,
         completed_transactions,
         interrupted_transactions,
+        supply_chain,
+        unconstrained_business_revenue - business_revenue,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())
