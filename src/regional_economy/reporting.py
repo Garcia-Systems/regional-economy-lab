@@ -78,6 +78,17 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Transportation and Accessibility",
+            (
+                ("Transportation capacity", f"{m.transportation.capacity:,}"),
+                ("Commuter accessibility", _percent(m.transportation.commuter_accessibility)),
+                ("Visitor accessibility", _percent(m.transportation.visitor_accessibility)),
+                ("Freight accessibility", _percent(m.transportation.freight_accessibility)),
+                ("Transportation utilization", _percent(m.transportation.utilization)),
+                ("Accessibility index", _percent(m.transportation.accessibility_index)),
+            ),
+        ),
+        (
             "Visitors",
             (
                 ("Visitors", f"{m.visitor_count:,}"),
@@ -268,6 +279,10 @@ def explanation(result):
         "Population and participation set the labor pool, while commuting changes who is locally available and who earns income outside.",
         "Training deterministically expands selected skill capacity over time in this educational model; it does not model students, "
         "recruiting, guaranteed placement, or education policy.",
+        "Accessibility matters economically because transportation connects workers, visitors, freight, customers, and institutions. "
+        "A disruption temporarily reduces effective activity rather than deleting population.",
+        "Transportation affects more than commuting: visitor access changes tourism demand, freight access changes aggregate institutional "
+        "and business purchasing, and capacity improvements can benefit several sectors at once. These are aggregate effects, not routing.",
     )
     return "\n".join(lines)
 
@@ -522,8 +537,12 @@ def comparison(first, second):
             (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}") if attr == "healthcare_employment" else format_money
         )
         lines.append(f"{label:<29}{formatter(a):>20}{formatter(b):>20}{formatter(b - a, signed=True):>20}")
-    workforce_rows = (("Labor-force size", "labor_force"), ("Employment", "employed"),
-                      ("Unemployment", "unemployed"), ("Unfilled positions", "unfilled_positions"))
+    workforce_rows = (
+        ("Labor-force size", "labor_force"),
+        ("Employment", "employed"),
+        ("Unemployment", "unemployed"),
+        ("Unfilled positions", "unfilled_positions"),
+    )
     for label, attr in workforce_rows:
         a, b = getattr(first.metrics.workforce, attr), getattr(second.metrics.workforce, attr)
         lines.append(f"{label:<29}{a:>20,}{b:>20,}{b - a:>+20,}")
@@ -538,7 +557,38 @@ def comparison(first, second):
     for label, attr in (("Housing occupancy rate", "housing_occupancy_rate"), ("Housing pressure index", "housing_pressure_index")):
         a, b = getattr(first.metrics, attr), getattr(second.metrics, attr)
         lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
+    for label, attr in (("Accessibility index", "accessibility_index"), ("Transport utilization", "utilization")):
+        a, b = getattr(first.metrics.transportation, attr), getattr(second.metrics.transportation, attr)
+        lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
     return "\n".join(lines)
+
+
+def transportation_report(result):
+    m = result.metrics.transportation
+    return "\n".join(
+        (
+            f"TRANSPORTATION REPORT — {result.scenario_label}",
+            "Aggregate accessibility assumptions; no GIS, routes, vehicles, or traffic simulation.",
+            f"Accessibility index: {_percent(m.accessibility_index)}",
+            f"Commuter accessibility: {_percent(m.commuter_accessibility)}",
+            f"Visitor accessibility: {_percent(m.visitor_accessibility)}",
+            f"Freight accessibility: {_percent(m.freight_accessibility)}",
+            f"Transportation capacity: {m.capacity:,}",
+            f"Effective demand: {m.effective_demand:,} of {m.demand:,}",
+            f"Capacity utilization: {_percent(m.utilization)}",
+        )
+    )
+
+
+def transportation_trace(result):
+    return "\n".join(
+        (
+            f"TRANSPORTATION EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
+            "Transportation Capacity ↓ Accessibility ↓ Workers / Visitors / Freight",
+            "↓ Businesses ↓ Households ↓ Regional Economic Activity",
+            "This is a systems-thinking visualization, not a route, vehicle trace, or literal tracked trip.",
+        )
+    )
 
 
 def workforce_report(result):
@@ -564,9 +614,11 @@ def workforce_report(result):
 
 
 def workforce_trace(result):
-    return "\n".join((
-        f"WORKFORCE EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
-        "Population ↓ Labor Force ↓ Skills ↓ Employer Demand ↓ Employment",
-        "↓ Household Income ↓ Regional Spending",
-        "This is an educational systems trace rather than a prediction of labor-market outcomes.",
-    ))
+    return "\n".join(
+        (
+            f"WORKFORCE EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
+            "Population ↓ Labor Force ↓ Skills ↓ Employer Demand ↓ Employment",
+            "↓ Household Income ↓ Regional Spending",
+            "This is an educational systems trace rather than a prediction of labor-market outcomes.",
+        )
+    )

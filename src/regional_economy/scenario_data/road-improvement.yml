@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: road-improvement
+label: Road Improvement
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -310,12 +310,12 @@ workforce:
 
 transportation:
   # Aggregate trip-equivalent capacity; no individual roads, vehicles, or routes.
-  regional_roadway_capacity: 12000
+  regional_roadway_capacity: 1900
   commuter_demand: 180
   visitor_demand: 1000
   freight_demand: 220
-  commuter_accessibility: "1.00"
-  visitor_accessibility: "1.00"
-  freight_accessibility: "1.00"
-  average_travel_efficiency: "1.00"
+  commuter_accessibility: "0.99"
+  visitor_accessibility: "0.99"
+  freight_accessibility: "0.98"
+  average_travel_efficiency: "0.99"
   disruption_factor: "1.00"

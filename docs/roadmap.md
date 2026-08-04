@@ -33,3 +33,7 @@ Aggregate owner, rental, and workforce housing supply, cohort demand, capacity-s
 ## Chapter 10 — complete
 
 Aggregate workforce participation, availability, six simplified skill groups, employer demand, commuting, training capacity, deterministic matching, reports, traces, and three scenarios are implemented. Recruiting, individual workers, detailed occupations, payroll administration, unemployment insurance, immigration, education policy, transportation, wage optimization, and forecasting remain out of scope.
+
+## Chapter 11 — complete
+
+Aggregate roadway capacity, commuter/visitor/freight accessibility, travel-efficiency and disruption factors, deterministic capacity rationing, cross-sector effects, dashboard indicators, reports, traces, and three scenarios are implemented. This is intentionally not GIS, traffic, vehicle, routing, transit-scheduling, fuel, inventory, or logistics software. Utilities, banking, supply chains, economic shocks, and later chapters remain out of scope.

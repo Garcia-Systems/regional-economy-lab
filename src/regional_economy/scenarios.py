@@ -23,6 +23,7 @@ from regional_economy.entities import (
     StudentCohort,
     TourismBusiness,
     TourismSector,
+    TransportationSystem,
     University,
     Visitor,
     WorkforceSystem,
@@ -48,6 +49,7 @@ ROOT_FIELDS = {
     "healthcare",
     "housing",
     "workforce",
+    "transportation",
 }
 
 
@@ -63,6 +65,7 @@ class Scenario:
     healthcare: HealthcareSystem
     housing: HousingSystem
     workforce: WorkforceSystem
+    transportation: TransportationSystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -471,10 +474,16 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         # Backward-compatible neutral aggregate for Chapters 0-9.
         working_age = population
         participation = Decimal(employed) / Decimal(population) if population else Decimal(0)
-        workforce = WorkforceSystem(working_age, participation, 0, 0, 0,
+        workforce = WorkforceSystem(
+            working_age,
+            participation,
+            0,
+            0,
+            0,
             {skill: Decimal(1) / Decimal(len(SkillCategory)) for skill in SkillCategory},
             {skill: employed // len(SkillCategory) for skill in SkillCategory},
-            {skill: Decimal(0) for skill in SkillCategory})
+            {skill: Decimal(0) for skill in SkillCategory},
+        )
     else:
         working_age = _nonnegative(int(_require(workforce_data, "working_age_population", "workforce")), "working-age population")
         participation = _rate(_require(workforce_data, "participation_rate", "workforce"), "workforce.participation_rate")
@@ -491,14 +500,33 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         demand_data = _require(workforce_data, "employment_demand", "workforce")
         if set(demand_data) != expected_skills:
             raise ValueError(f"Workforce employment demand must include exactly: {', '.join(sorted(expected_skills))}.")
-        workforce = WorkforceSystem(working_age, participation, commuters_in, commuters_out,
+        workforce = WorkforceSystem(
+            working_age,
+            participation,
+            commuters_in,
+            commuters_out,
             _nonnegative(int(_require(training, "capacity", "workforce.training")), "training capacity"),
             {SkillCategory(k): v for k, v in skill_shares.items()},
             {SkillCategory(k): _nonnegative(int(v), f"{k} employment demand") for k, v in demand_data.items()},
-            {SkillCategory(k): v for k, v in training_shares.items()})
+            {SkillCategory(k): v for k, v in training_shares.items()},
+        )
     demand_share_data = _require(raw, "business_demand_shares", "scenario")
     if set(demand_share_data) != {"households", "visitors", "institutions", "government"}:
         raise ValueError("business_demand_shares must include households, visitors, institutions, and government.")
+    transportation_data = raw.get("transportation", {})
+    transportation = TransportationSystem(
+        _nonnegative(int(transportation_data.get("regional_roadway_capacity", "1000000")), "transportation capacity"),
+        _nonnegative(
+            int(transportation_data.get("commuter_demand", str(workforce.commuters_in + workforce.commuters_out))), "commuter demand"
+        ),
+        _nonnegative(int(transportation_data.get("visitor_demand", str(visitor_count))), "visitor transportation demand"),
+        _nonnegative(int(transportation_data.get("freight_demand", "0")), "freight demand"),
+        _rate(transportation_data.get("commuter_accessibility", "1"), "transportation.commuter_accessibility"),
+        _rate(transportation_data.get("visitor_accessibility", "1"), "transportation.visitor_accessibility"),
+        _rate(transportation_data.get("freight_accessibility", "1"), "transportation.freight_accessibility"),
+        _rate(transportation_data.get("average_travel_efficiency", "1"), "transportation.average_travel_efficiency"),
+        _rate(transportation_data.get("disruption_factor", "1"), "transportation.disruption_factor"),
+    )
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -520,4 +548,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         healthcare=healthcare,
         housing=housing,
         workforce=workforce,
+        transportation=transportation,
     )

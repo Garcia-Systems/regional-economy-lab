@@ -5,6 +5,7 @@ from regional_economy.entities.business import BusinessSectorResult, Sector
 from regional_economy.entities.government import PublicServiceDepartment
 from regional_economy.entities.healthcare import AgeCohort
 from regional_economy.entities.household import HouseholdAllocation
+from regional_economy.entities.transportation import TransportationResult
 from regional_economy.entities.workforce import WorkforceResult
 
 
@@ -113,6 +114,7 @@ class RegionalMetrics:
     housing_construction_units: int
     annual_housing_construction_rate: Decimal
     workforce: WorkforceResult
+    transportation: TransportationResult
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:

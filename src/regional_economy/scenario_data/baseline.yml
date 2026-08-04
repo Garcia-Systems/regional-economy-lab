@@ -307,3 +307,15 @@ workforce:
       professional_services: "0.10"
       trades: "0.25"
       retail_food_service: "0.25"
+
+transportation:
+  # Aggregate trip-equivalent capacity; no individual roads, vehicles, or routes.
+  regional_roadway_capacity: 12000
+  commuter_demand: 180
+  visitor_demand: 1000
+  freight_demand: 220
+  commuter_accessibility: "1.00"
+  visitor_accessibility: "1.00"
+  freight_accessibility: "1.00"
+  average_travel_efficiency: "1.00"
+  disruption_factor: "1.00"
