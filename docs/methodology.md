@@ -79,3 +79,18 @@ After transportation and utilities determine accessible intended demand, payment
 ## Supply-chain method
 
 Chapter 14 evaluates four configured supplier shares in stable enum order. It multiplies each Decimal share by category availability, sums the products, and takes the minimum of this reliability and a documented lead-time factor. Business capacity is multiplied by that factor before integer-cent revenue allocation. The existing combined procurement share is reclassified between local and external using the supplier mix; the allocation helper preserves cent-level reconciliation. No inventory state or cross-laboratory runtime integration is introduced. The Inventory Synchronization Laboratory models operational inventory systems; this laboratory models their conceptual regional economic consequences.
+
+## Chapter 15 dashboard methodology
+
+The dashboard layer is downstream of `SimulationResult`. A fixed metadata registry is validated
+against a separate calculation registry, then evaluated into immutable monthly snapshots. Sorting by
+month is deterministic and duplicate periods are rejected. The latest supplied snapshot is current,
+the preceding supplied snapshot is previous, and supplied snapshots through current form the
+year-to-date collection. Consumers must sum only flow indicators; stock measures require a different
+aggregation interpretation.
+
+Console and Markdown outputs format cents for readers while declaring their units; CSV preserves raw
+values and explicit unit columns. Comparisons calculate alternative minus baseline in the indicator's
+declared unit. Data-quality text identifies fictional configured inputs, completeness, determinism,
+and absence of live sources. No dashboard value changes events or economic flows. No forecast,
+statistical inference, causal estimate, optimization, or recommendation is produced.

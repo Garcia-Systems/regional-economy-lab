@@ -70,3 +70,10 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added aggregate supply-chain categories, availability, procurement reliability, and deterministic lead-time capacity effects.
 - Added `supplier-delay`, `local-sourcing`, and `external-disruption` scenarios plus supply report and trace modes.
 - Added Chapter 14 documentation and clarified the no-runtime-dependency boundary with the Inventory Synchronization Laboratory.
+
+## Chapter 15
+
+- Added metadata-first regional indicators, monthly snapshots, trends, year-to-date support, and
+  leading/lagging educational classifications.
+- Added deterministic dashboard, comparison, indicator trace, Markdown export, and CSV export CLI
+  commands plus Chapter 15 narrative, debugging laboratory, and tests.

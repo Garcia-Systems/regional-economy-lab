@@ -3,6 +3,18 @@
 import argparse
 from collections.abc import Sequence
 
+from regional_economy.dashboards import (
+    build_dashboard,
+    csv_export,
+    indicator_trace,
+    markdown_export,
+)
+from regional_economy.dashboards import (
+    comparison_report as dashboard_comparison,
+)
+from regional_economy.dashboards import (
+    console_report as dashboard_report,
+)
 from regional_economy.engine import run_scenario
 from regional_economy.reporting import (
     banking_report,
@@ -45,8 +57,11 @@ def build_parser() -> argparse.ArgumentParser:
             "regional-sim compare baseline tourism-season | regional-sim explain baseline | regional-sim trace baseline"
         ),
     )
-    parser.add_argument("command", metavar="SCENARIO|MODE", help="scenario name, or compare, explain, trace")
+    parser.add_argument(
+        "command", metavar="SCENARIO|MODE", help="scenario name, or compare, explain, trace, dashboard, or export-dashboard"
+    )
     parser.add_argument("scenarios", metavar="SCENARIO", nargs="*", help="scenario names required by the selected mode")
+    parser.add_argument("--format", choices=("markdown", "csv"), help="export format (export-dashboard only)")
     return parser
 
 
@@ -54,7 +69,28 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command == "compare":
+        if args.command == "dashboard":
+            if len(args.scenarios) == 1:
+                result = run_scenario(load_scenario(args.scenarios[0]))
+                print(dashboard_report(build_dashboard((result,))))
+            elif len(args.scenarios) == 3 and args.scenarios[0] == "compare":
+                first = build_dashboard((run_scenario(load_scenario(args.scenarios[1])),))
+                second = build_dashboard((run_scenario(load_scenario(args.scenarios[2])),))
+                print(dashboard_comparison(first, second))
+            else:
+                parser.error("dashboard requires SCENARIO or compare BASELINE ALTERNATIVE")
+        elif args.command == "export-dashboard":
+            if len(args.scenarios) != 1:
+                parser.error("export-dashboard requires exactly one scenario name")
+            if args.format is None:
+                parser.error("export-dashboard requires --format markdown or --format csv")
+            board = build_dashboard((run_scenario(load_scenario(args.scenarios[0])),))
+            print(markdown_export(board) if args.format == "markdown" else csv_export(board))
+        elif args.command == "indicator-trace":
+            if len(args.scenarios) != 1:
+                parser.error("indicator-trace requires exactly one scenario name")
+            print(indicator_trace(build_dashboard((run_scenario(load_scenario(args.scenarios[0])),))))
+        elif args.command == "compare":
             if len(args.scenarios) != 2:
                 parser.error("compare requires exactly two scenario names")
             first = run_scenario(load_scenario(args.scenarios[0]))

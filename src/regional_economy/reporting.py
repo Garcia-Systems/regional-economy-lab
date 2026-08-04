@@ -283,6 +283,10 @@ def explanation(result):
         "Aggregate banking supports payroll, purchases, hiring, and investment. Payment-network mechanics belong in the "
         "Digital Banking Systems Laboratory.",
         "Unmet essential expenses measure financial stress without inventing debt. Indicators are not an official affordability analysis.",
+        "Dashboard indicators summarize completed simulated periods. Each definition, unit, calculation, frequency, assumption, and "
+        "limitation matters because changing any of them can change the conclusion.",
+        "A trend compares reported periods; it is not a forecast. Leading and lagging labels are simplified educational classifications, "
+        "not claims of predictive accuracy, and no indicator should be interpreted apart from its assumptions.",
         "Visitor spending is external income because visitors bring purchasing power from outside the region. "
         "It becomes lodging, restaurant, attraction, and retail revenue.",
         "Tourism wages can circulate through household spending; this one-month aggregate records wages "
