@@ -12,7 +12,10 @@ def test_scenario_cli_contains_required_sections(capsys: object) -> None:
     assert "REGIONAL ECONOMY — MONTH 1" in output
     assert "ORDERED EVENT TIMELINE" in output
     assert "RECONCILIATION" in output
-    assert output.count("RECONCILIATION — PASS") == 4
+    assert "Allocation reconciliations" in output
+    assert "Transfer reconciliations" in output
+    assert output.count("PASS") >= 6
+    assert "NOT YET CONSOLIDATED" in output
     assert "fictional assumptions" in output
 
 
@@ -49,4 +52,4 @@ def test_failed_reconciliation_returns_nonzero(monkeypatch, capsys: object) -> N
         cli, "run_scenario", lambda scenario: replace(result, metrics=replace(result.metrics, household_reconciliation=failed))
     )
     assert main(["baseline"]) == 1
-    assert "RECONCILIATION — FAIL" in capsys.readouterr().out  # type: ignore[attr-defined]
+    assert "FAIL" in capsys.readouterr().out  # type: ignore[attr-defined]

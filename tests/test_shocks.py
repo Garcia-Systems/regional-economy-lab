@@ -45,7 +45,7 @@ def test_report_and_cascade_trace_show_before_after() -> None:
     trace = cascade_trace(disrupted)
     assert "Recovery stage: immediate impact" in report
     assert "Key indicators before → after" in report
-    assert "Estimated regional impact" in report
+    assert "Recorded business revenue change" in report
     assert "Affected System" in trace
     assert "Households" in trace and "Businesses" in trace and "Government" in trace
 

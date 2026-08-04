@@ -312,5 +312,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         interrupted_transactions,
         supply_chain,
         unconstrained_business_revenue - business_revenue,
+        taxes,
+        government.taxes_collected,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock, scenario.resilience)

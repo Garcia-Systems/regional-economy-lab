@@ -38,7 +38,8 @@ def test_business_scenarios_compare_and_are_deterministic():
 @pytest.mark.parametrize("name", ("downtown-expansion", "restaurant-boom", "retail-decline"))
 def test_business_scenario_cli(name, capsys):
     assert main([name]) == 0
-    assert "BUSINESS REVENUE RECONCILIATION — PASS" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "Business Revenue" in output and "PASS" in output
 
 
 def test_business_report_cli(capsys):

@@ -20,7 +20,11 @@ def test_dashboard_sections_and_money_alignment(baseline) -> None:
     assert "$6,242,000.00" in report
     money_lines = [line for line in report.splitlines() if "$" in line]
     assert len({len(line) for line in money_lines}) == 1
-    assert reconciliation_report(baseline).count("RECONCILIATION — PASS") == 4
+    reconciliation = reconciliation_report(baseline)
+    assert "Allocation reconciliations" in reconciliation
+    assert "Transfer reconciliations" in reconciliation
+    assert reconciliation.count("PASS") == 6
+    assert "NOT YET CONSOLIDATED" in reconciliation
 
 
 def test_timeline_is_ordered_vertical_and_informative(baseline) -> None:

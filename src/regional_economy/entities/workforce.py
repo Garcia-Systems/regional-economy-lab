@@ -77,14 +77,27 @@ class WorkforceSystem:
             for skill in SkillCategory
         }
         skills = tuple(
-            SkillResult(skill, base[skill] + trained[skill], self.demand[skill], min(base[skill] + trained[skill], self.demand[skill]),
-                        max(0, self.demand[skill] - base[skill] - trained[skill]))
+            SkillResult(
+                skill,
+                base[skill] + trained[skill],
+                self.demand[skill],
+                min(base[skill] + trained[skill], self.demand[skill]),
+                max(0, self.demand[skill] - base[skill] - trained[skill]),
+            )
             for skill in SkillCategory
         )
         employed = sum(item.employed for item in skills)
         resident_employed = min(resident_available, max(0, employed - self.commuters_in)) + self.commuters_out
         return WorkforceResult(
-            self.working_age_population, self.participation_rate, self.labor_force, self.commuters_in, self.commuters_out,
-            available_labor + self.training_capacity, employed, max(0, self.labor_force - resident_employed),
-            sum(item.unfilled for item in skills), self.training_capacity, skills,
+            self.working_age_population,
+            self.participation_rate,
+            self.labor_force,
+            self.commuters_in,
+            self.commuters_out,
+            available_labor + self.training_capacity,
+            employed,
+            max(0, self.labor_force - resident_employed),
+            sum(item.unfilled for item in skills),
+            self.training_capacity,
+            skills,
         )

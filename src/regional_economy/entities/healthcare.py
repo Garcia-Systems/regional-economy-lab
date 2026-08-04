@@ -54,18 +54,10 @@ class HealthcareSystem:
 
     def demand(self) -> dict[str, Decimal]:
         return {
-            "outpatient visits": sum(
-                (cohort.outpatient_visits_per_person * cohort.population for cohort in self.cohorts), Decimal(0)
-            ),
-            "inpatient services": sum(
-                (cohort.inpatient_services_per_person * cohort.population for cohort in self.cohorts), Decimal(0)
-            ),
-            "pharmacy units": sum(
-                (cohort.pharmacy_units_per_person * cohort.population for cohort in self.cohorts), Decimal(0)
-            ),
-            "preventive visits": sum(
-                (cohort.preventive_visits_per_person * cohort.population for cohort in self.cohorts), Decimal(0)
-            ),
+            "outpatient visits": sum((cohort.outpatient_visits_per_person * cohort.population for cohort in self.cohorts), Decimal(0)),
+            "inpatient services": sum((cohort.inpatient_services_per_person * cohort.population for cohort in self.cohorts), Decimal(0)),
+            "pharmacy units": sum((cohort.pharmacy_units_per_person * cohort.population for cohort in self.cohorts), Decimal(0)),
+            "preventive visits": sum((cohort.preventive_visits_per_person * cohort.population for cohort in self.cohorts), Decimal(0)),
         }
 
     @property

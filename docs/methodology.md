@@ -8,27 +8,36 @@ the same time remain in insertion order. A fresh scenario produces byte-for-byte
 
 ## Flow and reconciliation
 
-External household income first separates into housing, local customer spending, nonlocal spending,
-and retention. Visitor category spending joins household customer spending as sector revenue.
-Revenue then becomes taxes, wages, local purchases, external purchases, or business retention.
+The declared boundary and complete monetary inventory are maintained in
+[accounting-boundary.md](accounting-boundary.md). Households, modeled businesses, and modeled local
+government are inside only for transactions represented in the canonical pipeline; other
+institutions may be partially integrated or descriptive.
 
 Cash balances are amounts held at a point; transaction flows move during the month. Revenue is the
 customer flow received by businesses, income is an inflow to a receiving unit, and modeled activity
-counts the unique customer transaction once. Reconciliation compares external sources with final
-classified uses. It never equates revenue with money remaining locally.
+counts the unique customer transaction once. Its public label is therefore **recorded business
+revenue**, not total local economic activity. Allocation checks prove subsystem allocations and a
+tax transfer check proves one matched transfer. They do not compare every regional source, use,
+stock, and institutional flow.
 
 This small accounting experiment is not an input-output model, official impact estimate, or
 forecast. It deliberately excludes machine learning, stochastic methods, and calibration so a
 reader can trace every cent and understand every assumption.
 
 
-## Formal accounting identities and tax treatment
+## Allocation and transfer identities and tax treatment
 
-The report deliberately uses three identities rather than adding repeated circulation to initial funds:
+The report uses five allocation identities and one supported transfer identity:
 
-1. **Household funds:** external household income = externally paid housing + local household spending + household nonlocal spending + retained household funds.
-2. **Customer spending:** local household spending + visitor spending = recorded business customer revenue.
-3. **Business revenue:** customer revenue = wages + local business purchases + business external purchases + taxes remitted + retained business funds.
+1. **Household available cash:** gross income = deductions + actual housing + actual essential and discretionary spending + savings + retained funds.
+2. **Required expenses:** configured required expenses = actual required payments + unmet expenses.
+3. **Customer allocation:** payment-completed demand = demand allocated to sectors, not necessarily capacity-served revenue.
+4. **Business allocation:** recorded revenue = wages + local/external purchases + sector sales taxes + retained operating funds.
+5. **Government allocation:** operating budget = departmental operating allocations.
+6. **Tax transfer:** business transaction-tax outflow = local-government transaction-tax inflow.
+
+Regional sources-and-uses status is **NOT YET CONSOLIDATED**. That disclosed limitation is not a
+runtime failure; failure of an implemented allocation or transfer check is.
 
 Thus a household purchase is counted once as customer activity even though the same transfer appears as a household use and a business receipt. Wages and local purchases are later uses, never new external inflows in this one-month model.
 

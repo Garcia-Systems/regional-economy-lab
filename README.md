@@ -1,7 +1,7 @@
 # Executable Regional Economy Laboratory
 
-A deterministic, inspectable textbook for learning how money enters a region, moves among its
-participants, leaves through leakage, and remains as retained funds. The fictional Historic
+A deterministic, inspectable textbook for learning how selected flows enter a region, move among
+represented participants, leave as classified external outflows, and remain as ending positions. The fictional Historic
 Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
 
 > **Educational disclaimer:** v0.2.0 development values are fictional assumptions—not official statistics, an
@@ -10,9 +10,10 @@ Triangle setting makes abstract accounting concrete without claiming to describe
 ## Philosophy and educational value
 
 Read a claim, run it, pause it in a debugger, change one assumption, and test the result. The model
-prefers a small reconciled system over false realism. Identical YAML always produces identical
+prefers explicit subsystem reconciliations over false claims of completeness. Identical YAML always produces identical
 integer-cent results: there is no randomness, hidden calibration, or machine learning. Students can
-therefore distinguish **sources**, **transaction flows**, **leakage**, and **ending uses**.
+therefore distinguish inflows, transfers, outflows, unmet amounts, and ending positions. Regional
+sources and uses are currently **NOT YET CONSOLIDATED**.
 
 ## Install and explore
 
@@ -105,7 +106,8 @@ scenario rather than editing the reference files.
 ## Documentation and roadmap
 
 Method details live in [methodology](docs/methodology.md), assumptions in
-[assumptions](docs/assumptions.md), terminology in the [glossary](docs/glossary.md), and provenance
+[assumptions](docs/assumptions.md), the contract and inventory in [accounting boundary](docs/accounting-boundary.md),
+terminology in the [glossary](docs/glossary.md), and provenance
 rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
 not promised functionality. Chapter 20 completes the configurable-region capstone while retaining the deterministic educational boundaries.
 
