@@ -1,6 +1,6 @@
 # Executable Regional Economy Laboratory
 
-Scenario discovery, scalar formats, compatibility, and validation are specified in the authoritative [scenario schema guide](docs/scenario-schema.md).
+The explicit command hierarchy and compatibility aliases are documented in the authoritative [CLI guide](docs/cli.md). Scenario discovery, scalar formats, compatibility, and validation are specified in the authoritative [scenario schema guide](docs/scenario-schema.md).
 
 The deterministic monthly engine has twelve explicit, checked stages. See the
 [simulation architecture](docs/architecture.md) for their inputs, outputs, ownership,
@@ -26,25 +26,21 @@ sources and uses are currently **NOT YET CONSOLIDATED**.
 Python 3.13 is required. Run `python -m pip install -e '.[dev]'`, then:
 
 ```bash
-regional-sim baseline
-regional-sim tourism-season
+regional-sim --help
+regional-sim scenario list
+regional-sim run baseline
+regional-sim run tourism-season
 regional-sim compare baseline tourism-season
+regional-sim report tourism peak-tourism
 regional-sim explain baseline
 regional-sim trace baseline
-regional-sim dashboard baseline
-regional-sim dashboard compare baseline tourism-season
-regional-sim export-dashboard baseline --format markdown
-regional-sim export-dashboard baseline --format csv
-regional-sim indicator-trace baseline
-regional-sim annual baseline
-regional-sim annual-report baseline
-regional-sim compare-years baseline strong-tourism-year
-regional-sim list-templates
-regional-sim create-template my-region
-regional-sim validate my-region.yml
-regional-sim run my-region.yml
-regional-sim compare my-region.yml baseline
-regional-sim --help
+regional-sim dashboard show baseline
+regional-sim dashboard export baseline --format markdown
+regional-sim annual list
+regional-sim annual run normal-year
+regional-sim template list
+regional-sim scenario validate my-region.yml
+regional-sim custom run my-region.yml
 ```
 
 Docker equivalents are `docker compose run --rm lab regional-sim baseline` and

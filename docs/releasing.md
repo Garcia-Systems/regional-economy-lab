@@ -14,3 +14,7 @@ Releases are manual; CI builds and tests but never publishes.
 10. Mark it as the latest stable release and publish it.
 
 Do not publish to PyPI unless a separate publishing policy is approved.
+
+## CLI wheel smoke test
+
+Outside the checkout, verify `regional-sim --help`, `regional-sim scenario list`, `regional-sim run baseline`, `regional-sim annual list`, and `regional-sim template list`. The complete contract is in [the CLI guide](cli.md).

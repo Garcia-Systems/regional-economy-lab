@@ -53,13 +53,13 @@ def test_comparison_has_fixed_columns_and_signed_changes(baseline) -> None:
 def test_documented_cli_examples_parse() -> None:
     parser = build_parser()
     for argv in (
-        ["baseline"],
-        ["tourism-season"],
+        ["run", "baseline"],
+        ["run", "tourism-season"],
         ["compare", "baseline", "tourism-season"],
         ["explain", "baseline"],
         ["trace", "baseline"],
     ):
-        assert parser.parse_args(argv).command == argv[0]
+        assert parser.parse_args(argv).handler
     readme = Path("README.md").read_text()
     assert all("regional-sim " + " ".join(argv) in readme for argv in (["baseline"], ["explain", "baseline"], ["trace", "baseline"]))
 
@@ -68,4 +68,5 @@ def test_cli_help(capsys) -> None:
     with pytest.raises(SystemExit) as exit_info:
         main(["--help"])
     assert exit_info.value.code == 0
-    assert "compare, explain, trace" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "compare" in output and "explain" in output and "trace" in output

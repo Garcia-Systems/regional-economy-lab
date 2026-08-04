@@ -31,10 +31,11 @@ docker compose run --rm lab pytest
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
-regional-sim baseline
-regional-sim tourism-season
+regional-sim scenario list
+regional-sim run baseline
+regional-sim run tourism-season
 regional-sim compare baseline tourism-season
-python -m regional_economy.cli baseline
+python -m regional_economy.cli run baseline
 pytest
 ruff check .
 ```
@@ -71,3 +72,8 @@ identity. Event ordering is summarized in [`docs/diagrams/event-ordering.mmd`](.
 4. **Question / incorrect behavior:** why must loading stop if a temporary scenario changes the first household retained share from `0.15` to `0.14`?
 5. **Correct behavior:** shares total exactly `1.00`; all three checks display `PASS` and zero difference.
 6. **Economic importance:** an unclassified cent would make retained money or leakage disappear, undermining every interpretation of the boundary.
+
+
+## Command reference
+
+Commands use `regional-sim <command> [arguments]`; monthly scenarios, annual profiles, and templates are separate resources. See the authoritative [CLI guide](../docs/cli.md). The historical direct-scenario shortcut remains compatible.
