@@ -77,3 +77,11 @@
 **Unmet business demand** — Demand above capacity that produces no revenue.
 **Retained operating surplus** — Simplified educational residual after tax, payroll, and purchases; not GAAP profit.
 **Business opening / closure** — Deterministic aggregate scenario count, never an identified firm.
+
+## Chapter 9 terms
+
+**Housing occupancy rate** — Occupied aggregate housing units divided by total units; occupancy is capped by capacity.
+**Housing vacancy rate** — Unoccupied aggregate units divided by total units.
+**Unmet housing demand** — Aggregate demand above available regional housing capacity.
+**Workforce housing utilization** — Served workforce demand divided by configured workforce units; workforce demand is not added twice to total demand.
+**Housing pressure index** — Bounded educational indicator equal to 70% of occupancy rate plus 30% of unmet-demand share; not a price or forecast.

@@ -25,3 +25,7 @@ Implemented simplified local revenue, balanced operating and high-level capital 
 ## Chapter 8 — complete
 
 Aggregate retail, restaurants, personal services, and entertainment now share regional demand, enforce capacity, report simplified profitability, and support deterministic expansion, restaurant-boom, and retail-decline scenarios. Supply chains, finance, transport, housing, and later chapters remain out of scope.
+
+## Chapter 9 — complete
+
+Aggregate owner, rental, and workforce housing supply, cohort demand, capacity-safe occupancy, vacancy, construction, affordability indicators, reports, traces, and three deterministic scenarios are implemented. Mortgage markets, property valuation, landlords, zoning, lending, migration, and individual or commercial properties remain out of scope. Future chapters may add richer aggregate housing behavior without implying a real-market forecast.

@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: housing-shortage
+label: Housing Shortage
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -272,9 +272,9 @@ healthcare:
 housing:
   # Aggregate fictional units and demand; housing costs remain educational assumptions.
   categories:
-    - {name: owner_occupied, units: 900, occupied_units: 820}
+    - {name: owner_occupied, units: 650, occupied_units: 640}
     - {name: rental, units: 700, occupied_units: 650}
     - {name: workforce, units: 250, occupied_units: 210}
   demand: {households: 860, students: 600, retirees: 140, seasonal_residents: 50, workforce: 220}
   construction_units: 0
-  annual_construction_rate: "0.02"
+  annual_construction_rate: "0.005"

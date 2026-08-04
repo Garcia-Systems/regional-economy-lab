@@ -15,6 +15,8 @@ from regional_economy.entities import (
     Government,
     HealthcareSystem,
     Household,
+    HousingCategory,
+    HousingSystem,
     Region,
     Sector,
     StudentCohort,
@@ -42,6 +44,7 @@ ROOT_FIELDS = {
     "tourism",
     "university",
     "healthcare",
+    "housing",
 }
 
 
@@ -55,6 +58,7 @@ class Scenario:
     business_demand_shares: dict[str, dict[Sector, Decimal]]
     university: University
     healthcare: HealthcareSystem
+    housing: HousingSystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -419,6 +423,45 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         ),
         cohorts=cohorts,
     )
+
+    housing_data = raw.get("housing")
+    if housing_data is None:
+        # Compatibility for Chapters 0-8 authored scenarios. Chapter 9 files make
+        # every assumption explicit; this neutral stock exactly accommodates demand.
+        household_demand = sum(household.count for household in households)
+        housing = HousingSystem(
+            (HousingCategory("owner_occupied", household_demand, household_demand),),
+            household_demand,
+            0,
+            0,
+            0,
+            0,
+            0,
+            Decimal(0),
+        )
+    else:
+        category_items = _require(housing_data, "categories", "housing")
+        categories = tuple(
+            HousingCategory(
+                str(_require(item, "name", "housing category")),
+                _nonnegative(int(_require(item, "units", "housing category")), "housing units"),
+                _nonnegative(int(item.get("occupied_units", "0")), "occupied housing units"),
+            )
+            for item in category_items
+        )
+        if len({category.name for category in categories}) != len(categories):
+            raise ValueError("Duplicate housing category. Fix: aggregate each category exactly once.")
+        demand = _require(housing_data, "demand", "housing")
+        housing = HousingSystem(
+            categories,
+            _nonnegative(int(_require(demand, "households", "housing.demand")), "household housing demand"),
+            _nonnegative(int(demand.get("students", "0")), "student housing demand"),
+            _nonnegative(int(demand.get("retirees", "0")), "retiree housing demand"),
+            _nonnegative(int(demand.get("seasonal_residents", "0")), "seasonal resident housing demand"),
+            _nonnegative(int(demand.get("workforce", "0")), "workforce housing demand"),
+            _nonnegative(int(housing_data.get("construction_units", "0")), "housing construction"),
+            _rate(housing_data.get("annual_construction_rate", "0"), "housing.annual_construction_rate"),
+        )
     demand_share_data = _require(raw, "business_demand_shares", "scenario")
     if set(demand_share_data) != {"households", "visitors", "institutions", "government"}:
         raise ValueError("business_demand_shares must include households, visitors, institutions, and government.")
@@ -441,4 +484,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         },
         university=university,
         healthcare=healthcare,
+        housing=housing,
     )

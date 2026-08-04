@@ -43,3 +43,7 @@ Government uses fictional monthly property revenue, transaction-based local sale
 ## Chapter 8 business assumptions
 
 Business sectors are aggregate fictional educational models, not real businesses. Household, visitor, institutional, and government demand is allocated with explicit Decimal shares. Monthly revenue cannot exceed configured capacity. Profitability is the simplified retained operating surplus after sales tax, payroll, and local/external purchases; it is not GAAP profit. Openings and closures are deterministic aggregate scenario inputs.
+
+## Chapter 9 housing assumptions
+
+Housing categories, construction, demand, and costs are fictional educational assumptions. Demand is an aggregate unit count; workforce demand is a utilization lens already included within cohort demand. Occupancy is capped at total supply, vacancy is its residual, and excess demand is explicitly unmet. The bounded pressure index weights occupancy 70% and unmet-demand share 30%; it is not a price or official affordability statistic. Construction adds scenario capacity without changing household income. No real housing market, mortgage, valuation, landlord, zoning, lending, speculation, migration, individual property, or commercial real-estate behavior is modeled. Future chapters may add richer housing behavior.
