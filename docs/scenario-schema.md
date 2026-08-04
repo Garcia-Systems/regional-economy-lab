@@ -63,8 +63,8 @@ The current version is `schema_version: 2`; omission currently means version 2.
 Version 1 is accepted only for the deprecated aggregate household form using
 `households`, `monthly_income`, `housing_cost`, and root
 `household_allocation`. It is converted to current household domain values before
-simulation. New scenarios must use `household_types`. Version 1 support is planned
-for removal at the next major version after a release-cycle deprecation notice.
+simulation. New scenarios must use `household_types`. Version 1 support is deprecated
+and reserved only for compatibility with older teaching materials until a major-version removal notice.
 Other versions fail explicitly.
 
 ## Authoring and packaging
