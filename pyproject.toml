@@ -19,7 +19,7 @@ Repository = "https://github.com/garcia-systems/regional-economy-lab"
 Changelog = "https://github.com/garcia-systems/regional-economy-lab/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-dev = ["build>=1.2,<2", "pytest>=8.3,<9", "pytest-cov>=6,<7", "ruff>=0.9,<1"]
+dev = ["build>=1.2,<2", "pytest>=8.3,<10", "pytest-cov>=6,<7", "ruff>=0.9,<1"]
 
 [project.scripts]
 regional-sim = "regional_economy.cli:main"
