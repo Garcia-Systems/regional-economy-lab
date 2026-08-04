@@ -15,3 +15,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Income-growth and cost-of-living-pressure scenarios, household detail output, household comparison metrics, four-way reconciliation, tests, and VS Code debugging configurations.
 ### Changed
 - Bundled scenarios use the v0.2 cohort schema; the loader retains a documented v0.1 aggregate compatibility path.
+
+## [0.3.0] - Unreleased
+### Added
+- Chapter 4 tourism subsystem with seasonal demand, four tourism sectors, fixed capacity, employment, taxes, leakage, dashboard indicators, reports, traces, scenarios, tests, and debugging guidance.

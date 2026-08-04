@@ -28,6 +28,18 @@ class RegionalMetrics:
     household_deductions: int
     after_tax_household_income: int
     visitor_spending: int
+    visitor_count: int
+    visitor_nights: int
+    demanded_visitor_spending: int
+    lodging_occupancy: Decimal
+    tourism_revenue: int
+    tourism_wages: int
+    tourism_tax_revenue: int
+    unmet_visitor_demand: int
+    unmet_visitor_spending: int
+    tourism_leakage: int
+    tourism_employment: int
+    tourism_capacity_utilization: Decimal
     local_household_spending: int
     business_revenue: int
     household_derived_business_revenue: int

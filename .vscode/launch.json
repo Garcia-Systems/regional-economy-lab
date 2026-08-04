@@ -1,10 +1,121 @@
-{"version":"0.2.0","configurations":[
-{"name":"Run Baseline Scenario","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["baseline"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Run Tourism-Season Scenario","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["tourism-season"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Run Income-Growth Scenario","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["income-growth"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Run Cost-of-Living-Pressure Scenario","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["cost-of-living-pressure"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Compare Household Scenarios","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["compare","baseline","income-growth"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Inspect Household Budgets","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["households","baseline"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Debug Chapter 3 Household Allocation","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["households","cost-of-living-pressure"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Explain Baseline","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["explain","baseline"],"console":"integratedTerminal","justMyCode":true},
-{"name":"Trace Baseline","type":"debugpy","request":"launch","module":"regional_economy.cli","args":["trace","baseline"],"console":"integratedTerminal","justMyCode":true}]}
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Baseline Scenario",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "baseline"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Tourism-Season Scenario",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "tourism-season"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Income-Growth Scenario",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "income-growth"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Cost-of-Living-Pressure Scenario",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "cost-of-living-pressure"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Compare Household Scenarios",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "compare",
+        "baseline",
+        "income-growth"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Inspect Household Budgets",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "households",
+        "baseline"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Debug Chapter 3 Household Allocation",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "households",
+        "cost-of-living-pressure"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Explain Baseline",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "explain",
+        "baseline"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Trace Baseline",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "trace",
+        "baseline"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Debug Chapter 4 Tourism Capacity",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "regional_economy.cli",
+      "args": [
+        "tourism-report",
+        "peak-tourism"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}
