@@ -11,3 +11,6 @@ Chapter 3 adds household cohorts, safe monthly budgets, affordability indicators
 
 ## v0.3.0 — Chapter 4
 Chapter 4 implements fixed-capacity tourism, four visitor sectors, deterministic seasonality, aggregate tourism employment and tourism-focused scenarios/reports. Workforce constraints, housing effects, congestion, dynamic pricing, competition, banking, supply chains, storms, infrastructure and labor matching remain later-chapter boundaries.
+
+## Chapter 5 — Higher Education (complete)
+Fictional aggregate university, enrollment seasons, payroll, procurement, student spending, and external research/support inflows are implemented. Real public aggregate higher-education datasets remain a future transformed-data opportunity.

@@ -63,6 +63,15 @@ class RegionalMetrics:
     severely_cost_burdened_households: int
     household_count: int
     household_allocations: tuple[HouseholdAllocation, ...]
+    student_population: int
+    university_employment: int
+    university_payroll: int
+    university_procurement: int
+    university_local_procurement: int
+    external_university_funding: int
+    student_spending: int
+    university_business_impact: int
+    university_contribution: int
     household_reconciliation: Reconciliation
     required_expense_reconciliation: Reconciliation
     customer_reconciliation: Reconciliation

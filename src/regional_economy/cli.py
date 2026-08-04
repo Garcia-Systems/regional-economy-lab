@@ -4,7 +4,17 @@ import argparse
 from collections.abc import Sequence
 
 from regional_economy.engine import run_scenario
-from regional_economy.reporting import comparison, explanation, full_report, household_report, tourism_report, tourism_trace, trace
+from regional_economy.reporting import (
+    comparison,
+    explanation,
+    full_report,
+    household_report,
+    tourism_report,
+    tourism_trace,
+    trace,
+    university_report,
+    university_trace,
+)
 from regional_economy.scenarios import load_scenario
 
 
@@ -34,7 +44,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(comparison(first, second))
             if not first.metrics.reconciled or not second.metrics.reconciled:
                 return 1
-        elif args.command in {"explain", "trace", "households", "tourism-report", "tourism-trace"}:
+        elif args.command in {"explain", "trace", "households", "tourism-report", "tourism-trace", "university-report", "university-trace"}:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one scenario name")
             result = run_scenario(load_scenario(args.scenarios[0]))
@@ -47,6 +57,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if args.command == "tourism-report"
                 else tourism_trace(result)
                 if args.command == "tourism-trace"
+                else university_report(result)
+                if args.command == "university-report"
+                else university_trace(result)
+                if args.command == "university-trace"
                 else household_report(result)
             )
             if not result.metrics.reconciled:

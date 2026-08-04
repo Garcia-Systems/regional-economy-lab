@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: research-expansion
+label: Research Expansion
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -165,9 +165,9 @@ university:
   faculty_count: 420
   staff_count: 580
   payroll: "6200000.00"
-  operating_budget: "10000000.00"
+  operating_budget: "11200000.00"
   procurement_budget: "2400000.00"
-  research_funding: "1800000.00"
+  research_funding: "3000000.00"
   local_purchasing_share: "0.45"
   external_funding_share: "0.70"
   season: Fall

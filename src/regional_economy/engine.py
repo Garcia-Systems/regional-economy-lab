@@ -18,7 +18,10 @@ from regional_economy.events import (
     HousingCostsPaid,
     MonthCompleted,
     MonthStarted,
+    StudentSpendingCompleted,
     TaxesCollected,
+    UniversityFundingReceived,
+    UniversityProcurementCompleted,
     VisitorsArrived,
     WagesPaid,
 )
@@ -70,8 +73,23 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HouseholdShortfallRecorded(7, f"Unmet essential expenses were {format_money(unmet)}"))
     visitor_spending = scenario.visitors.total_spending
     scheduler.schedule(VisitorsArrived(8, f"{scenario.visitors.visitor_count:,} visitors spent {format_money(visitor_spending)}"))
+    university = scenario.university
+    student_spending = university.student_spending
+    local_procurement = university.local_procurement
+    scheduler.schedule(UniversityFundingReceived(8, f"University received {format_money(university.external_funding)} externally"))
+    scheduler.schedule(StudentSpendingCompleted(8, f"{university.enrollment:,} students spent {format_money(student_spending)} locally"))
+    scheduler.schedule(UniversityProcurementCompleted(8, f"University purchased {format_money(local_procurement)} locally"))
     household_by_sector = _allocate_total(local_household, scenario.household_sector_shares)
-    revenue_by_sector = household_by_sector
+    student_categories = university.student_spending_by_category()
+    student_by_sector = {
+        Sector.RETAIL: student_categories["retail"],
+        Sector.FOOD: student_categories["food"],
+        Sector.TOURISM: student_categories["entertainment"],
+    }
+    procurement_by_sector = _allocate_total(local_procurement, scenario.household_sector_shares)
+    revenue_by_sector = {
+        sector: household_by_sector[sector] + student_by_sector[sector] + procurement_by_sector[sector] for sector in Sector
+    }
     total_sales_tax = multiply(sum(revenue_by_sector.values()), region.local_government.sales_tax_rate)
     tax_parts = allocate(
         total_sales_tax, ((s.value, Decimal(revenue_by_sector[s]) / Decimal(sum(revenue_by_sector.values()))) for s in Sector)
@@ -86,10 +104,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     tourism_tax = tourism_sales_tax + lodging_tax
     if tourism_revenue:
         tourism_sectors = tuple(TourismSector)
-        proportional = [
-            Decimal(scenario.visitors.spending_by_category[s]) / Decimal(tourism_revenue)
-            for s in tourism_sectors[:-1]
-        ]
+        proportional = [Decimal(scenario.visitors.spending_by_category[s]) / Decimal(tourism_revenue) for s in tourism_sectors[:-1]]
         proportional.append(Decimal(1) - sum(proportional, Decimal(0)))
         tourism_tax_parts = allocate(tourism_tax, ((s.value, share) for s, share in zip(tourism_sectors, proportional, strict=True)))
     else:
@@ -100,10 +115,12 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         operating = revenue - tourism_tax_parts[sector.value]
         parts = allocate(
             operating,
-            (("wages", scenario.visitors.businesses[sector].wage_share),
-             ("local", scenario.visitors.businesses[sector].local_purchase_share),
-             ("external", scenario.visitors.businesses[sector].external_purchase_share),
-             ("retained", scenario.visitors.businesses[sector].retained_share)),
+            (
+                ("wages", scenario.visitors.businesses[sector].wage_share),
+                ("local", scenario.visitors.businesses[sector].local_purchase_share),
+                ("external", scenario.visitors.businesses[sector].external_purchase_share),
+                ("retained", scenario.visitors.businesses[sector].retained_share),
+            ),
         )
         tourism_wages += parts["wages"]
         tourism_local += parts["local"]
@@ -122,7 +139,9 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     cash = Reconciliation("HOUSEHOLD AVAILABLE CASH", gross, deductions + housing + essential + discretionary + savings + retained)
     required_configured = sum(a.configured_required_expenses for a in allocations)
     required = Reconciliation("HOUSEHOLD REQUIRED EXPENSES", required_configured, housing + essential + unmet)
-    customer = Reconciliation("CUSTOMER SPENDING", local_household + visitor_spending, business_revenue)
+    customer = Reconciliation(
+        "CUSTOMER SPENDING", local_household + visitor_spending + student_spending + local_procurement, business_revenue
+    )
     business = Reconciliation(
         "BUSINESS REVENUE", business_revenue, wages + local_purchases + external_purchases + taxes + business_retained
     )
@@ -160,7 +179,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         local_purchases,
         external_purchases,
         taxes,
-        deductions + nonlocal_spending + external_purchases,
+        deductions + nonlocal_spending + external_purchases + university.external_procurement,
         retained,
         savings,
         business_retained,
@@ -176,6 +195,15 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         sum(a.count for a in allocations if a.severely_burdened),
         count,
         allocations,
+        university.enrollment,
+        university.employment,
+        university.payroll,
+        university.procurement_budget,
+        local_procurement,
+        university.external_funding,
+        student_spending,
+        student_spending + local_procurement,
+        university.payroll + student_spending + local_procurement,
         cash,
         required,
         customer,

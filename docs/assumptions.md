@@ -29,3 +29,6 @@ All household values are fictional or assumed monthly cohort values. Required co
 
 ## Chapter 4 tourism assumptions
 Visitor counts, stays, daily spending, sector allocations, seasonal multipliers, revenue capacities, employment and operating shares are fictional educational assumptions. Williamsburg/Historic Triangle names are public-data geographic-name placeholders only. No value is an official tourism statistic. Capacity is fixed monthly revenue capacity; lodging occupancy and overall utilization are simplified revenue proxies. Realized spending is capped sector by sector, and external tourism purchases are estimated leakage.
+
+## Higher education
+The university and every operational value are fictional educational assumptions. Faculty and staff are aggregate employment; payroll is represented in existing household income cohorts and is not re-spent on receipt. Research funding is an aggregate external inflow. Procurement uses a configured local share; its remainder leaks outside. Student housing spending is input-only. Fall, Spring, and Summer enrollment/spending multipliers are deterministic. Public aggregate datasets could later replace explicitly classified inputs, but no real institution's internal operations are modeled.

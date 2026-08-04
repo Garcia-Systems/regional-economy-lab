@@ -67,6 +67,19 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "University",
+            (
+                ("Student population", f"{m.student_population:,}"),
+                ("Faculty and staff", f"{m.university_employment:,}"),
+                ("University payroll", format_money(m.university_payroll)),
+                ("University procurement", format_money(m.university_procurement)),
+                ("Local university procurement", format_money(m.university_local_procurement)),
+                ("External university funding", format_money(m.external_university_funding)),
+                ("Student spending", format_money(m.student_spending)),
+                ("University contribution", format_money(m.university_contribution)),
+            ),
+        ),
+        (
             "Businesses",
             (
                 ("Customer revenue received", format_money(m.business_revenue)),
@@ -165,6 +178,10 @@ def explanation(result):
         "Tourism wages can circulate through household spending; this one-month aggregate records wages "
         "but does not spend them a second time.",
         "Fixed capacity prevents impossible revenue: demand beyond capacity is shown as unmet visitors and lost spending.",
+        "Universities are major institutions because they simultaneously employ people, purchase inputs, attract outside funding, "
+        "and bring student spending to local businesses.",
+        "External university funding enters from outside the region, unlike household income, which belongs to the household sector. "
+        "Student purchases raise restaurant and retail revenue; local procurement keeps more of an operating dollar circulating locally.",
     )
     return "\n".join(lines)
 
@@ -211,6 +228,34 @@ def tourism_trace(result):
     )
 
 
+def university_report(result):
+    m = result.metrics
+    return "\n".join(
+        (
+            f"UNIVERSITY REPORT — {result.scenario_label}",
+            "Fictional educational institution; amounts are monthly modeled flows.",
+            f"Enrollment: {m.student_population:,}",
+            f"Employment: {m.university_employment:,}",
+            f"Payroll: {format_money(m.university_payroll)}",
+            f"Procurement: {format_money(m.university_procurement)}",
+            f"External funding: {format_money(m.external_university_funding)}",
+            f"Student spending: {format_money(m.student_spending)}",
+            f"Local business impacts: {format_money(m.university_business_impact)}",
+        )
+    )
+
+
+def university_trace(result):
+    return "\n".join(
+        (
+            f"UNIVERSITY CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "External Funding ↓ University ↓ Payroll ↓ Households ↓ Businesses ↓ Taxes ↓ Leakage",
+            "Students ↓ Restaurants ↓ Retail ↓ Households ↓ Businesses",
+            "These are conceptual educational traces, not literal tracked dollars or accounting identities.",
+        )
+    )
+
+
 def comparison(first, second):
     rows = (
         ("Gross household income", "gross_household_income"),
@@ -227,6 +272,10 @@ def comparison(first, second):
         ("Business revenue", "business_revenue"),
         ("Taxes collected", "taxes_collected"),
         ("Economic leakage", "economic_leakage"),
+        ("Student spending", "student_spending"),
+        ("University procurement", "university_procurement"),
+        ("External university funding", "external_university_funding"),
+        ("University contribution", "university_contribution"),
     )
     first_label = first.scenario_label[:20]
     second_label = second.scenario_label[:20]
