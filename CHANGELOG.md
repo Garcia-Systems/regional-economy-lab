@@ -47,3 +47,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ## Unreleased — Chapter 10
 - Added aggregate workforce participation, availability, six simplified skill categories, commuting, training capacity, deterministic employment matching, unemployment, and unfilled-position indicators.
 - Added major-employer-arrival, workforce-shortage, and workforce-training-expansion scenarios, dashboard/report/trace output, tests, and the Chapter 10 debugging laboratory.
+
+## Chapter 11 — Transportation and Accessibility
+
+- Added aggregate deterministic transportation capacity, travel efficiency, disruptions, and commuter, visitor, and freight accessibility.
+- Added corridor-closure, tourism-congestion, and road-improvement scenarios; dashboard metrics; report, trace, explain, comparison, tests, and Chapter 11 laboratory documentation.
+- Explicitly excludes individual roads and vehicles, GIS/routing, transit scheduling, inventories, logistics optimization, forecasting, and later economic systems.

@@ -152,3 +152,7 @@ Chapter 9 treats owner, rental, and workforce housing as aggregate regional capa
 ## Chapter 10: workforce and skills
 
 Chapter 10 adds aggregate labor-force participation, six simplified skill categories, commuting, employer demand, training capacity, employment, unemployment, and unfilled-position indicators. Try `regional-sim major-employer-arrival`, `regional-sim workforce-shortage`, `regional-sim workforce-training-expansion`, `regional-sim workforce-report baseline`, and `regional-sim workforce-trace baseline`. Workforce groups are deterministic educational aggregates, not individual workers or forecasts. See [Chapter 10](book/chapter-10.md).
+
+## Chapter 11: transportation and accessibility
+
+Chapter 11 represents transportation as aggregate commuter, visitor, and freight accessibility constrained by fictional trip-equivalent regional capacity, travel efficiency, and temporary disruption. Try `regional-sim corridor-closure`, `regional-sim tourism-congestion`, `regional-sim road-improvement`, `regional-sim transportation-report baseline`, `regional-sim transportation-trace baseline`, and `regional-sim compare baseline corridor-closure`. No individual roads, traffic simulation, routing, scheduling, logistics optimization, or GIS is performed. See [Chapter 11](book/chapter-11.md).

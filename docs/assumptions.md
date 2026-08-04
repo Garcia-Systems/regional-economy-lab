@@ -51,3 +51,7 @@ Housing categories, construction, demand, and costs are fictional educational as
 ## Chapter 10 workforce assumptions
 
 Workforce groups are fictional aggregate educational models. Working-age population and a Decimal participation rate determine the resident labor force; out-commuters reduce locally available resident labor and in-commuters add nonresident labor. Six simplified, mutually exclusive skill shares allocate one pool. Configured skill demand is matched deterministically, and deficits become unfilled-position indicators. Training capacity increases selected category availability over the scenario horizon without modeling individual students or guaranteeing jobs. No recruiting, wage adjustment, occupation, immigration, or transportation behavior is implied.
+
+## Chapter 11 transportation
+
+Transportation is aggregate accessibility, measured with fictional trip-equivalent demand and capacity. Commuter, visitor, and freight rates, average travel efficiency, and a temporary disruption factor are Decimal assumptions. Efficiency and disruption are applied once; a shared capacity factor ensures effective demand never exceeds regional capacity. Freight changes accessible aggregate procurement, not inventories. Reduced access suppresses effective monthly activity without removing population. No roads, vehicles, routes, GIS, transit schedules, travel-time forecast, or logistics optimization are represented.

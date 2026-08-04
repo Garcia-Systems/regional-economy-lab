@@ -99,3 +99,11 @@
 **In-commuter / out-commuter** — Aggregate nonresident working inside / resident working outside the modeled boundary.
 
 **Training capacity** — Deterministic scenario-horizon addition to selected skill availability, without individual learners.
+
+**Accessibility index** — Arithmetic mean of effective commuter, visitor, and freight accessibility after efficiency, disruption, and any capacity rationing.
+
+**Freight accessibility** — Aggregate share of freight-dependent economic access available this month; not shipment or inventory availability.
+
+**Transportation capacity** — Fictional aggregate trip-equivalent ceiling shared by modeled commuter, visitor, and freight demand.
+
+**Transportation utilization** — Effective aggregate transportation demand divided by transportation capacity, capped at 100%.
