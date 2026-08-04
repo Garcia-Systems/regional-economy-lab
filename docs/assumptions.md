@@ -81,3 +81,7 @@ examples, not evidence of predictive accuracy. All inputs are fictional and no l
 ## Chapter 16 decision support
 
 Decision reports compare baseline and alternative outputs for the same monthly reporting period. They reuse dashboard values and metadata. The changed-indicator count is descriptive, not a benefit score. Assumptions drive every output; opportunity costs without supported monetary values remain qualitative. Reports are educational scenario summaries, not predictions, causal estimates, rankings, recommendations, or policy analysis.
+
+## Chapter 17 shock assumptions
+
+Shock effects are deterministic Decimal remaining-availability multipliers applied once during a fictional one-month simulation. Recovery is an authored stage (`immediate impact`, `partial recovery`, or `restored operations`) with explicit factors, not an inferred repair curve. Effects combine multiplicatively with existing system behavior. Household labor income responds to workforce availability, while realized business revenue determines payroll and current taxes. Scenarios are educational, not forecasts, probability estimates, historical recreations, or emergency-planning tools.

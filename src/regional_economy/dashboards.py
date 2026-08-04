@@ -299,6 +299,13 @@ def console_report(board: Dashboard) -> str:
     return "\n".join(lines)
 
 
+def shock_dashboard(result: SimulationResult, baseline: SimulationResult) -> str:
+    """Chapter 17 resilience panel alongside the metadata-first dashboard."""
+    from regional_economy.reporting import shock_summary
+
+    return "\n\n".join((console_report(build_dashboard((result,))), shock_summary(result, baseline)))
+
+
 def markdown_export(board: Dashboard) -> str:
     current = board.current
     lines = [

@@ -202,3 +202,7 @@ This conceptual regional model intentionally omits inventory, warehouses, barcod
 ## Chapter 16 — business and public decision making
 
 Decision reports compare explicit one-month scenarios using existing dashboard indicators. Try `regional-sim evaluate-business expansion`, `regional-sim evaluate-public broadband`, `regional-sim compare-decisions expansion broadband`, `regional-sim explain-decisions`, and `regional-sim decision-trace broadband`. These educational tools summarize assumptions, benefits, tradeoffs, limitations, questions, and opportunity costs; they neither forecast nor recommend business actions or public policies. See [Chapter 16](book/chapter-16.md).
+
+## Chapter 17 — Economic shocks and cascading effects
+
+Chapter 17 applies reusable deterministic availability factors to the existing interconnected systems, then exposes affected sectors, recovery stage, before/after indicators, and an explicit cascade trace. Try `regional-sim severe-storm`, `regional-sim tourism-collapse`, `regional-sim payment-disruption`, `regional-sim supplier-disruption`, `regional-sim shock-report severe-storm`, and `regional-sim compare baseline severe-storm`. These fictional educational scenarios are not forecasts or emergency-planning tools; recovery assumptions are simplified and deterministic. Detailed payments remain in the **Digital Banking Systems Laboratory**, and inventory synchronization remains in the **Inventory Synchronization Laboratory**; there are no cross-repository runtime dependencies. See [Chapter 17](book/chapter-17.md).

@@ -35,6 +35,7 @@ from regional_economy.entities import (
     WorkforceSystem,
 )
 from regional_economy.money import parse_money, parse_rate
+from regional_economy.shocks import Shock, parse_shock
 
 SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "scenarios"  # compatibility for custom authoring/tests
 ROOT_FIELDS = {
@@ -59,6 +60,7 @@ ROOT_FIELDS = {
     "utilities",
     "banking",
     "supply_chain",
+    "shock",
 }
 
 
@@ -78,6 +80,7 @@ class Scenario:
     utilities: UtilitySystem
     banking: BankingSystem
     supply_chain: SupplyChain
+    shock: Shock | None = None
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -610,4 +613,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         utilities=utilities,
         banking=banking,
         supply_chain=supply_chain,
+        shock=parse_shock(raw.get("shock")),
     )

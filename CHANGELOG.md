@@ -82,3 +82,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 - Add deterministic business and public decision reports, opportunity-cost and comparison summaries, explain/trace commands, and dashboard-period validation.
 - Add Chapter 16 narrative and debugging laboratory; document the educational, non-predictive, non-recommendation boundary.
+
+## Unreleased — Chapter 17
+
+- Added reusable deterministic shocks, simplified recovery stages, explicit cascade trace/reporting, and normal-versus-disrupted indicators.
+- Added `severe-storm`, `tourism-collapse`, `payment-disruption`, and `supplier-disruption` educational scenarios plus CLI, tests, dashboard integration, documentation, and debugging laboratory.
+- Explicitly excludes forecasting, probability, emergency planning, disaster operations, insurance, optimization, machine learning, and annual simulation.

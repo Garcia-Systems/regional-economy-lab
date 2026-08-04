@@ -8,6 +8,7 @@ from regional_economy.dashboards import (
     csv_export,
     indicator_trace,
     markdown_export,
+    shock_dashboard,
 )
 from regional_economy.dashboards import (
     comparison_report as dashboard_comparison,
@@ -35,6 +36,7 @@ from regional_economy.reporting import (
     banking_trace,
     business_report,
     business_trace,
+    cascade_trace,
     comparison,
     explanation,
     full_report,
@@ -45,6 +47,7 @@ from regional_economy.reporting import (
     household_report,
     housing_report,
     housing_trace,
+    shock_summary,
     supply_report,
     supply_trace,
     tourism_report,
@@ -103,7 +106,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "dashboard":
             if len(args.scenarios) == 1:
                 result = run_scenario(load_scenario(args.scenarios[0]))
-                print(dashboard_report(build_dashboard((result,))))
+                if result.shock:
+                    print(shock_dashboard(result, run_scenario(load_scenario("baseline"))))
+                else:
+                    print(dashboard_report(build_dashboard((result,))))
             elif len(args.scenarios) == 3 and args.scenarios[0] == "compare":
                 first = build_dashboard((run_scenario(load_scenario(args.scenarios[1])),))
                 second = build_dashboard((run_scenario(load_scenario(args.scenarios[2])),))
@@ -129,6 +135,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(comparison(first, second))
             if not first.metrics.reconciled or not second.metrics.reconciled:
                 return 1
+        elif args.command == "shock-report":
+            if len(args.scenarios) != 1:
+                parser.error("shock-report requires exactly one scenario name")
+            result = run_scenario(load_scenario(args.scenarios[0]))
+            baseline = run_scenario(load_scenario("baseline"))
+            print(shock_summary(result, baseline))
+        elif args.command == "cascade-trace":
+            if len(args.scenarios) != 1:
+                parser.error("cascade-trace requires exactly one scenario name")
+            print(cascade_trace(run_scenario(load_scenario(args.scenarios[0]))))
         elif args.command in {
             "explain",
             "trace",

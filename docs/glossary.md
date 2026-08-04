@@ -156,3 +156,13 @@ employment, household income, or tax collections.
 **Opportunity cost** — The alternative use of limited resources forgone when an action is selected; it need not have an invented monetary value.
 
 **Scenario score** — Chapter 16's deterministic count of referenced indicators that differ from baseline; a descriptive completeness aid, never a value score or rank.
+
+## Chapter 17 terms
+
+**Cascade** — An explicit sequence in which a configured subsystem effect changes secondary activity and regional indicators.
+
+**Remaining availability** — A Decimal factor from zero through one representing the share of normal activity available under a shock.
+
+**Recovery stage** — An educational scenario label: immediate impact, partial recovery, or restored operations; it is not a forecast timeline.
+
+**Resilience indicator** — A before/after descriptive measure used to inspect how a fictional regional system responds under fixed assumptions, not a risk probability.
