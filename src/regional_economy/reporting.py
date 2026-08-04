@@ -1,78 +1,209 @@
+"""Stable, student-facing reports for simulation results."""
+
+from collections.abc import Iterable
+
 from regional_economy.engine import SimulationResult
 from regional_economy.money import format_money
 
+LABEL_WIDTH = 35
+VALUE_WIDTH = 20
+
+
+def _section(title: str, rows: Iterable[tuple[str, str]]) -> list[str]:
+    lines = [f"[{title}]"]
+    lines.extend(f"  {label + ':':<{LABEL_WIDTH}}{value:>{VALUE_WIDTH}}" for label, value in rows)
+    return lines
+
 
 def dashboard(result: SimulationResult) -> str:
-    metrics = result.metrics
-    rows: list[tuple[str, str]] = [
-        ("Population", f"{metrics.population:,}"),
-        ("Employed residents", f"{metrics.employed_residents:,}"),
-        ("External household income", format_money(metrics.external_household_income)),
-        ("Visitor spending", format_money(metrics.visitor_spending)),
-        ("Local household spending", format_money(metrics.local_household_spending)),
-        ("Business revenue", format_money(metrics.business_revenue)),
-        ("Wages paid", format_money(metrics.wages_paid)),
-        ("Local business purchases", format_money(metrics.local_business_purchases)),
-        ("External business purchases", format_money(metrics.external_business_purchases)),
-        ("Taxes collected", format_money(metrics.taxes_collected)),
-        ("Economic leakage", format_money(metrics.economic_leakage)),
-        ("Retained household funds", format_money(metrics.retained_household_funds)),
-        ("Retained business funds", format_money(metrics.retained_business_funds)),
-        ("Simulated local economic activity", format_money(metrics.simulated_local_economic_activity)),
+    """Render sources, movements, exits, and balances in a fixed order."""
+    m = result.metrics
+    sections = [
+        (
+            "Region",
+            [
+                ("Name", result.region_name),
+                ("Simulation month", f"{result.month:,}"),
+                ("Population", f"{m.population:,}"),
+                ("Employed residents", f"{m.employed_residents:,}"),
+            ],
+        ),
+        (
+            "Households",
+            [
+                ("External income (entered)", format_money(m.external_household_income)),
+                ("Local spending (moved)", format_money(m.local_household_spending)),
+                ("Housing (left boundary)", format_money(m.housing_costs)),
+                ("Nonlocal spending (left)", format_money(m.household_nonlocal_spending)),
+                ("Retained funds (remained)", format_money(m.retained_household_funds)),
+            ],
+        ),
+        ("Visitors", [("Spending entering region", format_money(m.visitor_spending))]),
+        (
+            "Businesses",
+            [
+                ("Customer revenue received", format_money(m.business_revenue)),
+                ("Wages paid locally", format_money(m.wages_paid)),
+                ("Local purchases", format_money(m.local_business_purchases)),
+                ("External purchases (left)", format_money(m.external_business_purchases)),
+                ("Retained operating funds", format_money(m.retained_business_funds)),
+            ],
+        ),
+        ("Government", [("Taxes collected (remained)", format_money(m.taxes_collected))]),
+        (
+            "Economic Flows",
+            [
+                ("Total external inflows", format_money(m.reconciliation.sources)),
+                ("Local economic activity", format_money(m.simulated_local_economic_activity)),
+                ("Total leakage", format_money(m.economic_leakage)),
+            ],
+        ),
+        (
+            "Reconciliation",
+            [
+                ("Sources", format_money(m.reconciliation.sources)),
+                ("Classified ending uses", format_money(m.reconciliation.uses)),
+                ("Difference", format_money(m.reconciliation.difference)),
+                ("Status", "PASS" if m.reconciliation.reconciled else "FAIL"),
+            ],
+        ),
     ]
-    lines = [
-        f"REGIONAL ECONOMY — MONTH {result.month}",
-        f"Scenario: {result.scenario_name}",
-        f"Region: {result.region_name}",
-    ]
-    lines.extend(f"{label + ':':<38}{value:>18}" for label, value in rows)
+    lines = [f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD", f"Scenario: {result.scenario_label} ({result.scenario_name})"]
+    for title, rows in sections:
+        lines.extend(("", *_section(title, rows)))
     return "\n".join(lines)
 
 
+def _event_title(event: object) -> str:
+    name = type(event).__name__
+    words = []
+    for character in name:
+        if character.isupper() and words:
+            words.append(" ")
+        words.append(character)
+    return "".join(words)
+
+
 def timeline(result: SimulationResult) -> str:
+    """Render the deterministic event sequence as a readable vertical flow."""
     lines = ["ORDERED EVENT TIMELINE"]
-    lines.extend(
-        f"t={event.time:<2} {type(event).__name__:<29} {event.detail}" for event in result.timeline
-    )
+    for index, event in enumerate(result.timeline):
+        if index:
+            lines.extend(("       ↓", ""))
+        lines.extend((f"{event.time:02d}  {_event_title(event)}", f"    {event.detail}"))
     return "\n".join(lines)
 
 
 def reconciliation_report(result: SimulationResult) -> str:
-    reconciliation = result.metrics.reconciliation
-    status = "PASS" if reconciliation.reconciled else "FAIL"
-    return "\n".join([
-        "RECONCILIATION",
-        f"External sources: {format_money(reconciliation.sources)}",
-        f"Ending uses:      {format_money(reconciliation.uses)}",
-        f"Difference:       {format_money(reconciliation.difference)}",
-        f"Result: {status} — sources equal classified ending uses.",
-        "Business revenue is a transaction flow, not a remaining cash balance.",
-    ])
+    r = result.metrics.reconciliation
+    status = "PASS" if r.reconciled else "FAIL"
+    return "\n".join(
+        (
+            "RECONCILIATION NOTE",
+            f"Result: {status}",
+            f"{status}: external sources {format_money(r.sources)} - "
+            f"classified uses {format_money(r.uses)} = {format_money(r.difference)}.",
+            "Business revenue is a movement of money, not an additional source or an ending balance.",
+        )
+    )
 
 
 def full_report(result: SimulationResult) -> str:
     return "\n\n".join((dashboard(result), timeline(result), reconciliation_report(result)))
 
 
+def explanation(result: SimulationResult) -> str:
+    """Explain the event chain in economic rather than implementation language."""
+    m = result.metrics
+    entries = (
+        (
+            "Month Started",
+            "The laboratory opens one accounting period so every later movement belongs to the same month.",
+            "The regional clock changes; no money moves.",
+        ),
+        (
+            "External Income Received",
+            "Resident households need an explicit source of funds before allocating them.",
+            f"Households receive {format_money(m.external_household_income)} from outside the modeled boundary.",
+        ),
+        (
+            "Visitors Arrived",
+            "Visitor purchases bring additional demand from outside the region.",
+            f"Visitors introduce {format_money(m.visitor_spending)}.",
+        ),
+        (
+            "Households Spent Money",
+            "Households divide post-housing funds among local purchases, nonlocal purchases, and retention.",
+            f"Modeled businesses receive {format_money(m.local_household_spending)} from households.",
+        ),
+        (
+            "Businesses Recorded Revenue",
+            "Customer payments become business revenue; revenue is a flow, not profit.",
+            f"Businesses record {format_money(m.business_revenue)} from households and visitors.",
+        ),
+        (
+            "Businesses Paid Wages",
+            "Businesses use part of after-tax revenue to compensate labor.",
+            f"Employees receive {format_money(m.wages_paid)}; v0.1.0 does not spend those wages again.",
+        ),
+        (
+            "Taxes Collected",
+            "Simplified sales and lodging taxes move part of customer payments to local government.",
+            f"Government retains {format_money(m.taxes_collected)}.",
+        ),
+        (
+            "Month Completed",
+            "All external sources are compared with mutually exclusive ending uses.",
+            f"The difference is {format_money(m.reconciliation.difference)} "
+            f"({'reconciled' if m.reconciliation.reconciled else 'not reconciled'}).",
+        ),
+    )
+    lines = [f"EXPLAIN MODE — {result.scenario_label}", "A student guide to why the month unfolds in this order."]
+    for number, (title, why, change) in enumerate(entries, 1):
+        lines.extend(("", f"{number}. {title}", f"   Why: {why}", f"   Change: {change}"))
+    return "\n".join(lines)
+
+
+def trace(result: SimulationResult) -> str:
+    """Render a conceptual one-dollar journey; it is deliberately not an identity."""
+    return "\n".join(
+        (
+            f"ONE-DOLLAR EDUCATIONAL TRACE — {result.scenario_label}",
+            "External income ($1.00 enters)",
+            "  ↓",
+            "Household (allocates it after housing)",
+            "  ↓",
+            "Local business (receives a possible local purchase)",
+            "  ↓",
+            "Employee wages (one possible business use)",
+            "  ↓",
+            "Household spending (a later round, not simulated in v0.1.0)",
+            "  ↓",
+            "Government taxes (may retain a share)",
+            "  ↓",
+            "Leakage (may leave through nonlocal spending or external inputs)",
+            "",
+            "ASSUMPTIONS",
+            "• This is not an accounting identity or a claim that one dollar follows every arrow.",
+            "• This path illustrates connections; the same literal dollar does not take every branch.",
+            "• Shares describe aggregates, not probabilities for a particular dollar.",
+            "• Wages are not recirculated by the one-month engine, so the second household step is conceptual.",
+            "• Taxes and leakage occur at different points and are not deducted repeatedly from $1.00.",
+        )
+    )
+
+
 def comparison(baseline: SimulationResult, alternative: SimulationResult) -> str:
-    metrics = [
+    rows = (
         ("Visitor spending", "visitor_spending"),
         ("Business revenue", "business_revenue"),
         ("Wages paid", "wages_paid"),
         ("Taxes collected", "taxes_collected"),
         ("Economic leakage", "economic_leakage"),
         ("Local economic activity", "simulated_local_economic_activity"),
-    ]
-    lines = [
-        "SCENARIO COMPARISON",
-        f"{'Metric':<29}{baseline.scenario_label:>20}{alternative.scenario_label:>20}{'Change':>20}",
-    ]
-    for label, attribute in metrics:
-        first = getattr(baseline.metrics, attribute)
-        second = getattr(alternative.metrics, attribute)
-        lines.append(
-            f"{label:<29}{format_money(first):>20}{format_money(second):>20}"
-            f"{format_money(second - first, signed=True):>20}"
-        )
+    )
+    lines = ["SCENARIO COMPARISON", f"{'Metric':<29}{baseline.scenario_label:>20}{alternative.scenario_label:>20}{'Change':>20}"]
+    for label, attribute in rows:
+        first, second = getattr(baseline.metrics, attribute), getattr(alternative.metrics, attribute)
+        lines.append(f"{label:<29}{format_money(first):>20}{format_money(second):>20}{format_money(second - first, signed=True):>20}")
     return "\n".join(lines)
-

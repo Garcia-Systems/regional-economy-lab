@@ -54,3 +54,18 @@ Williamsburg measurements. Still, the lesson is testable: identical inflows can 
 regional consequences because retention assumptions control how quickly money leaves, and explicit
 reconciliation prevents leakage from also masquerading as retained money.
 
+
+See the canonical [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.mmd) and
+[`docs/diagrams/event-ordering.mmd`](../docs/diagrams/event-ordering.mmd) sources.
+
+### Complete debugging exercise
+
+1. **Breakpoint:** `engine.py`, the line `leakage = housing + household_nonlocal + external_purchases`.
+2. **Expected variables:** all three components are integer cents and their sum equals
+   `metrics.economic_leakage` after construction.
+3. **Incorrect behavior to inspect:** temporarily omit `external_purchases` from the expression;
+   leakage becomes too small while final uses still contain the external payment.
+4. **Correct behavior:** leakage includes each boundary exit exactly once, while reconciliation uses
+   still classify every cent and finish at zero.
+5. **Economic importance:** omitted imports exaggerate local retention even when the books happen
+   to reconcile through a separately classified use.

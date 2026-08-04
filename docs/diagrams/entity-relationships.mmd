@@ -1,0 +1,9 @@
+classDiagram
+  Region "1" *-- "many" Household
+  Region "1" *-- "many" Business
+  Region "1" *-- "1" Government
+  Scenario "1" --> "1" Region
+  Scenario "1" --> "1" Visitor
+  Visitor --> Business : category spending
+  Household --> Business : local spending
+  Business --> Government : taxes
