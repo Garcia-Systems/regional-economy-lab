@@ -111,3 +111,5 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added file-driven user regions, four fictional educational templates, region profiles, strengthened indicator/path validation, template creation, and capstone CLI workflows.
 - Reused monthly, annual, dashboard, comparison, decision, and resilience reporting without introducing a new economic subsystem.
 - Added Chapter 20 narrative, validation/debugging laboratory, reproducibility documentation, and end-to-end deterministic template tests.
+
+- Added immutable, source-attributed transaction stages, adjacent constraint transitions, canonical sector summaries, and recorded-revenue attribution; general, Explain, and Trace reports consume these records.

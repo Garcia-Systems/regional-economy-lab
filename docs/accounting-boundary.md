@@ -141,7 +141,15 @@ capacity, deposits, loans, credit, and retained positions are never leakage.
 
 ## Roadmap
 
-A later correction should introduce canonical transaction-stage records, calculate loss only
-between adjacent stages, post independently derived receiving entries for additional transfers,
-and then build a consolidated sources-and-uses ledger. It should preserve this vocabulary rather
-than treating descriptive institutional totals as transactions.
+Canonical transaction-stage records now calculate losses only between adjacent stages. A later
+correction should post independently derived receiving entries for additional transfers and then
+build a consolidated sources-and-uses ledger. It should preserve this vocabulary rather than
+treating descriptive institutional totals as transactions.
+
+## Transaction-stage boundary
+
+Recorded business revenue is the single canonical customer-derived receipt inside the modeled region. It is tax-inclusive: sales tax is extracted from recorded sector revenue, not added on top, before operating revenue is allocated to wages, local purchases, external purchases, and retained operating funds. Lodging tax remains a separate tourism-category calculation pending the tourism accounting correction.
+
+Configured, constrained, interrupted, and unmet demand are counterfactual or unsuccessful transactions, not spending and not external leakage. Only an actual purchase outside the regional boundary is an outflow.
+
+For compatibility, `local_household_spending` and `household_derived_business_revenue` retain their historical meaning of configured household local spending. New source-attributed realized values use the `recorded_*_business_revenue_cents` properties. Likewise, `completed_transactions` means payment-completed demand, while `business_revenue` aliases canonical recorded revenue.

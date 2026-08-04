@@ -21,6 +21,7 @@ from regional_economy.events import (
     HousingCostsPaid,
     MonthCompleted,
     MonthStarted,
+    PaymentTransactionsCompleted,
     PublicServicesProvided,
     StudentSpendingCompleted,
     TaxesCollected,
@@ -33,6 +34,16 @@ from regional_economy.metrics import Reconciliation, RegionalMetrics
 from regional_economy.money import allocate, format_money, multiply
 from regional_economy.scenarios import Scenario
 from regional_economy.shocks import Shock
+from regional_economy.transactions import (
+    SOURCE_ORDER,
+    DemandBySource,
+    DemandStage,
+    SectorAmounts,
+    SectorTransactionSummary,
+    SourceRevenueSummary,
+    StageTransition,
+    TransactionPipeline,
+)
 
 
 @dataclass(frozen=True)
@@ -104,27 +115,79 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     government = region.local_government
     scheduler.schedule(HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents"))
     scheduler.schedule(HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households"))
-    demand_sources = {
-        "households": multiply(multiply(local_household, commuter_access), utility_factor),
-        "visitors": visitor_spending,
-        "institutions": local_procurement
-        + multiply(multiply(multiply(healthcare.local_procurement, freight_access), utility_factor), institution_factor),
-        "government": multiply(multiply(government.permits_and_fees, utility_factor), institution_factor),
-    }
-    banking = scenario.banking.evaluate()
-    intended_transactions = sum(demand_sources.values())
-    payment_factor = banking.payment_availability * factor("payment_availability")
-    demand_sources = {source: multiply(amount, payment_factor) for source, amount in demand_sources.items()}
-    completed_transactions = sum(demand_sources.values())
-    interrupted_transactions = intended_transactions - completed_transactions
-    demand_by_source = {
-        source: _allocate_total(amount, scenario.business_demand_shares[source]) for source, amount in demand_sources.items()
-    }
-    revenue_by_sector = {sector: sum(demand_by_source[source][sector] for source in demand_sources) for sector in Sector}
-    supply_chain = scenario.supply_chain.evaluate()
-    unconstrained_business_revenue = sum(
-        min(revenue_by_sector[business.sector], business.monthly_capacity) for business in region.businesses
+    configured = DemandStage(
+        "Configured demand",
+        DemandBySource(
+            local_household,
+            scenario.visitors.total_spending,
+            university.local_procurement,
+            healthcare.local_procurement,
+            government.permits_and_fees,
+        ),
     )
+    transportation_stage = DemandStage(
+        "Transportation-accessible demand",
+        DemandBySource(
+            multiply(local_household, commuter_access),
+            multiply(scenario.visitors.total_spending, transportation.visitor_accessibility * transport_factor),
+            multiply(university.local_procurement, freight_access),
+            multiply(healthcare.local_procurement, freight_access),
+            government.permits_and_fees,
+        ),
+    )
+    utility_stage = DemandStage(
+        "Utility-serviceable demand",
+        DemandBySource.from_dict(
+            {name: multiply(amount, utility_factor) for name, amount in transportation_stage.by_source.as_dict().items()}
+        ),
+    )
+    shock_stage = DemandStage(
+        "Shock-adjusted demand",
+        DemandBySource(
+            utility_stage.by_source.household_cents,
+            multiply(utility_stage.by_source.visitor_cents, visitor_factor),
+            multiply(utility_stage.by_source.university_cents, institution_factor),
+            multiply(utility_stage.by_source.healthcare_cents, institution_factor),
+            multiply(utility_stage.by_source.government_cents, institution_factor),
+        ),
+    )
+    banking = scenario.banking.evaluate()
+    payment_factor = banking.payment_availability * factor("payment_availability")
+    payment_stage = DemandStage(
+        "Payment-completed demand",
+        DemandBySource.from_dict({name: multiply(amount, payment_factor) for name, amount in shock_stage.by_source.as_dict().items()}),
+    )
+    transitions = (
+        StageTransition(configured, transportation_stage, "transportation", "constrained demand"),
+        StageTransition(transportation_stage, utility_stage, "utilities", "constrained demand"),
+        StageTransition(utility_stage, shock_stage, "active shock", "constrained demand"),
+        StageTransition(shock_stage, payment_stage, "payments", "interrupted demand"),
+    )
+    pipeline = TransactionPipeline(configured, transportation_stage, utility_stage, shock_stage, payment_stage, transitions)
+    demand_sources = payment_stage.by_source.as_dict()
+    completed_transactions = payment_stage.total_cents
+    interrupted_transactions = transitions[-1].reduced_cents
+    scheduler.schedule(
+        PaymentTransactionsCompleted(
+            9,
+            f"Payments completed {format_money(completed_transactions)}; interrupted demand was {format_money(interrupted_transactions)}",
+        )
+    )
+    demand_by_source = {
+        source: _allocate_total(amount, scenario.business_demand_shares[source_key])
+        for source, source_key, amount in (
+            ("households", "households", demand_sources["household"]),
+            ("visitors", "visitors", demand_sources["visitor"]),
+            ("university", "institutions", demand_sources["university"]),
+            ("healthcare", "institutions", demand_sources["healthcare"]),
+            ("government", "government", demand_sources["government"]),
+        )
+    }
+    revenue_by_sector = {sector: sum(amounts[sector] for amounts in demand_by_source.values()) for sector in Sector}
+    supply_chain = scenario.supply_chain.evaluate()
+    capacity_by_sector = {
+        business.sector: min(revenue_by_sector[business.sector], business.monthly_capacity) for business in region.businesses
+    }
     for business in region.businesses:
         procurement_share = business.local_purchase_share + business.external_purchase_share
         business.local_purchase_share = procurement_share * supply_chain.local_purchasing_share
@@ -133,6 +196,41 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
             revenue_by_sector[business.sector], government.sales_tax_rate, supply_chain.capacity_factor * factor("supplier_reliability")
         )
     business_revenue = sum(b.local_revenue for b in region.businesses)
+    recorded_by_sector = {business.sector: business.local_revenue for business in region.businesses}
+    unserved_by_sector = {sector: revenue_by_sector[sector] - capacity_by_sector[sector] for sector in Sector}
+    supply_loss_by_sector = {sector: capacity_by_sector[sector] - recorded_by_sector[sector] for sector in Sector}
+    source_sector_records = tuple((source.rstrip("s"), SectorAmounts.from_dict(amounts)) for source, amounts in demand_by_source.items())
+    sector_transactions = SectorTransactionSummary(
+        source_sector_records,
+        SectorAmounts.from_dict(revenue_by_sector),
+        SectorAmounts.from_dict(capacity_by_sector),
+        SectorAmounts.from_dict(unserved_by_sector),
+        SectorAmounts.from_dict(recorded_by_sector),
+        SectorAmounts.from_dict(supply_loss_by_sector),
+    )
+    recorded_sources = {source: 0 for source in SOURCE_ORDER}
+    source_aliases = {
+        "household": "households",
+        "visitor": "visitors",
+        "university": "university",
+        "healthcare": "healthcare",
+        "government": "government",
+    }
+    for sector in Sector:
+        allocated = revenue_by_sector[sector]
+        if not allocated:
+            continue
+        shares_list: list[tuple[str, Decimal]] = []
+        assigned_share = Decimal(0)
+        for source in SOURCE_ORDER[:-1]:
+            share = Decimal(demand_by_source[source_aliases[source]][sector]) / Decimal(allocated)
+            shares_list.append((source, share))
+            assigned_share += share
+        shares = (*shares_list, (SOURCE_ORDER[-1], Decimal(1) - assigned_share))
+        attributed = allocate(recorded_by_sector[sector], shares)
+        for source, amount in attributed.items():
+            recorded_sources[source] += amount
+    source_revenue = SourceRevenueSummary(DemandBySource.from_dict(recorded_sources))
     # Chapter 2 tourism indicators remain available, but Chapter 8 allocates visitor
     # spending once across the downtown sectors rather than recording it twice.
     tourism_revenue = visitor_spending
@@ -159,12 +257,12 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         tourism_local += parts["local"]
         tourism_external += parts["external"]
         tourism_retained += parts["retained"]
-    scheduler.schedule(BusinessRevenueRecorded(9, f"Businesses recorded {format_money(business_revenue)}"))
+    scheduler.schedule(BusinessRevenueRecorded(9, f"Businesses recorded canonical revenue of {format_money(business_revenue)}"))
     wages = sum(b.wages_paid for b in region.businesses)
     scheduler.schedule(WagesPaid(10, f"Businesses paid {format_money(wages)} in wages"))
     taxes = sum(b.taxes for b in region.businesses) + lodging_tax
     region.local_government.collect(taxes)
-    scheduler.schedule(TaxesCollected(11, f"Government collected {format_money(taxes)}"))
+    scheduler.schedule(TaxesCollected(11, f"Government collected {format_money(taxes)} from recorded-revenue and lodging tax bases"))
     departments = government.departments
     government_budget = Reconciliation(
         "GOVERNMENT OPERATING BUDGET", government.operating_budget, sum(department.operating_budget for department in departments)
@@ -180,7 +278,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     cash = Reconciliation("HOUSEHOLD AVAILABLE CASH", gross, deductions + housing + essential + discretionary + savings + retained)
     required_configured = sum(a.configured_required_expenses for a in allocations)
     required = Reconciliation("HOUSEHOLD REQUIRED EXPENSES", required_configured, housing + essential + unmet)
-    customer = Reconciliation("CUSTOMER SPENDING", sum(demand_sources.values()), sum(revenue_by_sector.values()))
+    customer = Reconciliation("CUSTOMER SPENDING", payment_stage.total_cents, sum(revenue_by_sector.values()))
     business = Reconciliation(
         "BUSINESS REVENUE",
         business_revenue,
@@ -293,26 +391,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         workforce,
         transportation,
         utilities,
-        sum(demand_sources.values())
-        and sum(
-            (
-                multiply(amount, Decimal(1) - utility_factor)
-                for amount in (
-                    local_household,
-                    scenario.visitors.total_spending,
-                    university.local_procurement,
-                    healthcare.local_procurement,
-                    government.permits_and_fees,
-                )
-            ),
-            0,
-        ),
+        transitions[1].reduced_cents,
         banking,
         completed_transactions,
         interrupted_transactions,
         supply_chain,
-        unconstrained_business_revenue - business_revenue,
+        sector_transactions.supply_constrained.total_cents,
         taxes,
         government.taxes_collected,
+        pipeline,
+        sector_transactions,
+        source_revenue,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock, scenario.resilience)

@@ -11,6 +11,7 @@ from regional_economy.entities.supply_chain import SupplyChainResult
 from regional_economy.entities.transportation import TransportationResult
 from regional_economy.entities.utility import UtilityResult
 from regional_economy.entities.workforce import WorkforceResult
+from regional_economy.transactions import SectorTransactionSummary, SourceRevenueSummary, TransactionPipeline
 
 
 @dataclass(frozen=True)
@@ -110,6 +111,12 @@ MONETARY_METRICS: dict[str, MonetaryMetricMetadata] = {
     "utility_constrained_activity": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
     "completed_transactions": _money(MonetaryClassification.INTERNAL_TRANSFER),
     "interrupted_transactions": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "transportation_constrained_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "utility_constrained_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "shock_reduced_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "payment_interrupted_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "sector_capacity_unserved_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "supply_constrained_demand_cents": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
     "supply_constrained_business_activity": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
     "business_tax_outflow": _money(MonetaryClassification.INTERNAL_TRANSFER),
     "government_transaction_tax_inflow": _money(MonetaryClassification.INTERNAL_TRANSFER),
@@ -216,6 +223,9 @@ class RegionalMetrics:
     supply_constrained_business_activity: int
     business_tax_outflow: int
     government_transaction_tax_inflow: int
+    transaction_pipeline: TransactionPipeline
+    sector_transactions: SectorTransactionSummary
+    source_revenue: SourceRevenueSummary
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
@@ -242,8 +252,40 @@ class RegionalMetrics:
 
     @property
     def recorded_business_revenue(self) -> int:
-        """Canonical name for the legacy activity value."""
-        return self.business_revenue
+        """Revenue remaining after capacity and supply constraints."""
+        return self.sector_transactions.recorded_revenue.total_cents
+
+    @property
+    def transportation_constrained_demand_cents(self) -> int:
+        return self.transaction_pipeline.transitions[0].reduced_cents
+
+    @property
+    def utility_constrained_demand_cents(self) -> int:
+        return self.transaction_pipeline.transitions[1].reduced_cents
+
+    @property
+    def shock_reduced_demand_cents(self) -> int:
+        return self.transaction_pipeline.transitions[2].reduced_cents
+
+    @property
+    def payment_interrupted_demand_cents(self) -> int:
+        return self.transaction_pipeline.transitions[3].reduced_cents
+
+    @property
+    def sector_capacity_unserved_demand_cents(self) -> int:
+        return self.sector_transactions.capacity_unserved.total_cents
+
+    @property
+    def supply_constrained_demand_cents(self) -> int:
+        return self.sector_transactions.supply_constrained.total_cents
+
+    @property
+    def recorded_household_business_revenue_cents(self) -> int:
+        return self.source_revenue.recorded.household_cents
+
+    @property
+    def recorded_visitor_business_revenue_cents(self) -> int:
+        return self.source_revenue.recorded.visitor_cents
 
     @property
     def household_external_outflows(self) -> int:

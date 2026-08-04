@@ -124,3 +124,9 @@ The capstone connects concepts from other Garcia Systems laboratories at subsyst
 ## Chapter 20 configuration methodology
 
 The capstone adds no economic equations. A file path or bundled name enters one loader, which validates schema and cross-field compatibility and constructs the same immutable assumptions/domain entities. The scheduler retains deterministic phase and sequence ordering. Generic dashboards, monthly reports, annual orchestration, resilience views, and comparisons consume results without feeding values back. Reproducibility requires retaining the YAML, repository version, command, and output. Validation is fail-fast and corrective: messages name a semantic location and a suggested fix; runtime integer-cent reconciliation remains the final accounting check.
+
+## Canonical monthly transaction stages
+
+Customer demand follows one auditable order: **configured → transportation-accessible → utility-serviceable → shock-adjusted → payment-completed → sector-allocated → capacity-served → supply-serviceable/recorded business revenue**. This makes the embedded multiplication sequence explicit; factors are never reapplied by a report. Each constraint is the difference between adjacent stages, so reductions cannot overlap.
+
+The sources that actually enter this path are household local spending, visitor spending, university local procurement, healthcare local procurement, and government permits-and-fees demand. Student spending remains descriptive because the existing engine does not add it to downtown demand. Source amounts use largest-remainder sector allocation. Recorded sector revenue is attributed back proportionally, with ties in stable household, visitor, university, healthcare, government order.

@@ -112,3 +112,7 @@ An annual run contains exactly twelve independently completed monthly runs in Ja
 ## Chapter 20 — user-defined regions
 
 User-authored YAML uses the same explicit fictional assumptions as bundled scenarios. Filenames and `name` fields match; money is converted to integer cents, rates use `Decimal`, allocations total exactly one, and all configured capacities and counts are nonnegative. Templates are educational starting points, not calibrated archetypes. Manufacturing is represented with existing business and supplier aggregates rather than a new production model. Identical configuration, package version, and command produce identical ordered output.
+
+## Canonical allocation assumption
+
+Canonical source and sector allocations use integer cents and deterministic largest-remainder allocation. Ties follow configured sector order and household, visitor, university, healthcare, government source order, preserving totals without fractional cents.

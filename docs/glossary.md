@@ -205,3 +205,9 @@ employment, household income, or tax collections.
 **Region template** — A complete, fictional educational YAML scenario intended to be copied and edited without changing simulation code.
 
 **Configuration trace** — The capstone sequence from region definition through validation, simulation, indicators, reports, and comparison.
+
+- **Adjacent-stage loss:** Exact integer-cent difference between consecutive canonical stages; it belongs only to that transition.
+- **Configured demand:** Business demand before transaction-path accessibility constraints.
+- **Interrupted payment demand:** Shock-adjusted demand that did not complete because of payment availability; neither spending nor leakage.
+- **Recorded business revenue:** Tax-inclusive customer-derived revenue remaining after all transaction constraints.
+- **Unmet demand:** Demand that sector capacity could not serve; not a completed transaction or external outflow.

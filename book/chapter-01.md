@@ -76,3 +76,7 @@ The canonical relationship diagram is [`docs/diagrams/entity-relationships.mmd`]
    the complete payment and divides after-tax funds into mutually exclusive uses.
 6. **Economic importance:** silently dropping demand would understate customer activity and break
    the connection between household/visitor payments and business receipts.
+
+## Auditing a transaction path
+
+The monthly model preserves customer-source identity through a canonical transaction pipeline. A reduction belongs to the single transition where it occurs, preventing the same unrealized demand from being described twice.

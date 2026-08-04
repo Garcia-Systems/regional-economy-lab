@@ -142,7 +142,7 @@ def dashboard(result: SimulationResult) -> str:
             "Businesses",
             (
                 ("Customer revenue received", format_money(m.business_revenue)),
-                ("Household-derived revenue", format_money(m.household_derived_business_revenue)),
+                ("Recorded household revenue", format_money(m.recorded_household_business_revenue_cents)),
                 ("Wages paid locally", format_money(m.wages_paid)),
                 ("Local purchases", format_money(m.local_business_purchases)),
                 ("External purchases", format_money(m.external_business_purchases)),
@@ -256,11 +256,37 @@ def reconciliation_report(result):
 
 
 def full_report(result):
-    parts = [dashboard(result)]
+    parts = [dashboard(result), transaction_pipeline_report(result)]
     if result.shock:
         parts.append(shock_summary(result))
     parts.extend((timeline(result), reconciliation_report(result)))
     return "\n\n".join(parts)
+
+
+def transaction_pipeline_report(result) -> str:
+    """Render canonical records without reconstructing any constraint effect."""
+    m = result.metrics
+    p = m.transaction_pipeline
+    lines = ["TRANSACTION PIPELINE", f"  {p.configured.name:<38}{format_money(p.configured.total_cents):>20}"]
+    for transition in p.transitions:
+        lines.extend(
+            (
+                f"  {transition.after.name:<38}{format_money(transition.after.total_cents):>20}",
+                f"    {transition.classification.title()} — {transition.reason:<25}{format_money(transition.reduced_cents):>20}",
+            )
+        )
+    s = m.sector_transactions
+    lines.extend(
+        (
+            f"  {'Sector-allocated demand':<38}{format_money(s.allocated.total_cents):>20}",
+            f"  {'Capacity-served demand':<38}{format_money(s.capacity_served.total_cents):>20}",
+            f"    {'Unmet — sector capacity':<36}{format_money(s.capacity_unserved.total_cents):>20}",
+            f"  {'Supply-serviceable demand':<38}{format_money(s.recorded_revenue.total_cents):>20}",
+            f"    {'Constrained demand — supply':<36}{format_money(s.supply_constrained.total_cents):>20}",
+            f"  {'Recorded business revenue':<38}{format_money(m.recorded_business_revenue):>20}",
+        )
+    )
+    return "\n".join(lines)
 
 
 def shock_summary(result, baseline=None):
@@ -335,6 +361,7 @@ def household_report(result):
 def explanation(result):
     lines = (
         f"EXPLAIN MODE — {result.scenario_label}",
+        transaction_pipeline_report(result),
         "Gross income is reduced first by simplified payroll/income deductions; these leave the household sector and are not local taxes.",
         "Housing and essential costs are paid before savings or discretionary spending. Disposable income after required expenses is "
         + format_money(result.metrics.disposable_income_after_required_expenses)
@@ -407,9 +434,12 @@ def explanation(result):
 def trace(result):
     return "\n".join(
         (
-            f"HOUSEHOLD-BUDGET EDUCATIONAL TRACE — {result.scenario_label}",
-            "Gross income → deductions → required costs → savings/local discretionary spending",
-            "→ business revenue → taxes, wages, purchases, and leakage",
+            f"CANONICAL TRANSACTION TRACE — {result.scenario_label}",
+            transaction_pipeline_report(result),
+            "Configured demand ↓ transportation accessibility ↓ utility serviceability",
+            "↓ shock adjustment ↓ payment completion ↓ sector allocation",
+            "↓ capacity service ↓ supply availability ↓ recorded business revenue",
+            "↓ business operating allocation",
             "",
             "This conceptual aggregate trace is not an accounting identity or tracking of a literal dollar.",
             "Wages are not spent again in this one-month model.",
