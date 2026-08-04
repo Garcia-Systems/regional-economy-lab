@@ -53,3 +53,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added aggregate deterministic transportation capacity, travel efficiency, disruptions, and commuter, visitor, and freight accessibility.
 - Added corridor-closure, tourism-congestion, and road-improvement scenarios; dashboard metrics; report, trace, explain, comparison, tests, and Chapter 11 laboratory documentation.
 - Explicitly excludes individual roads and vehicles, GIS/routing, transit scheduling, inventories, logistics optimization, forecasting, and later economic systems.
+
+## Unreleased — Chapter 12
+
+- Added aggregate electric, water, wastewater, and broadband capacity, utilization, reliability, reserve, unmet-demand, and constrained-activity modeling.
+- Added deterministic `power-outage`, `broadband-upgrade`, and `maintenance-window` scenarios, utilities report/trace CLI modes, dashboard metrics, documentation, and tests.
+- Explicitly excludes engineering-grade grids, hydraulics, routing, protocols, cybersecurity, optimization, and individual customers.

@@ -37,3 +37,7 @@ Aggregate workforce participation, availability, six simplified skill groups, em
 ## Chapter 11 — complete
 
 Aggregate roadway capacity, commuter/visitor/freight accessibility, travel-efficiency and disruption factors, deterministic capacity rationing, cross-sector effects, dashboard indicators, reports, traces, and three scenarios are implemented. This is intentionally not GIS, traffic, vehicle, routing, transit-scheduling, fuel, inventory, or logistics software. Utilities, banking, supply chains, economic shocks, and later chapters remain out of scope.
+
+## Chapter 12 — complete
+
+Aggregate electric power, water, wastewater, and broadband capacity; deterministic reliability, maintenance, outage and upgrade scenarios; utilization, unmet demand, reporting, explain/trace content, tests, and the debugging laboratory are implemented. Engineering networks and post-Chapter-12 banking, supply-chain, and shock models remain out of scope.

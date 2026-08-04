@@ -319,3 +319,11 @@ transportation:
   freight_accessibility: "1.00"
   average_travel_efficiency: "1.00"
   disruption_factor: "1.00"
+
+utilities:
+  # Aggregate capacity units; no substations, pipes, customers, or network nodes.
+  maintenance_reserve: "0.05"
+  electric: {capacity: 1200, demand: 900, reliability: "0.99"}
+  water: {capacity: 1000, demand: 720, reliability: "0.99"}
+  wastewater: {capacity: 900, demand: 650, reliability: "0.99"}
+  broadband: {capacity: 1500, demand: 1050, reliability: "0.98"}

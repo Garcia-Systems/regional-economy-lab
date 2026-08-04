@@ -89,6 +89,17 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Utilities and Digital Infrastructure",
+            (
+                ("Electric utilization", _percent(m.utilities.service("electric").utilization)),
+                ("Water utilization", _percent(m.utilities.service("water").utilization)),
+                ("Wastewater utilization", _percent(m.utilities.service("wastewater").utilization)),
+                ("Broadband utilization", _percent(m.utilities.service("broadband").utilization)),
+                ("Infrastructure reliability", _percent(m.utilities.reliability)),
+                ("Unmet utility demand", f"{m.utilities.unmet_demand:,}"),
+            ),
+        ),
+        (
             "Visitors",
             (
                 ("Visitors", f"{m.visitor_count:,}"),
@@ -283,6 +294,11 @@ def explanation(result):
         "A disruption temporarily reduces effective activity rather than deleting population.",
         "Transportation affects more than commuting: visitor access changes tourism demand, freight access changes aggregate institutional "
         "and business purchasing, and capacity improvements can benefit several sectors at once. These are aggregate effects, not routing.",
+        "Utilities enable households, businesses, healthcare, education, tourism, and government to operate simultaneously. Reliability "
+        "matters because unavailable capacity constrains activity even when demand is unchanged.",
+        "A binding electric, water, wastewater, or broadband service reduces effective regional activity across sectors. "
+        "Spare capacity and "
+        "maintenance reserve can improve resilience, but this deterministic aggregate model is not an engineering simulation.",
     )
     return "\n".join(lines)
 
@@ -560,7 +576,45 @@ def comparison(first, second):
     for label, attr in (("Accessibility index", "accessibility_index"), ("Transport utilization", "utilization")):
         a, b = getattr(first.metrics.transportation, attr), getattr(second.metrics.transportation, attr)
         lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
+    for label, name in (("Electric utilization", "electric"), ("Broadband utilization", "broadband")):
+        a, b = first.metrics.utilities.service(name).utilization, second.metrics.utilities.service(name).utilization
+        lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
+    a, b = first.metrics.utility_constrained_activity, second.metrics.utility_constrained_activity
+    lines.append(f"{'Utility-constrained activity':<29}{format_money(a):>20}{format_money(b):>20}{format_money(b - a, signed=True):>20}")
     return "\n".join(lines)
+
+
+def utilities_report(result):
+    m = result.metrics
+    lines = [
+        f"UTILITIES REPORT — {result.scenario_label}",
+        "Aggregate deterministic educational systems; no engineering-grade network simulation.",
+        f"{'Service':<15}{'Capacity':>12}{'Available':>12}{'Demand':>12}{'Utilization':>14}{'Reliability':>14}{'Unmet':>10}",
+    ]
+    for service in m.utilities.services:
+        lines.append(
+            f"{service.name.title():<15}{service.capacity:>12,}{service.available_capacity:>12,}{service.demand:>12,}"
+            f"{_percent(service.utilization):>14}{_percent(service.reliability):>14}{service.unmet_demand:>10,}"
+        )
+    lines.extend(
+        (
+            f"Infrastructure reliability: {_percent(m.utilities.reliability)}",
+            f"Unmet utility demand: {m.utilities.unmet_demand:,}",
+            f"Constrained economic activity: {format_money(m.utility_constrained_activity)}",
+        )
+    )
+    return "\n".join(lines)
+
+
+def utilities_trace(result):
+    return "\n".join(
+        (
+            f"UTILITIES EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
+            "Infrastructure Capacity ↓ Utility Availability",
+            "↓ Businesses / Institutions / Households ↓ Economic Activity ↓ Regional Outcomes",
+            "This is a systems-thinking illustration rather than an engineering simulation.",
+        )
+    )
 
 
 def transportation_report(result):

@@ -8,6 +8,7 @@ from .housing import HousingCategory, HousingSystem
 from .region import Region
 from .transportation import TransportationResult, TransportationSystem
 from .university import StudentCohort, University
+from .utility import UtilityResult, UtilityServiceResult, UtilitySystem
 from .visitor import TourismBusiness, TourismSector, Visitor
 from .workforce import SkillCategory, SkillResult, WorkforceResult, WorkforceSystem
 
@@ -32,6 +33,9 @@ __all__ = [
     "TransportationResult",
     "TransportationSystem",
     "University",
+    "UtilityResult",
+    "UtilityServiceResult",
+    "UtilitySystem",
     "Visitor",
     "WorkforceResult",
     "WorkforceSystem",

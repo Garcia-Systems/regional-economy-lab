@@ -156,3 +156,15 @@ Chapter 10 adds aggregate labor-force participation, six simplified skill catego
 ## Chapter 11: transportation and accessibility
 
 Chapter 11 represents transportation as aggregate commuter, visitor, and freight accessibility constrained by fictional trip-equivalent regional capacity, travel efficiency, and temporary disruption. Try `regional-sim corridor-closure`, `regional-sim tourism-congestion`, `regional-sim road-improvement`, `regional-sim transportation-report baseline`, `regional-sim transportation-trace baseline`, and `regional-sim compare baseline corridor-closure`. No individual roads, traffic simulation, routing, scheduling, logistics optimization, or GIS is performed. See [Chapter 11](book/chapter-11.md).
+
+## Chapter 12 — Utilities and digital infrastructure
+
+Aggregate electric, water, wastewater, and broadband capacity now constrain effective regional activity through deterministic reliability, reserve, disruption, and upgrade assumptions. These are educational regional systems—not engineering-grade grids or networks.
+
+```bash
+regional-sim power-outage
+regional-sim broadband-upgrade
+regional-sim maintenance-window
+regional-sim utilities-report baseline
+regional-sim compare baseline power-outage
+```

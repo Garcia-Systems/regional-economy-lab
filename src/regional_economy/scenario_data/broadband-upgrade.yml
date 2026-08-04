@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: broadband-upgrade
+label: Broadband Upgrade
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -326,4 +326,4 @@ utilities:
   electric: {capacity: 1200, demand: 900, reliability: "0.99"}
   water: {capacity: 1000, demand: 720, reliability: "0.99"}
   wastewater: {capacity: 900, demand: 650, reliability: "0.99"}
-  broadband: {capacity: 1500, demand: 1050, reliability: "0.98"}
+  broadband: {capacity: 2200, demand: 1050, reliability: "0.995"}

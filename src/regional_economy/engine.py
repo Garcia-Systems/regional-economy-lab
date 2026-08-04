@@ -76,12 +76,14 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(DiscretionarySpendingCompleted(6, f"Discretionary spending was {format_money(discretionary)}"))
     scheduler.schedule(HouseholdShortfallRecorded(7, f"Unmet essential expenses were {format_money(unmet)}"))
     transportation = scenario.transportation.evaluate()
+    utilities = scenario.utilities.evaluate()
+    utility_factor = utilities.activity_factor
     accessible_visitors = int(Decimal(scenario.visitors.visitor_count) * transportation.visitor_accessibility)
-    visitor_spending = multiply(scenario.visitors.total_spending, transportation.visitor_accessibility)
+    visitor_spending = multiply(multiply(scenario.visitors.total_spending, transportation.visitor_accessibility), utility_factor)
     scheduler.schedule(VisitorsArrived(8, f"{accessible_visitors:,} accessible visitors spent {format_money(visitor_spending)}"))
     university = scenario.university
     student_spending = university.student_spending
-    local_procurement = multiply(university.local_procurement, transportation.freight_accessibility)
+    local_procurement = multiply(multiply(university.local_procurement, transportation.freight_accessibility), utility_factor)
     scheduler.schedule(UniversityFundingReceived(8, f"University received {format_money(university.external_funding)} externally"))
     scheduler.schedule(StudentSpendingCompleted(8, f"{university.enrollment:,} students spent {format_money(student_spending)} locally"))
     scheduler.schedule(UniversityProcurementCompleted(8, f"University purchased {format_money(local_procurement)} locally"))
@@ -90,10 +92,11 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents"))
     scheduler.schedule(HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households"))
     demand_sources = {
-        "households": multiply(local_household, transportation.commuter_accessibility),
+        "households": multiply(multiply(local_household, transportation.commuter_accessibility), utility_factor),
         "visitors": visitor_spending,
-        "institutions": local_procurement + multiply(healthcare.local_procurement, transportation.freight_accessibility),
-        "government": government.permits_and_fees,
+        "institutions": local_procurement
+        + multiply(multiply(healthcare.local_procurement, transportation.freight_accessibility), utility_factor),
+        "government": multiply(government.permits_and_fees, utility_factor),
     }
     demand_by_source = {
         source: _allocate_total(amount, scenario.business_demand_shares[source]) for source, amount in demand_sources.items()
@@ -107,13 +110,15 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     tourism_revenue = visitor_spending
     tourism_sales_tax = multiply(tourism_revenue, government.sales_tax_rate)
     lodging_tax = multiply(
-        multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], transportation.visitor_accessibility),
+        multiply(
+            multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], transportation.visitor_accessibility), utility_factor
+        ),
         government.lodging_tax_rate,
     )
     tourism_tax = tourism_sales_tax + lodging_tax
     tourism_wages = tourism_local = tourism_external = tourism_retained = 0
     for sector in TourismSector:
-        revenue = multiply(scenario.visitors.spending_by_category[sector], transportation.visitor_accessibility)
+        revenue = multiply(multiply(scenario.visitors.spending_by_category[sector], transportation.visitor_accessibility), utility_factor)
         operating = revenue - multiply(revenue, government.sales_tax_rate)
         parts = allocate(
             operating,
@@ -261,5 +266,20 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         scenario.housing.annual_construction_rate,
         workforce,
         transportation,
+        utilities,
+        sum(demand_sources.values())
+        and sum(
+            (
+                multiply(amount, Decimal(1) - utility_factor)
+                for amount in (
+                    local_household,
+                    scenario.visitors.total_spending,
+                    university.local_procurement,
+                    healthcare.local_procurement,
+                    government.permits_and_fees,
+                )
+            ),
+            0,
+        ),
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())

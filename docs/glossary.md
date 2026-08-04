@@ -107,3 +107,9 @@
 **Transportation capacity** — Fictional aggregate trip-equivalent ceiling shared by modeled commuter, visitor, and freight demand.
 
 **Transportation utilization** — Effective aggregate transportation demand divided by transportation capacity, capped at 100%.
+
+**Available utility capacity** — Aggregate installed capacity remaining after deterministic maintenance reserve and reliability assumptions.
+
+**Infrastructure reliability** — Scenario-configured share of aggregate service capacity available for the modeled month, not an engineering reliability statistic.
+
+**Unmet utility demand** — Demand above available aggregate electric, water, wastewater, or broadband capacity.
