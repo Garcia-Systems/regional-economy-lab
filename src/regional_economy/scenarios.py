@@ -6,8 +6,6 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 from regional_economy.entities import (
     AgeCohort,
     BankingSystem,
@@ -35,35 +33,10 @@ from regional_economy.entities import (
     WorkforceSystem,
 )
 from regional_economy.money import parse_money, parse_rate
+from regional_economy.scenario_schema import ScenarioNotFoundError, ScenarioValidationError, parse_scenario_yaml
 from regional_economy.shocks import Shock, parse_shock
 
 SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "scenarios"  # compatibility for custom authoring/tests
-ROOT_FIELDS = {
-    "name",
-    "label",
-    "region",
-    "government",
-    "household_allocation",
-    "household_sector_shares",
-    "business_demand_shares",
-    "households",
-    "household_types",
-    "affordability_thresholds",
-    "businesses",
-    "visitors",
-    "tourism",
-    "university",
-    "healthcare",
-    "housing",
-    "workforce",
-    "transportation",
-    "utilities",
-    "banking",
-    "supply_chain",
-    "shock",
-    "resilience",
-    "indicators",
-}
 
 
 @dataclass(frozen=True)
@@ -166,20 +139,17 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         else (directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml"))
     )
     if not path.is_file():
-        raise ValueError(f"scenario not found: {name}")
+        raise ScenarioNotFoundError(f"scenario not found: {name}")
     try:
-        # BaseLoader preserves every scalar as text, preventing YAML float construction.
-        raw = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
-    except yaml.YAMLError as error:
-        raise ValueError(f"Invalid YAML in {path}. Fix the syntax near: {error}") from error
-    if not isinstance(raw, dict):
-        raise ValueError("Invalid scenario root. Fix: define named YAML sections such as region, households, and businesses.")
-    unsupported = set(raw) - ROOT_FIELDS
-    if unsupported:
-        raise ValueError(f"Unsupported scenario field(s): {', '.join(sorted(unsupported))}. Fix: remove unsupported fields.")
+        config = parse_scenario_yaml(path.read_text(encoding="utf-8"), str(path), scenario_name)
+    except OSError as error:
+        raise ScenarioNotFoundError(f"scenario is unreadable: {path}: {error}") from error
+    raw = config.values
     configured_name = str(raw.get("name", scenario_name))
     if configured_name != scenario_name:
-        raise ValueError(f"Scenario name mismatch: requested {scenario_name!r}, file declares {configured_name!r}. Fix: make them match.")
+        raise ScenarioValidationError(
+            f"{path}: name mismatch: requested {scenario_name!r}, file declares {configured_name!r}. Fix: make them match."
+        )
 
     requested_indicators = raw.get("indicators", [])
     if requested_indicators:

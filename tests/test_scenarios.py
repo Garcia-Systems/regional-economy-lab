@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from regional_economy.scenario_catalog import SCENARIO_CATALOG
+from regional_economy.scenario_schema import ScenarioValidationError, parse_scenario_yaml
 from regional_economy.scenarios import load_scenario
 
 
@@ -61,7 +63,13 @@ def test_unknown_sector_lists_choices(tmp_path: Path) -> None:
 
 
 def test_packaged_scenarios_match_authoring_copies() -> None:
-    for name in ("baseline", "tourism-season", "income-growth", "cost-of-living-pressure"):
+    authoring = {path.stem: path for path in Path("scenarios").glob("*.yml")}
+    packaged = {entry.scenario_id: entry for entry in SCENARIO_CATALOG}
+    assert authoring.keys() == packaged.keys()
+    assert len(packaged) == len(set(packaged)) == 48
+    for name, path in authoring.items():
+        resource = Path("src/regional_economy/scenario_data", f"{name}.yml")
+        assert path.read_bytes() == resource.read_bytes()
         assert load_scenario(name) == load_scenario(name, Path("scenarios"))
 
 
@@ -72,3 +80,29 @@ def test_malformed_yaml_and_unsupported_fields_fail_clearly(tmp_path: Path) -> N
     _write_changed(tmp_path, "region:", "future_system: no\nregion:")
     with pytest.raises(ValueError, match="Unsupported scenario field"):
         load_scenario("invalid", tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "path"),
+    [
+        ("population: 1000", "population: 1000\n  typo: 1", "region.typo"),
+        ("count: 180", "count: 180\n    typo: 1", "household_types[0].typo"),
+        ("visitor_count: 10000", "visitor_count: 10000\n  typo: 1", "tourism.typo"),
+    ],
+)
+def test_nested_unknown_fields_report_full_path(tmp_path: Path, old: str, new: str, path: str) -> None:
+    _write_changed(tmp_path, old, new)
+    with pytest.raises(ScenarioValidationError, match=path.replace("[", r"\[").replace("]", r"\]")):
+        load_scenario("invalid", tmp_path)
+
+
+def test_schema_version_and_deterministic_error() -> None:
+    source = Path("scenarios/baseline.yml").read_text(encoding="utf-8")
+    bad = "schema_version: 99\n" + source
+    messages = []
+    for _ in range(2):
+        with pytest.raises(ScenarioValidationError) as error:
+            parse_scenario_yaml(bad, "bad.yml", "baseline")
+        messages.append(str(error.value))
+    assert messages[0] == messages[1]
+    assert "schema_version" in messages[0]

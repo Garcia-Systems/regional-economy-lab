@@ -1,5 +1,7 @@
 # Methodology
 
+Monthly scenario inputs follow the authoritative [scenario schema](scenario-schema.md).
+
 ## Deterministic simulation and events
 
 YAML is validated into regional dataclasses. The one-month engine calculates explicit flows and

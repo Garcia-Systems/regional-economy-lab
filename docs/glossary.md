@@ -1,5 +1,7 @@
 # Glossary
 
+**Scenario schema:** The strict composite input contract in the [scenario schema guide](scenario-schema.md).
+
 - **Accounting boundary:** participants and transactions included in canonical regional flow.
 - **Flow:** money moving during the simulated month.
 - **Stock / ending position:** money or capacity held at a point in time or month end.
