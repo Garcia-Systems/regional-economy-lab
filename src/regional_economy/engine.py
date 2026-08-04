@@ -234,5 +234,18 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         required,
         customer,
         business,
+        scenario.housing.total_units,
+        scenario.housing.occupied_units,
+        scenario.housing.vacant_units,
+        scenario.housing.demand,
+        scenario.housing.unmet_demand,
+        scenario.housing.occupancy_rate,
+        scenario.housing.vacancy_rate,
+        scenario.housing.workforce_units,
+        scenario.housing.available_workforce_units,
+        scenario.housing.workforce_housing_utilization,
+        scenario.housing.pressure_index,
+        scenario.housing.construction_units,
+        scenario.housing.annual_construction_rate,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())

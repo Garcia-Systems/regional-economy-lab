@@ -144,3 +144,7 @@ Chapter 7 adds a simplified fictional local-government budget, aggregate departm
 ## Chapter 8: local business
 
 Chapter 8 models a fictional downtown through aggregate retail, restaurant, personal-service, and entertainment sectors. Try `regional-sim business-report baseline`, `regional-sim downtown-expansion`, `regional-sim restaurant-boom`, or `regional-sim retail-decline`. Capacity constrains revenue, and simplified profitability is educational—not GAAP accounting. No real or individual businesses are represented.
+
+## Chapter 9: housing and affordability
+
+Chapter 9 treats owner, rental, and workforce housing as aggregate regional capacity. Occupancy cannot exceed supply; vacancy, unmet demand, workforce utilization, and a transparent pressure index expose growth pressures. Try `regional-sim housing-boom`, `regional-sim housing-shortage`, `regional-sim workforce-housing-expansion`, `regional-sim housing-report baseline`, or `regional-sim compare baseline housing-shortage`. Housing costs are educational assumptions and no real housing market is modeled. See [Chapter 9](book/chapter-09.md).

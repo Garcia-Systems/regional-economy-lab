@@ -268,3 +268,13 @@ healthcare:
       labor_force_participation: "0.12"
       dependent: true
       retirement_age: true
+
+housing:
+  # Aggregate fictional units and demand; housing costs remain educational assumptions.
+  categories:
+    - {name: owner_occupied, units: 900, occupied_units: 820}
+    - {name: rental, units: 700, occupied_units: 650}
+    - {name: workforce, units: 250, occupied_units: 210}
+  demand: {households: 860, students: 600, retirees: 140, seasonal_residents: 50, workforce: 220}
+  construction_units: 0
+  annual_construction_rate: "0.02"

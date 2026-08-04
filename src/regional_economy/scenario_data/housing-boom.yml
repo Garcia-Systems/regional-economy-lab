@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: housing-boom
+label: Housing Boom
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -276,5 +276,5 @@ housing:
     - {name: rental, units: 700, occupied_units: 650}
     - {name: workforce, units: 250, occupied_units: 210}
   demand: {households: 860, students: 600, retirees: 140, seasonal_residents: 50, workforce: 220}
-  construction_units: 0
-  annual_construction_rate: "0.02"
+  construction_units: 300
+  annual_construction_rate: "0.12"

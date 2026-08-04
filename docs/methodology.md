@@ -55,3 +55,7 @@ The engine collects transaction taxes after business revenue, combines them with
 ## Aggregate business method
 
 Four downtown sectors receive integer-cent demand allocations from households, visitors, university and healthcare procurement, and a government activity proxy. Each source's Decimal shares sum to one. Sector revenue is the lesser of demand and capacity. Sales taxes and operating allocations then reconcile revenue exactly. Stable enum and source order makes remainder allocation and output reproducible. These are simplified profitability indicators; no real businesses or detailed accounts are modeled.
+
+## Aggregate housing method
+
+The loader validates nonnegative aggregate category units and rejects configured occupied units above category capacity. Scenario construction units are added to existing supply. Demand sums household, student, retiree, and seasonal-resident components in declared order; workforce demand is reported separately because it is a subset lens. Realized occupancy is `min(demand, supply)`, vacancy is `supply - occupancy`, and unmet demand is `max(0, demand - supply)`. Decimal division produces occupancy, vacancy, utilization, and a documented 70/30 pressure index. No stochastic process or market-clearing price is used, so repeated runs and comparisons are reproducible.

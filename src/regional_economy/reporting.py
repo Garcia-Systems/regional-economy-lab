@@ -52,6 +52,19 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Housing Capacity",
+            (
+                ("Housing units", f"{m.housing_units:,}"),
+                ("Occupied units", f"{m.occupied_housing_units:,}"),
+                ("Vacant units", f"{m.vacant_housing_units:,}"),
+                ("Occupancy rate", _percent(m.housing_occupancy_rate)),
+                ("Vacancy rate", _percent(m.housing_vacancy_rate)),
+                ("Workforce housing utilization", _percent(m.workforce_housing_utilization)),
+                ("Housing pressure index", _percent(m.housing_pressure_index)),
+                ("Unmet housing demand", f"{m.unmet_housing_demand:,}"),
+            ),
+        ),
+        (
             "Visitors",
             (
                 ("Visitors", f"{m.visitor_count:,}"),
@@ -233,6 +246,11 @@ def explanation(result):
         "is fixed, so increasing one department's share reduces funds available to another.",
         "Department allocations change modeled capacity because each service has an assumed cost per capacity unit. Public investment "
         "therefore has opportunity costs; this educational abstraction does not recommend a policy choice.",
+        "Housing is a regional capacity constraint: demand cannot occupy more aggregate units than exist. High occupancy and low vacancy "
+        "raise the housing pressure indicator and can limit workforce housing availability.",
+        "Affordability differs from income because configured housing costs compete with other required expenses. "
+        "Construction adds capacity and can improve vacancy, but it does not instantly change incomes or erase cost burdens. "
+        "No real housing market is modeled.",
     )
     return "\n".join(lines)
 
@@ -414,6 +432,40 @@ def government_trace(result):
     )
 
 
+def housing_report(result):
+    m = result.metrics
+    return "\n".join(
+        (
+            f"HOUSING AND AFFORDABILITY REPORT — {result.scenario_label}",
+            "Aggregate fictional categories and educational cost assumptions; no real housing market or market-clearing price is modeled.",
+            f"Housing supply: {m.housing_units:,} units ({m.housing_construction_units:,} added by construction)",
+            f"Housing demand: {m.housing_demand:,} households or aggregate resident units",
+            f"Occupied units: {m.occupied_housing_units:,}",
+            f"Vacant units: {m.vacant_housing_units:,}",
+            f"Occupancy rate: {_percent(m.housing_occupancy_rate)}",
+            f"Vacancy rate: {_percent(m.housing_vacancy_rate)}",
+            f"Workforce housing: {m.workforce_housing_units:,} units; "
+            f"{m.available_workforce_housing_units:,} available; utilization {_percent(m.workforce_housing_utilization)}",
+            f"Unmet housing demand: {m.unmet_housing_demand:,} households unable to obtain preferred housing",
+            f"Aggregate housing pressure index: {_percent(m.housing_pressure_index)}",
+            f"Average configured housing-cost burden: {_percent(m.average_housing_cost_burden)}",
+            f"Cost-burdened households: {m.cost_burdened_households:,}",
+            "Construction changes regional capacity; it does not automatically change household income or instantly solve affordability.",
+        )
+    )
+
+
+def housing_trace(result):
+    return "\n".join(
+        (
+            f"HOUSING CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "Population Growth ↓ Housing Demand ↓ Occupancy ↓ Housing Pressure",
+            "↓ Household Disposable Income ↓ Business Spending ↓ Regional Outcomes",
+            "This is an educational systems trace, not a literal household pathway, price forecast, or accounting identity.",
+        )
+    )
+
+
 def comparison(first, second):
     rows = (
         ("Gross household income", "gross_household_income"),
@@ -453,4 +505,15 @@ def comparison(first, second):
             (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}") if attr == "healthcare_employment" else format_money
         )
         lines.append(f"{label:<29}{formatter(a):>20}{formatter(b):>20}{formatter(b - a, signed=True):>20}")
+    for label, attr in (
+        ("Housing units", "housing_units"),
+        ("Occupied housing units", "occupied_housing_units"),
+        ("Vacant housing units", "vacant_housing_units"),
+        ("Unmet housing demand", "unmet_housing_demand"),
+    ):
+        a, b = getattr(first.metrics, attr), getattr(second.metrics, attr)
+        lines.append(f"{label:<29}{a:>20,}{b:>20,}{b - a:>+20,}")
+    for label, attr in (("Housing occupancy rate", "housing_occupancy_rate"), ("Housing pressure index", "housing_pressure_index")):
+        a, b = getattr(first.metrics, attr), getattr(second.metrics, attr)
+        lines.append(f"{label:<29}{_percent(a):>20}{_percent(b):>20}{_percent(b - a):>20}")
     return "\n".join(lines)

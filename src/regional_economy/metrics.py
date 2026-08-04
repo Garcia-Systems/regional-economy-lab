@@ -98,6 +98,19 @@ class RegionalMetrics:
     required_expense_reconciliation: Reconciliation
     customer_reconciliation: Reconciliation
     business_reconciliation: Reconciliation
+    housing_units: int
+    occupied_housing_units: int
+    vacant_housing_units: int
+    housing_demand: int
+    unmet_housing_demand: int
+    housing_occupancy_rate: Decimal
+    housing_vacancy_rate: Decimal
+    workforce_housing_units: int
+    available_workforce_housing_units: int
+    workforce_housing_utilization: Decimal
+    housing_pressure_index: Decimal
+    housing_construction_units: int
+    annual_housing_construction_rate: Decimal
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
