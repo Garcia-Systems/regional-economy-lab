@@ -1,4 +1,4 @@
-# v0.1.0 Assumptions
+# v0.4.0 Assumptions
 
 Rules for fictional metadata and explicit numeric scalars are in the [scenario schema](scenario-schema.md).
 

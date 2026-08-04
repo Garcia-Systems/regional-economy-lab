@@ -1,32 +1,91 @@
 # Executable Regional Economy Laboratory
 
-The explicit command hierarchy and compatibility aliases are documented in the authoritative [CLI guide](docs/cli.md). Scenario discovery, scalar formats, compatibility, and validation are specified in the authoritative [scenario schema guide](docs/scenario-schema.md).
+[![CI](https://github.com/garcia-systems/regional-economy-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/garcia-systems/regional-economy-lab/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The deterministic monthly engine has twelve explicit, checked stages. See the
-[simulation architecture](docs/architecture.md) for their inputs, outputs, ownership,
-and reconciliation invariants.
+**Version:** v0.4.0
 
-A deterministic, inspectable textbook for learning how selected flows enter a region, move among
-represented participants, leave as classified external outflows, and remain as ending positions. The fictional Historic
-Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
+The Executable Regional Economy Laboratory is a deterministic, inspectable textbook for learning how selected money, capacity, and service flows enter a fictional region, move among represented participants, leave as classified external outflows, and remain as ending positions. The Historic Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
 
-> **Educational disclaimer:** Values are fictional assumptions—not official statistics, an
-> impact study, advice, policy analysis, or a forecast.
+> **Educational disclaimer:** all values are fictional assumptions. This project is not official statistics, an impact study, investment or policy advice, a forecast, or a calibrated model of Williamsburg or any other real locality.
 
-## Philosophy and educational value
+## Who this is for
 
-Read a claim, run it, pause it in a debugger, change one assumption, and test the result. The model
-prefers explicit subsystem reconciliations over false claims of completeness. Identical YAML always produces identical
-integer-cent results: there is no randomness, hidden calibration, or machine learning. Students can
-therefore distinguish inflows, transfers, outflows, unmet amounts, and ending positions. Regional
-sources and uses are currently **NOT YET CONSOLIDATED**.
+This repository is designed for:
 
-## Install and explore
+* students learning regional economics, accounting boundaries, and systems thinking;
+* instructors who want executable lessons rather than static examples;
+* software learners practicing deterministic tests, CLI use, and debugger inspection;
+* civic or business readers who want transparent scenario mechanics without claims of prediction.
 
-Python 3.13 is required. Run `python -m pip install -e '.[dev]'`, then:
+It is intentionally small enough to inspect. It favors explicit assumptions, reproducible output, and teachable constraints over realism or feature breadth.
+
+## Executable textbook philosophy
+
+Read a chapter, run its scenario, pause execution in a debugger, change one YAML assumption, and re-run the tests. Identical inputs produce identical integer-cent results: there is no randomness, hidden calibration, machine learning, optimization, or live-data dependency in v0.4.0.
+
+The project teaches boundaries as much as results. Reports distinguish external inflows, internal transfers, classified external outflows, unmet demand, interrupted demand, ending positions, and recorded business revenue. Subsystem reconciliations are explicit; regional sources and uses are still disclosed as **NOT YET CONSOLIDATED** rather than overstated.
+
+## Learning objectives
+
+By the end of Chapters 0–20, readers should be able to:
+
+* explain what is inside and outside a modeled regional boundary;
+* trace how household, visitor, university, healthcare, government, business, housing, workforce, transportation, utility, banking, supply-chain, shock, and resilience assumptions affect outputs;
+* interpret deterministic monthly and annual reports without treating them as forecasts;
+* identify adjacent-stage constraints in the canonical transaction pipeline;
+* use scenario YAML, CLI commands, dashboards, traces, and tests to verify claims;
+* debug educational dataclass and reconciliation examples safely.
+
+## Repository structure
+
+```text
+book/                         Narrative chapters 0–20
+scenarios/                    Readable authoring copies of bundled monthly scenarios
+docs/                         Methodology, assumptions, architecture, CLI, roadmap, glossary
+docs/diagrams/                Mermaid diagrams for flow, relationships, and event ordering
+src/regional_economy/         Package source, deterministic engine, CLI, reports, scenario data
+tests/                        Executable documentation and behavior contracts
+.vscode/launch.json           Chapter-named debug configurations
+scripts/verify_release.py     Release verification gate
+.github/workflows/ci.yml      CI quality and build workflow
+```
+
+Bundled scenarios are installed as package resources, so `regional-sim` works outside the checkout. The root `scenarios/` files are maintained as readable authoring copies and checked against packaged data.
+
+## Installation
+
+Python 3.13 is required.
 
 ```bash
+python -m pip install -e '.[dev]'
 regional-sim --help
+```
+
+For a non-development install from a built wheel, install the wheel and run the same `regional-sim` commands. Release steps are documented in [docs/releasing.md](docs/releasing.md).
+
+## Dev Container usage
+
+Open the repository in a Dev Container, select the container's Python 3.13 interpreter, and install the project:
+
+```bash
+python -m pip install -e '.[dev]'
+ruff check .
+pytest
+```
+
+Docker equivalents are:
+
+```bash
+docker compose run --rm lab regional-sim run baseline
+docker compose run --rm lab pytest
+```
+
+## Running the simulator
+
+The authoritative command hierarchy is the [CLI guide](docs/cli.md). Common workflows are:
+
+```bash
 regional-sim scenario list
 regional-sim run baseline
 regional-sim run tourism-season
@@ -39,226 +98,107 @@ regional-sim dashboard export baseline --format markdown
 regional-sim annual list
 regional-sim annual run normal-year
 regional-sim template list
+regional-sim template create diversified-region my-region.yml
 regional-sim scenario validate my-region.yml
 regional-sim custom run my-region.yml
 ```
 
-Docker equivalents are `docker compose run --rm lab regional-sim run baseline` and
-`docker compose run --rm lab pytest`.
+Compatibility aliases remain centralized, but explicit commands are authoritative.
 
-## Repository architecture
+## Available scenarios
 
-```text
-scenarios/*.yml → validation/domain entities → deterministic scheduler/engine
-                → metrics → dashboard, timeline, explanation, trace, comparison
-book/           narrative chapters       tests/          executable claims
-docs/           method and diagrams       .vscode/        learner debug launches
-```
-
-Money is integer cents, rates are `Decimal`, and multiplication uses `ROUND_HALF_UP`. Scenario
-shares expose assumptions rather than burying them in code.
-
-## Scenario and chapter maps
+v0.4.0 includes 48 bundled monthly scenarios plus annual profiles and user-region templates. Use `regional-sim scenario list` for the maintained inventory. Representative scenarios include:
 
 | Scenario | Purpose |
 |---|---|
 | `baseline` | Reference one-month flow and reconciliation |
-| `tourism-season` | Controlled comparison with larger fictional visitor demand |
-| `income-growth` | Income growth with required costs held constant |
-| `cost-of-living-pressure` | Required costs rising faster than income |
+| `tourism-season`, `peak-tourism`, `slow-season` | Visitor-demand and capacity comparisons |
+| `income-growth`, `cost-of-living-pressure` | Household budget experiments |
+| `aging-population`, `healthy-growth` | Healthcare and demographic assumptions |
+| `housing-shortage`, `workforce-shortage` | Capacity-pressure examples |
+| `corridor-closure`, `power-outage`, `payment-outage`, `supplier-delay` | Ordered constraint and disruption examples |
+| `severe-storm`, `tourism-collapse` | Deterministic shock and cascade examples |
+| `diversified-region`, `tourism-dependent` | Educational resilience comparisons |
 
-| Chapter | Laboratory |
-|---|---|
-| [0 — How to Use the Laboratory](book/chapter-00.md) | Executable lesson and safe debugging launch |
-| [1 — What Is a Regional Economy?](book/chapter-01.md) | Executable lesson and safe debugging launch |
-| [2 — Where Money Enters and Leaves](book/chapter-02.md) | Executable lesson and safe debugging launch |
-| [3 — Households, Income, and Spending](book/chapter-03.md) | Executable lesson and safe debugging launch |
-| [4 — Tourism and hospitality](book/chapter-04.md) | Executable lesson and safe debugging launch |
-| [5 — Higher Education](book/chapter-05.md) | Executable lesson and safe debugging launch |
-| [6 — Healthcare and an Aging Population](book/chapter-06.md) | Executable lesson and safe debugging launch |
-| [7 — Government and Public Services](book/chapter-07.md) | Executable lesson and safe debugging launch |
-| [8 — Retail, Restaurants, and Local Business](book/chapter-08.md) | Executable lesson and safe debugging launch |
-| [9 — Housing and Affordability](book/chapter-09.md) | Executable lesson and safe debugging launch |
-| [10 — Workforce and Skills](book/chapter-10.md) | Executable lesson and safe debugging launch |
-| [11 — Transportation and Accessibility](book/chapter-11.md) | Executable lesson and safe debugging launch |
-| [12 — Utilities and Digital Infrastructure](book/chapter-12.md) | Executable lesson and safe debugging launch |
-| [13 — Banking, Credit, and Payments](book/chapter-13.md) | Executable lesson and safe debugging launch |
-| [14 — Supply Chains and Regional Commerce](book/chapter-14.md) | Executable lesson and safe debugging launch |
-| [15 — Regional Data, Indicators, and Dashboards](book/chapter-15.md) | Executable lesson and safe debugging launch |
-| [16 — Business and Public Decision Making](book/chapter-16.md) | Executable lesson and safe debugging launch |
-| [17 — Economic Shocks and Cascading Effects](book/chapter-17.md) | Executable lesson and safe debugging launch |
-| [18 — Regional Resilience and Adaptation](book/chapter-18.md) | Executable lesson and safe debugging launch |
-| [19 — A Year in the Regional Economy](book/chapter-19.md) | Executable lesson and safe debugging launch |
-| [20 — Design Your Own Regional Economy](book/chapter-20.md) | Executable lesson and safe debugging launch |
+Scenario structure, validation, compatibility, and scalar formats are specified in [docs/scenario-schema.md](docs/scenario-schema.md).
 
-Chapter 15 dashboards are reporting views over completed simulation results. Indicator definitions,
-units, methods, assumptions, limitations, frequency, and leading/lagging classifications are explicit;
-trends and scenario differences are educational comparisons, never forecasts or policy advice.
+## Debugging laboratories
 
-Chapter 19 is a deterministic twelve-month seasonal simulation: twelve independently configured monthly runs. Flows are summed and selected indicators averaged; deposits, reserves, savings, and inventory do not carry forward. Comparisons are descriptive, not forecasts.
+Each chapter has a named VS Code launch configuration and a semantic breakpoint target documented in [docs/debugging.md](docs/debugging.md) and [docs/chapter-map.md](docs/chapter-map.md). The shared safe fault fixture lets learners compare faulty and corrected values without modifying production simulation logic.
 
-Diagrams: [money flow](docs/diagrams/money-flow.mmd), [entity relationships](docs/diagrams/entity-relationships.mmd), and [event ordering](docs/diagrams/event-ordering.mmd). GitHub and Mermaid-compatible editors render these files.
-
-## Debugging workflow
-
-Use the complete [debugging guide](docs/debugging.md) and select the chapter-named configuration in VS Code's **Run and Debug** view. Set semantic breakpoints at the operations named by the chapter map. Every chapter uses the shared opt-in fault fixture, so learners inspect faulty and corrected dataclasses without modifying production simulation logic. For terminal checks:
+For terminal verification:
 
 ```bash
 ruff check .
+ruff format --check .
 pytest
 pytest --cov=regional_economy --cov-report=term-missing
 ```
 
-Friendly validation errors identify the YAML location and a repair. Start by testing a copied
-scenario rather than editing the reference files.
+## Chapter organization
 
-## Documentation and roadmap
+| Chapter | Topic | Primary executable |
+|---:|---|---|
+| 0 | How to use the laboratory | `regional-sim run baseline` |
+| 1 | What is a regional economy? | `regional-sim run baseline` |
+| 2 | Where money enters and leaves | `regional-sim trace tourism-season` |
+| 3 | Households, income, and spending | `regional-sim report household cost-of-living-pressure` |
+| 4 | Tourism and hospitality | `regional-sim report tourism peak-tourism` |
+| 5 | Higher education | `regional-sim report university enrollment-growth` |
+| 6 | Healthcare and an aging population | `regional-sim report healthcare aging-population` |
+| 7 | Government and public services | `regional-sim report government balanced-services` |
+| 8 | Retail, restaurants, and local business | `regional-sim report business downtown-expansion` |
+| 9 | Housing and affordability | `regional-sim report housing housing-shortage` |
+| 10 | Workforce and skills | `regional-sim report workforce workforce-shortage` |
+| 11 | Transportation and accessibility | `regional-sim report transportation corridor-closure` |
+| 12 | Utilities and digital infrastructure | `regional-sim report utilities power-outage` |
+| 13 | Banking, credit, and payments | `regional-sim report banking payment-outage` |
+| 14 | Supply chains and regional commerce | `regional-sim report supply supplier-delay` |
+| 15 | Regional data, indicators, and dashboards | `regional-sim dashboard show baseline` |
+| 16 | Business and public decision making | `regional-sim decision business expansion` |
+| 17 | Economic shocks and cascading effects | `regional-sim report shock severe-storm` |
+| 18 | Regional resilience and adaptation | `regional-sim resilience report diversified-region` |
+| 19 | A year in the regional economy | `regional-sim annual run normal-year` |
+| 20 | Design your own regional economy | `regional-sim template create university-region my-region.yml` |
 
-Method details live in [methodology](docs/methodology.md), assumptions in
-[assumptions](docs/assumptions.md), the contract and inventory in [accounting boundary](docs/accounting-boundary.md),
-terminology in the [glossary](docs/glossary.md), and provenance
-rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
-not promised functionality. Chapter 20 completes the configurable-region capstone while retaining the deterministic educational boundaries.
+The maintained compliance table is [docs/chapter-map.md](docs/chapter-map.md). Narrative lessons live in `book/chapter-00.md` through `book/chapter-20.md`.
 
-## Design a fictional region
+## Current implementation scope
 
-Use `regional-sim template list`, then `regional-sim template create diversified-region my-region.yml`. Edit the
-complete YAML file, keeping its filename and `name` aligned; run `regional-sim scenario validate my-region.yml`
-before `regional-sim custom run my-region.yml`. A custom file uses the shared validation and monthly engine, supports custom run/comparison/dashboard commands and custom-file annual orchestration; specialized catalog commands retain their documented resource types. Templates are
-organized as readable `scenarios/` authoring copies and installed package resources. Preserve the YAML,
-repository version, exact command, and output to reproduce a result. See [Chapter 20](book/chapter-20.md).
+v0.4.0 implements a deterministic monthly engine with twelve explicit checked stages, canonical transaction attribution, subsystem reports, dashboards, annual twelve-month orchestration, decision-evidence summaries, resilience summaries, custom-region templates, Dev Container support, CI, tests, and release verification.
 
-## Garcia Systems executable textbook collection
+Important boundaries remain:
 
-The Regional Economy Laboratory complements three technically independent educational repositories.
-The **Inventory Synchronization Laboratory** explores inventory and operational consistency; the
-**Digital Banking Systems Laboratory** explores banking transactions and controls; and the
-**Marketplace Pricing and Solutions Engineering Lab** explores marketplace pricing and solution design.
-Each laboratory studies its domain deeply. This repository integrates analogous household, business,
-banking, supplier, infrastructure, and institutional concerns into a broader regional-systems perspective.
-The projects are conceptually complementary, but share no runtime dependency and can be learned, tested,
-and released independently.
+* scenarios are fictional educational inputs, not calibrated data;
+* annual profiles run twelve independently configured months and do not carry deposits, reserves, savings, or inventory forward;
+* available credit is capacity, deposits are stocks, and payments are aggregate availability indicators;
+* housing, workforce, transportation, utilities, banking, supply-chain, shock, and resilience features are aggregate teaching models, not operational systems;
+* regional sources and uses are not yet consolidated into one complete regional accounting statement.
+
+The accounting contract is [docs/accounting-boundary.md](docs/accounting-boundary.md). Method details are in [docs/methodology.md](docs/methodology.md), assumptions in [docs/assumptions.md](docs/assumptions.md), terminology in [docs/glossary.md](docs/glossary.md), and reporting vocabulary in [docs/indicators.md](docs/indicators.md).
+
+## Roadmap for future volumes
+
+Future volumes should build on the stable v0.4.0 textbook rather than continue polishing this release indefinitely. Planned directions are documented in [docs/roadmap.md](docs/roadmap.md) and focus on additional chapters, richer economic models, optional stochastic simulation, public-data adapters, optimization, machine learning, and additional regional case studies. No timeline is promised.
+
+## GitHub metadata recommendations
+
+Repository settings are not modified by this release-preparation change. Suggested public metadata:
+
+* **Description:** Deterministic executable textbook for learning regional economic flows and scenario accounting.
+* **Topics:** `economics`, `education`, `simulation`, `regional-economy`, `executable-textbook`, `python`, `cli`, `deterministic`, `systems-thinking`.
+* **Homepage:** the published GitHub release page or project documentation site, if one is created.
+* **License:** MIT, matching [LICENSE](LICENSE).
+* **Badges:** CI and MIT license badges are included above; add coverage only if the public coverage service is configured.
 
 ## Release and community
 
-Bundled scenarios are package resources, so installed commands work outside the checkout; root `scenarios/` copies are maintained for readable authoring and checked against packaged data. See [release instructions](docs/releasing.md), [changelog](CHANGELOG.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), and [code of conduct](CODE_OF_CONDUCT.md). Run the complete release gate with `python scripts/verify_release.py`.
-
-## Chapter 3 — households, income, and spending
-
-Chapter 3 adds six fictional household cohorts and deterministic monthly budgets. Try:
-
-```console
-regional-sim run income-growth
-regional-sim run cost-of-living-pressure
-regional-sim report household baseline
-regional-sim compare baseline income-growth
-regional-sim explain baseline
-regional-sim trace baseline
-```
-
-Household deductions are external outflows, not local-government revenue. Affordability indicators are educational assumptions, not an official Williamsburg assessment. See [Chapter 3](book/chapter-03.md).
-
-## Chapter 4 — tourism and hospitality
-
-Chapter 4 adds deterministic seasonal visitor demand, fixed capacity for lodging, restaurants, attractions, and visitor retail, aggregate tourism employment, leakage, and simplified tourism taxes. Try `regional-sim run peak-tourism`, `regional-sim run slow-season`, `regional-sim run festival-weekend`, `regional-sim compare baseline peak-tourism`, and `regional-sim report tourism peak-tourism`. All values are fictional educational assumptions—not official Williamsburg tourism statistics. See [Chapter 4](book/chapter-04.md).
-
-## Chapter 5: fictional higher education
-
-The model now includes a fictional aggregate university, students, payroll, procurement, research/external funding, and deterministic Fall/Spring/Summer patterns. Try:
-
-```console
-regional-sim run enrollment-growth
-regional-sim run research-expansion
-regional-sim run summer-session
-regional-sim report university baseline
-regional-sim trace baseline
-regional-sim compare baseline enrollment-growth
-```
-
-University values are educational assumptions, not operations of a real institution or forecasts. See [Chapter 5](book/chapter-05.md).
-
-## Chapter 6 — healthcare and an aging population
-A fictional aggregate healthcare network now connects mutually exclusive age cohorts to outpatient, inpatient, pharmacy, and preventive demand plus healthcare employment, payroll, and local/external procurement. It includes no patients, clinical simulation, claims, forecasts, or optimization. Try:
-
-```console
-regional-sim run aging-population
-regional-sim run healthy-growth
-regional-sim run retiree-inmigration
-regional-sim report healthcare baseline
-regional-sim trace aging-population
-regional-sim compare baseline aging-population
-```
-
-All providers and values are educational assumptions. Public aggregate demographic datasets are outside the current provenance-controlled fixture set. See [Chapter 6](book/chapter-06.md).
-
-## Chapter 7: Government and public services
-
-Chapter 7 adds a simplified fictional local-government budget, aggregate departments, capacity indicators, and policy-neutral fixed-budget comparisons. Try `regional-sim run public-safety-focus`, `regional-sim run parks-investment`, `regional-sim run balanced-services`, `regional-sim report government baseline`, and `regional-sim compare baseline public-safety-focus`. Department budgets are educational abstractions; no policy recommendation is implied. See [Chapter 7](book/chapter-07.md).
-
-## Chapter 8: local business
-
-Chapter 8 models a fictional downtown through aggregate retail, restaurant, personal-service, and entertainment sectors. Try `regional-sim report business baseline`, `regional-sim run downtown-expansion`, `regional-sim run restaurant-boom`, or `regional-sim run retail-decline`. Capacity constrains revenue, and simplified profitability is educational—not GAAP accounting. No real or individual businesses are represented.
-
-## Chapter 9: housing and affordability
-
-Chapter 9 treats owner, rental, and workforce housing as aggregate regional capacity. Occupancy cannot exceed supply; vacancy, unmet demand, workforce utilization, and a transparent pressure index expose growth pressures. Try `regional-sim run housing-boom`, `regional-sim run housing-shortage`, `regional-sim run workforce-housing-expansion`, `regional-sim report housing baseline`, or `regional-sim compare baseline housing-shortage`. Housing costs are educational assumptions and no real housing market is modeled. See [Chapter 9](book/chapter-09.md).
-
-## Chapter 10: workforce and skills
-
-Chapter 10 adds aggregate labor-force participation, six simplified skill categories, commuting, employer demand, training capacity, employment, unemployment, and unfilled-position indicators. Try `regional-sim run major-employer-arrival`, `regional-sim run workforce-shortage`, `regional-sim run workforce-training-expansion`, `regional-sim report workforce baseline`, and `regional-sim trace baseline`. Workforce groups are deterministic educational aggregates, not individual workers or forecasts. See [Chapter 10](book/chapter-10.md).
-
-## Chapter 11: transportation and accessibility
-
-Chapter 11 represents transportation as aggregate commuter, visitor, and freight accessibility constrained by fictional trip-equivalent regional capacity, travel efficiency, and temporary disruption. Try `regional-sim run corridor-closure`, `regional-sim run tourism-congestion`, `regional-sim run road-improvement`, `regional-sim report transportation baseline`, `regional-sim trace baseline`, and `regional-sim compare baseline corridor-closure`. No individual roads, traffic simulation, routing, scheduling, logistics optimization, or GIS is performed. See [Chapter 11](book/chapter-11.md).
-
-## Chapter 12 — Utilities and digital infrastructure
-
-Aggregate electric, water, wastewater, and broadband capacity now constrain effective regional activity through deterministic reliability, reserve, disruption, and upgrade assumptions. These are educational regional systems—not engineering-grade grids or networks.
+See [CHANGELOG.md](CHANGELOG.md), [docs/release-notes-v0.4.0.md](docs/release-notes-v0.4.0.md), [docs/releasing.md](docs/releasing.md), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Run the complete release gate with:
 
 ```bash
-regional-sim run power-outage
-regional-sim run broadband-upgrade
-regional-sim run maintenance-window
-regional-sim report utilities baseline
-regional-sim compare baseline power-outage
+python scripts/verify_release.py
 ```
 
-## Chapter 13 — Banking, credit, and payments
+## Garcia Systems executable textbook collection
 
-Chapter 13 adds fictional aggregate institutions, household and business deposits, lending and available-credit indicators, and deterministic payment availability. An outage lowers completed transactions and current business revenue while reporting interrupted demand rather than deleting it.
-
-```bash
-regional-sim run payment-outage
-regional-sim run credit-tightening
-regional-sim run expanded-business-lending
-regional-sim report banking baseline
-regional-sim compare baseline payment-outage
-```
-
-This is not a payment network: accounts, ACH, cards, authorization, routing, settlement, messages, ledgers, and fraud controls belong in the **Digital Banking Systems Laboratory**. The **Inventory Synchronization Laboratory**, **Digital Banking Systems Laboratory**, and **Marketplace Pricing and Solutions Engineering Lab** each teach a subsystem deeply; this laboratory demonstrates how those subsystems conceptually interact in a regional economy. No repository has a runtime dependency on another. See [Chapter 13](book/chapter-13.md).
-
-## Chapter 14 — Supply chains and regional commerce
-
-Chapter 14 adds aggregate local, regional, national, and international suppliers, deterministic availability and lead-time assumptions, procurement classification, and supply-constrained business activity. Try `regional-sim run supplier-delay`, `regional-sim run local-sourcing`, `regional-sim run external-disruption`, `regional-sim report supply baseline`, `regional-sim trace baseline`, and `regional-sim compare baseline supplier-delay`.
-
-This conceptual regional model intentionally omits inventory, warehouses, barcodes, replenishment, purchase orders, routing, and ERP. Those operational systems belong in the **Inventory Synchronization Laboratory**; the laboratories complement one another without runtime dependencies. See [Chapter 14](book/chapter-14.md).
-
-## Chapter 16 — business and public decision making
-
-Decision reports compare explicit one-month scenarios using existing dashboard indicators. Try `regional-sim decision business expansion`, `regional-sim decision public broadband`, `regional-sim decision compare expansion broadband`, `regional-sim decision explain broadband`, and `regional-sim decision trace broadband`. These educational tools summarize assumptions, benefits, tradeoffs, limitations, questions, and opportunity costs; they neither forecast nor recommend business actions or public policies. See [Chapter 16](book/chapter-16.md).
-
-## Chapter 17 — Economic shocks and cascading effects
-
-Chapter 17 applies reusable deterministic availability factors to the existing interconnected systems, then exposes affected sectors, recovery stage, before/after indicators, and an explicit cascade trace. Try `regional-sim run severe-storm`, `regional-sim run tourism-collapse`, `regional-sim run payment-disruption`, `regional-sim run supplier-disruption`, `regional-sim report shock severe-storm`, and `regional-sim compare baseline severe-storm`. These fictional educational scenarios are not forecasts or emergency-planning tools; recovery assumptions are simplified and deterministic. Detailed payments remain in the **Digital Banking Systems Laboratory**, and inventory synchronization remains in the **Inventory Synchronization Laboratory**; there are no cross-repository runtime dependencies. See [Chapter 17](book/chapter-17.md).
-
-## Chapter 18 — regional resilience and adaptation
-
-Chapter 18 adds fictional, deterministic diversity, redundancy, institutional, financial, supplier, workforce, and recovery-readiness indicators. Try `regional-sim run diversified-region`, `regional-sim run tourism-dependent`, `regional-sim run resilient-infrastructure`, `regional-sim run limited-redundancy`, `regional-sim resilience report baseline`, and `regional-sim compare baseline diversified-region`. These educational measures are not official resilience ratings; scenario assumptions drive outcomes. See [Chapter 18](book/chapter-18.md). Conceptual connections to the Digital Banking Systems, Inventory Synchronization, and Marketplace Pricing and Solutions Engineering laboratories do not imply shared operational models.
-
-## Canonical transaction pipeline
-
-Monthly reports expose configured customer demand through accessibility, utilities, shocks, payments, sector capacity, and supply availability to recorded business revenue. Constraints are adjacent-stage differences, not independently reconstructed estimates.
-
-<!-- reporting-vocabulary -->
-Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
-[`docs/indicators.md`](docs/indicators.md) and the canonical `regional_economy.indicators` registry.
+The Regional Economy Laboratory complements three technically independent educational repositories: the Inventory Synchronization Laboratory, the Digital Banking Systems Laboratory, and the Marketplace Pricing and Solutions Engineering Lab. The projects are conceptually complementary, share no runtime dependency, and can be learned, tested, and released independently.
