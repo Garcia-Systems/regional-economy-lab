@@ -18,9 +18,9 @@ def test_allocation_capacity_occupancy_taxes_and_reconciliation() -> None:
     assert result.metrics.lodging_occupancy == Decimal(1)
     assert result.metrics.unmet_visitor_demand > 0
     assert result.metrics.unmet_visitor_spending > 0
-    assert result.metrics.tourism_revenue == sum(visitor.spending_by_category.values())
+    assert result.metrics.tourism_revenue == result.metrics.recorded_visitor_business_revenue_cents
     expected_tax = multiply(result.metrics.tourism_revenue, scenario.region.local_government.sales_tax_rate) + multiply(
-        visitor.spending_by_category[TourismSector.LODGING], scenario.region.local_government.lodging_tax_rate
+        result.metrics.visitor_transactions.recorded_revenue.lodging_cents, scenario.region.local_government.lodging_tax_rate
     )
     assert result.metrics.tourism_tax_revenue == expected_tax
     assert result.metrics.reconciled

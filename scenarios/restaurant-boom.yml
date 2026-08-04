@@ -172,10 +172,10 @@ tourism:
     July: "1.50"
     October: "1.10"
   spending_allocation:
-    lodging: "0.40"
-    restaurants: "0.25"
-    attractions: "0.20"
-    visitor_retail: "0.15"
+    lodging: "0.30"
+    restaurants: "0.45"
+    attractions: "0.15"
+    visitor_retail: "0.10"
   businesses:
     - sector: lodging
       employees: 110

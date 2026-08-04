@@ -130,3 +130,9 @@ The capstone adds no economic equations. A file path or bundled name enters one 
 Customer demand follows one auditable order: **configured → transportation-accessible → utility-serviceable → shock-adjusted → payment-completed → sector-allocated → capacity-served → supply-serviceable/recorded business revenue**. This makes the embedded multiplication sequence explicit; factors are never reapplied by a report. Each constraint is the difference between adjacent stages, so reductions cannot overlap.
 
 The sources that actually enter this path are household local spending, visitor spending, university local procurement, healthcare local procurement, and government permits-and-fees demand. Student spending remains descriptive because the existing engine does not add it to downtown demand. Source amounts use largest-remainder sector allocation. Recorded sector revenue is attributed back proportionally, with ties in stable household, visitor, university, healthcare, government order.
+
+## Canonical attribution method
+
+The engine carries source labels through configured demand, transportation, utilities, shocks, payment completion, sector capacity, supply capacity, and recorded revenue. Deterministic largest-remainder allocation preserves integer cents. Recorded household, visitor, university, healthcare, and government source amounts sum exactly to recorded business revenue. Visitor categories are retained rather than reconstructed; institutional local procurement is demand, external procurement is an outflow, and descriptive budgets do not enter reconciled flows.
+
+The canonical sales-tax base is all recorded business revenue and tax is extracted during business allocation. The lodging-tax base is recorded visitor-derived lodging revenue and lodging tax is added to government collections.

@@ -148,8 +148,18 @@ treating descriptive institutional totals as transactions.
 
 ## Transaction-stage boundary
 
-Recorded business revenue is the single canonical customer-derived receipt inside the modeled region. It is tax-inclusive: sales tax is extracted from recorded sector revenue, not added on top, before operating revenue is allocated to wages, local purchases, external purchases, and retained operating funds. Lodging tax remains a separate tourism-category calculation pending the tourism accounting correction.
+Recorded business revenue is the single canonical customer-derived receipt inside the modeled region. It is tax-inclusive: sales tax is extracted from recorded sector revenue, not added on top, before operating revenue is allocated to wages, local purchases, external purchases, and retained operating funds. Lodging tax is added separately using the canonical recorded visitor-derived lodging base.
 
 Configured, constrained, interrupted, and unmet demand are counterfactual or unsuccessful transactions, not spending and not external leakage. Only an actual purchase outside the regional boundary is an outflow.
 
 For compatibility, `local_household_spending` and `household_derived_business_revenue` retain their historical meaning of configured household local spending. New source-attributed realized values use the `recorded_*_business_revenue_cents` properties. Likewise, `completed_transactions` means payment-completed demand, while `business_revenue` aliases canonical recorded revenue.
+
+## Canonical tourism, procurement, tax, and outflow rules
+
+Visitor demand enters the immutable transaction pipeline with every other demand source. Configured, payment-completed, and recorded-revenue cents retain a tourism-sector label. Tourism revenue is the visitor-attributed portion of recorded business revenue, never a percentage of sector totals. The explicit educational mapping is lodging to personal services, restaurants to restaurants, attractions to entertainment, and visitor retail to retail.
+
+Sales tax is **extracted** from the complete canonical recorded-business-revenue base. Lodging tax is **added** to government collections and uses only canonical recorded visitor-derived lodging revenue. Reports, reconciliation, and dashboards consume those same values.
+
+University and healthcare procurement budgets are descriptive totals. Local shares become internal business-demand transfers after constraints; external shares are classified external procurement after the same constraints. Permits and fees are government revenue, not procurement. No government procurement budget is configured, so government local and external procurement are zero.
+
+Classified external outflows contain only household nonlocal purchases, household deductions outside modeled local government, business external procurement, and institutional external procurement. Interrupted, inaccessible, utility-constrained, unmet, capacity-constrained, or supply-constrained demand, deposits, credit, reserves, and retained funds never enter that total.

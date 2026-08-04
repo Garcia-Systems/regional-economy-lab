@@ -52,6 +52,25 @@ def test_records_are_deterministic_and_frozen() -> None:
         first.transaction_pipeline.configured.name = "changed"  # type: ignore[misc]
 
 
+def test_visitor_attribution_and_source_revenue_reconcile() -> None:
+    metrics = run_scenario(load_scenario("peak-tourism")).metrics
+    visitor = metrics.visitor_transactions
+    assert visitor.configured.total_cents == metrics.transaction_pipeline.configured.by_source.visitor_cents
+    assert visitor.payment_completed.total_cents == metrics.transaction_pipeline.payment_completed.by_source.visitor_cents
+    assert visitor.recorded_revenue.total_cents == metrics.source_revenue.recorded.visitor_cents
+    assert visitor.configured.total_cents == visitor.payment_completed.total_cents + visitor.constrained_cents
+    assert visitor.payment_completed.total_cents == visitor.recorded_revenue.total_cents + visitor.unrecorded_cents
+    assert metrics.source_revenue.total_cents == metrics.recorded_business_revenue
+
+
+def test_external_outflows_exclude_unmet_and_interrupted_demand() -> None:
+    metrics = run_scenario(load_scenario("payment-outage")).metrics
+    assert metrics.external_outflows.total_cents == metrics.total_classified_external_outflows
+    assert metrics.interrupted_transactions > 0
+    assert metrics.interrupted_transactions not in metrics.external_outflows.__dict__.values()
+    assert metrics.sector_capacity_unserved_demand_cents not in metrics.external_outflows.__dict__.values()
+
+
 def test_proportional_source_rounding_has_stable_remainder_order() -> None:
     sources = DemandBySource(1, 1, 1)
     assert sources.scaled(Decimal("0.5")) == DemandBySource(1, 1, 0)

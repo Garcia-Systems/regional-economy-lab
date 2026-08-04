@@ -66,3 +66,7 @@ All scenario quantities are fictional; rates, shares, and fixed capacities are e
 ## Summary
 
 Tourism imports spending, distributes direct revenue to four sectors, supports wages and taxes, and leaks through external purchases. Seasonality changes demand predictably. Fixed capacity makes opportunity costs visible and demonstrates both tourism opportunity and tourism dependency without pretending unlimited output is possible.
+
+## Canonical tourism attribution and taxes
+
+Visitor categories survive configured demand, payment completion, and recorded business revenue. Tourism indicators read that attribution directly rather than applying percentages to total revenue. Lodging maps explicitly to aggregate personal services, attractions to entertainment, and restaurant and visitor-retail categories map directly. Configured tourism-business capacities remain descriptive occupancy assumptions; monetary realization occurs once in the canonical business capacity and supply stages. Sales tax is extracted from all recorded business revenue. Lodging tax is added using recorded visitor-derived lodging revenue only.

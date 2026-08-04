@@ -111,3 +111,7 @@ All cohort values are fictional or assumed and monthly. Cohorts simplify varied 
 ## 21. Summary
 
 Income is not identical to spending. Deductions and required costs constrain cash; savings, preferences, and household characteristics determine what reaches local businesses; unmet expenses reveal stress without pretending unpaid obligations are money.
+
+## Canonical source handoff
+
+The accounting carried into tourism keeps demand-source labels on every cent. Household purchases are not used later to infer visitor activity, and constrained or interrupted demand is not an external outflow.

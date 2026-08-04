@@ -116,3 +116,10 @@ User-authored YAML uses the same explicit fictional assumptions as bundled scena
 ## Canonical allocation assumption
 
 Canonical source and sector allocations use integer cents and deterministic largest-remainder allocation. Ties follow configured sector order and household, visitor, university, healthcare, government source order, preserving totals without fractional cents.
+
+## Phase 1 attribution assumptions
+
+- Visitor lodging maps to aggregate personal services, attractions to entertainment, and restaurant and retail categories map directly. This educational bridge is not an industry-code correspondence.
+- Sales tax applies to all recorded business revenue and is extracted. Lodging tax applies only to recorded visitor lodging and is added to government collections.
+- University and healthcare local and external procurement are reduced by freight access, utility service, and institutional shocks. No government procurement is configured; permits and fees remain revenue only.
+- Demand prevented by access, utilities, shocks, payments, capacity, or supply is unmet or interrupted activity, not money leaving the region.
