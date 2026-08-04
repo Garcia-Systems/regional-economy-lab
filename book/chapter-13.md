@@ -1,5 +1,7 @@
 # Chapter 13 — Banking, Credit, and Payments
 
+![Illustration of banking credit and payments](../images/chapters/13-banking-credit-and-payments.png)
+
 ## Learning objectives
 
 After this chapter you can explain how aggregate deposits support lending, distinguish credit from income, trace payments into business revenue, interpret an outage without deleting demand, and identify the boundary between a regional model and a payment-network implementation.

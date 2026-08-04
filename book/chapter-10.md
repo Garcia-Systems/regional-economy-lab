@@ -1,5 +1,7 @@
 # Chapter 10 — Workforce and Skills
 
+![Illustration of workforce development and skills](../images/chapters/10-workforce-and-skills.png)
+
 > Every value is a fictional aggregate educational assumption. The deterministic model is not a labor-market forecast.
 
 ## Learning objectives

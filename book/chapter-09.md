@@ -1,5 +1,7 @@
 # Chapter 9 — Housing and Affordability
 
+![Illustration of housing affordability](../images/chapters/09-housing-and-affordability.png)
+
 ## Learning objectives
 
 After this chapter, you can explain housing as a regional capacity constraint; calculate aggregate occupancy, vacancy, and unmet demand; distinguish income from affordability; interpret workforce-housing utilization and the housing pressure index; compare deterministic construction scenarios; and debug an impossible allocation.

@@ -1,5 +1,7 @@
 # Chapter 5 — Higher Education
 
+![Illustration of higher education in a regional economy](../images/chapters/05-higher-education.png)
+
 ## Introduction and learning objectives
 
 Tidewater Regional University is a **fictional** institution that demonstrates why a university is much more than a place of instruction. After this chapter, you can identify university inflows and leakages, explain payroll and procurement pathways, interpret seasonal student spending, and reconcile the model without double-counting.

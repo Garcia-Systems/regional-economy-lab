@@ -1,5 +1,7 @@
 # Chapter 18 — Regional Resilience and Adaptation
 
+![Illustration of regional resilience and adaptation](../images/chapters/18-regional-resilience-and-adaptation.png)
+
 ## Learning objectives
 
 After this laboratory you can distinguish resilience from growth; interpret economic diversity, redundancy, and adaptive capacity; compare deterministic recovery paths; and audit a composite without treating it as an official rating.

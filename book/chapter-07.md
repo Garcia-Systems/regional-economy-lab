@@ -1,5 +1,7 @@
 # Chapter 7 — Government and Public Services
 
+![Illustration of government and public services](../images/chapters/07-government-and-public-services.png)
+
 ## Learning objectives
 
 After this chapter, you can identify simplified local revenue sources, reconcile operating allocations to a fixed budget, relate department funding to modeled capacity, compare allocation tradeoffs without choosing a preferred policy, and debug a deterministic budget failure.

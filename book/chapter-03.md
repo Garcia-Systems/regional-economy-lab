@@ -1,5 +1,7 @@
 # Chapter 3 — Households, Income, and Spending
 
+![Illustration of households income and spending](../images/chapters/03-households-income-and-spending.png)
+
 ## 1. A Williamsburg-based story
 
 Imagine six fictional groups of households planning one month near Williamsburg. A renter, a homeowner, a retiree, and a remote worker may receive different incomes and face different required costs. This laboratory does **not** claim those invented households describe Williamsburg. It asks a narrower systems question: how does household cash become—or fail to become—regional activity?

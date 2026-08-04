@@ -1,5 +1,7 @@
 # Chapter 8 — Retail, Restaurants, and Local Business
 
+![Illustration of retail restaurants and local business](../images/chapters/08-retail-restaurants-and-local-business.png)
+
 ## Learning objectives
 
 After this chapter, you can allocate demand from several regional sources, distinguish demand from capacity-constrained revenue, interpret simplified operating surplus, compare deterministic openings and closures, and diagnose double-counted demand.

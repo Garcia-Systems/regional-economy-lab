@@ -41,6 +41,7 @@ By the end of Chapters 0–20, readers should be able to:
 
 ```text
 book/                         Narrative chapters 0–20
+images/chapters/              Illustrated systems diagrams for each chapter
 scenarios/                    Readable authoring copies of bundled monthly scenarios
 docs/                         Methodology, assumptions, architecture, CLI, roadmap, glossary
 docs/diagrams/                Mermaid diagrams for flow, relationships, and event ordering
@@ -161,7 +162,7 @@ pytest --cov=regional_economy --cov-report=term-missing
 | 19 | A year in the regional economy | `regional-sim annual run normal-year` |
 | 20 | Design your own regional economy | `regional-sim template create university-region my-region.yml` |
 
-The maintained compliance table is [docs/chapter-map.md](docs/chapter-map.md). Narrative lessons live in `book/chapter-00.md` through `book/chapter-20.md`.
+The maintained compliance table is [docs/chapter-map.md](docs/chapter-map.md). Narrative lessons live in `book/chapter-00.md` through `book/chapter-20.md`. Every chapter begins with an illustrated systems diagram stored in `images/chapters/`.
 
 ## Current implementation scope
 

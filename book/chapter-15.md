@@ -1,5 +1,7 @@
 # Chapter 15 — Regional Data, Indicators, and Dashboards
 
+![Illustration of regional data indicators and dashboards](../images/chapters/15-regional-data-indicators-and-dashboards.png)
+
 ## Learning objectives
 
 After this chapter, you can define an indicator before calculating it; distinguish units, reporting periods, and data-quality notes; create monthly and caller-supplied multi-snapshot views; distinguish leading and lagging educational indicators; compare months and scenarios; and export deterministic Markdown and CSV reports without treating a trend as a prediction.
