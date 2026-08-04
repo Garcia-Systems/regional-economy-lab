@@ -103,3 +103,7 @@ regional-sim trace baseline
 ```
 
 Household deductions are external outflows, not local-government revenue. Affordability indicators are educational assumptions, not an official Williamsburg assessment. See [Chapter 3](book/chapter-03.md).
+
+## Chapter 4 — tourism and hospitality
+
+Chapter 4 adds deterministic seasonal visitor demand, fixed capacity for lodging, restaurants, attractions, and visitor retail, aggregate tourism employment, leakage, and simplified tourism taxes. Try `regional-sim peak-tourism`, `regional-sim slow-season`, `regional-sim festival-weekend`, `regional-sim compare baseline peak-tourism`, and `regional-sim tourism-report peak-tourism`. All values are fictional educational assumptions—not official Williamsburg tourism statistics. See [Chapter 4](book/chapter-04.md).

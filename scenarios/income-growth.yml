@@ -122,10 +122,40 @@ businesses:
     employees: 180
     monthly_capacity: "3500000.00"
     operating_allocation: *operating
-visitors:
-  count: 10000 # fictional
-  average_stay: "2.0" # assumed
-  spending_by_category:
-    tourism_hospitality: "250000.00" # fictional
-    retail: "75000.00" # fictional
-    food_service: "100000.00" # fictional
+tourism:
+  # All values are fictional educational assumptions, not official statistics.
+  visitor_count: 10000
+  average_length_of_stay: "2.0"
+  average_daily_spending: "215.00"
+  month: April
+  seasonal_multipliers:
+    January: "0.45"
+    April: "0.90"
+    July: "1.50"
+    October: "1.10"
+  spending_allocation:
+    lodging: "0.40"
+    restaurants: "0.25"
+    attractions: "0.20"
+    visitor_retail: "0.15"
+  businesses:
+    - sector: lodging
+      employees: 110
+      monthly_capacity: "3500000.00"
+      operating_allocation: &tourism_operating
+        wages: "0.45"
+        local_purchases: "0.20"
+        external_purchases: "0.25"
+        retained: "0.10"
+    - sector: restaurants
+      employees: 90
+      monthly_capacity: "2500000.00"
+      operating_allocation: *tourism_operating
+    - sector: attractions
+      employees: 70
+      monthly_capacity: "2000000.00"
+      operating_allocation: *tourism_operating
+    - sector: visitor_retail
+      employees: 45
+      monthly_capacity: "1500000.00"
+      operating_allocation: *tourism_operating

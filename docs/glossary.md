@@ -39,3 +39,11 @@
 - **Housing-cost burden / severe housing-cost burden:** housing above 30% / 50% of gross income, using assumed strict thresholds.
 - **Unmet essential expenses:** configured required costs that available cash could not pay; not spending or debt.
 - **Household cohort:** a deterministic group of similar fictional households processed as one unit.
+
+## Chapter 4 terms
+- **Visitor nights:** seasonal visitors multiplied by average length of stay, deterministically rounded.
+- **Tourism capacity:** fixed maximum monthly sector revenue in this educational model.
+- **Lodging occupancy:** lodging spending demand divided by lodging revenue capacity, capped at 100%; a proxy, not a room survey.
+- **Unmet visitor demand:** visitor-equivalent demand not served when lodging demand exceeds capacity.
+- **Tourism leakage:** tourism operating purchases made outside the modeled region.
+- **Direct effect:** tourism business revenue received from visitor purchases; later wage/local-purchase circulation is secondary.

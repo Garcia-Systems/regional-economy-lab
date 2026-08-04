@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: festival-weekend
+label: Festival Weekend
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -124,10 +124,10 @@ businesses:
     operating_allocation: *operating
 tourism:
   # All values are fictional educational assumptions, not official statistics.
-  visitor_count: 10000
+  visitor_count: 16000
   average_length_of_stay: "2.0"
-  average_daily_spending: "215.00"
-  month: April
+  average_daily_spending: "240.00"
+  month: October
   seasonal_multipliers:
     January: "0.45"
     April: "0.90"

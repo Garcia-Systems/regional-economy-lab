@@ -8,7 +8,16 @@ from typing import Any
 
 import yaml
 
-from regional_economy.entities import Business, Government, Household, Region, Sector, Visitor
+from regional_economy.entities import (
+    Business,
+    Government,
+    Household,
+    Region,
+    Sector,
+    TourismBusiness,
+    TourismSector,
+    Visitor,
+)
 from regional_economy.money import parse_money, parse_rate
 
 SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "scenarios"  # compatibility for custom authoring/tests
@@ -24,6 +33,7 @@ ROOT_FIELDS = {
     "affordability_thresholds",
     "businesses",
     "visitors",
+    "tourism",
 }
 
 
@@ -223,17 +233,38 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     if len(businesses) != len(Sector) or {business.sector for business in businesses} != set(Sector):
         raise ValueError(f"Invalid business sectors at scenario.businesses. Fix: include exactly one entry for each: {', '.join(Sector)}.")
 
-    visitor_data = _require(raw, "visitors", "scenario")
-    visitor_count = _nonnegative(int(_require(visitor_data, "count", "visitors")), "visitor count")
-    average_stay = Decimal(str(_require(visitor_data, "average_stay", "visitors")))
+    visitor_data = _require(raw, "tourism", "scenario")
+    visitor_count = _nonnegative(int(_require(visitor_data, "visitor_count", "tourism")), "visitor count")
+    average_stay = Decimal(str(_require(visitor_data, "average_length_of_stay", "tourism")))
     if average_stay < 0:
         raise ValueError("average stay must be nonnegative")
-    category_spending = {
-        _parse_sector(key, "visitors.spending_by_category"): _nonnegative(parse_money(value), "visitor spending")
-        for key, value in _require(visitor_data, "spending_by_category", "visitors").items()
-    }
-    if set(category_spending) != set(Sector):
-        raise ValueError(f"Missing visitor spending sector. Fix: include exactly: {', '.join(Sector)}.")
+    spending_shares = _shares(_require(visitor_data, "spending_allocation", "tourism"), "tourism spending")
+    try:
+        tourism_shares = {TourismSector(key): value for key, value in spending_shares.items()}
+    except ValueError as error:
+        raise ValueError(f"Unknown tourism sector. Fix: use one of: {', '.join(TourismSector)}.") from error
+    if set(tourism_shares) != set(TourismSector):
+        raise ValueError(f"Missing tourism spending sector. Fix: include exactly: {', '.join(TourismSector)}.")
+    seasonal = {str(key): Decimal(str(value)) for key, value in _require(visitor_data, "seasonal_multipliers", "tourism").items()}
+    if any(value < 0 for value in seasonal.values()):
+        raise ValueError("seasonal multipliers must be nonnegative")
+    month_name = str(_require(visitor_data, "month", "tourism"))
+    if month_name not in seasonal:
+        raise ValueError("tourism.month must have a seasonal multiplier")
+    tourism_businesses = {}
+    for item in _require(visitor_data, "businesses", "tourism"):
+        try:
+            sector = TourismSector(str(_require(item, "sector", "tourism business")))
+        except ValueError as error:
+            raise ValueError(f"Unknown tourism sector. Fix: use one of: {', '.join(TourismSector)}.") from error
+        allocation = _shares(_require(item, "operating_allocation", "tourism business"), f"tourism business {sector}")
+        tourism_businesses[sector] = TourismBusiness(
+            sector, _nonnegative(parse_money(_require(item, "monthly_capacity", "tourism business")), "tourism capacity"),
+            _nonnegative(int(_require(item, "employees", "tourism business")), "tourism employees"),
+            allocation["wages"], allocation["local_purchases"], allocation["external_purchases"], allocation["retained"],
+        )
+    if set(tourism_businesses) != set(TourismSector):
+        raise ValueError(f"Missing tourism business. Fix: include exactly: {', '.join(TourismSector)}.")
 
     region = Region(
         name=str(_require(region_data, "name", "region")),
@@ -247,6 +278,10 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
         region=region,
-        visitors=Visitor(visitor_count, average_stay, category_spending),
+        visitors=Visitor(
+            visitor_count, average_stay,
+            _nonnegative(parse_money(_require(visitor_data, "average_daily_spending", "tourism")), "daily spending"),
+            month_name, seasonal, tourism_shares, tourism_businesses,
+        ),
         household_sector_shares=_sector_shares(_require(raw, "household_sector_shares", "scenario"), "household sector"),
     )

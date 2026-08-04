@@ -51,7 +51,21 @@ def dashboard(result: SimulationResult) -> str:
                 ),
             ),
         ),
-        ("Visitors", (("Spending entering region", format_money(m.visitor_spending)),)),
+        (
+            "Visitors",
+            (
+                ("Visitors", f"{m.visitor_count:,}"),
+                ("Visitor nights", f"{m.visitor_nights:,}"),
+                ("Total visitor spending", format_money(m.visitor_spending)),
+                ("Lodging occupancy", _percent(m.lodging_occupancy)),
+                ("Tourism revenue", format_money(m.tourism_revenue)),
+                ("Tourism wages", format_money(m.tourism_wages)),
+                ("Tourism tax revenue", format_money(m.tourism_tax_revenue)),
+                ("Unmet visitor demand", f"{m.unmet_visitor_demand:,}"),
+                ("Lost visitor spending", format_money(m.unmet_visitor_spending)),
+                ("Estimated tourism leakage", format_money(m.tourism_leakage)),
+            ),
+        ),
         (
             "Businesses",
             (
@@ -146,6 +160,11 @@ def explanation(result):
         "Savings remains held rather than spent; nonlocal purchases become leakage. "
         "Cohorts can differ because costs and preferences differ.",
         "Unmet essential expenses measure financial stress without inventing debt. Indicators are not an official affordability analysis.",
+        "Visitor spending is external income because visitors bring purchasing power from outside the region. "
+        "It becomes lodging, restaurant, attraction, and retail revenue.",
+        "Tourism wages can circulate through household spending; this one-month aggregate records wages "
+        "but does not spend them a second time.",
+        "Fixed capacity prevents impossible revenue: demand beyond capacity is shown as unmet visitors and lost spending.",
     )
     return "\n".join(lines)
 
@@ -163,6 +182,35 @@ def trace(result):
     )
 
 
+def tourism_report(result):
+    m = result.metrics
+    return "\n".join(
+        (
+            f"TOURISM REPORT — {result.scenario_label}",
+            "Fictional educational assumptions; not official Williamsburg tourism statistics.",
+            f"Visitors: {m.visitor_count:,}",
+            f"Visitor nights: {m.visitor_nights:,}",
+            f"Lodging occupancy: {_percent(m.lodging_occupancy)}",
+            f"Visitor spending: {format_money(m.visitor_spending)}",
+            f"Business revenue: {format_money(m.tourism_revenue)}",
+            f"Tax collections: {format_money(m.tourism_tax_revenue)}",
+            f"Capacity utilization: {_percent(m.tourism_capacity_utilization)}",
+            f"Unmet visitors: {m.unmet_visitor_demand:,}",
+            f"Lost economic activity: {format_money(m.unmet_visitor_spending)}",
+        )
+    )
+
+
+def tourism_trace(result):
+    return "\n".join(
+        (
+            f"TOURISM CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+            "Visitor ↓ Hotel ↓ Restaurant ↓ Employees ↓ Household spending ↓ Government taxes ↓ Leakage",
+            "This is a conceptual educational trace, not a literal tracked dollar or an accounting identity.",
+        )
+    )
+
+
 def comparison(first, second):
     rows = (
         ("Gross household income", "gross_household_income"),
@@ -173,6 +221,9 @@ def comparison(first, second):
         ("Unmet essential expenses", "unmet_essential_expenses"),
         ("Household business revenue", "household_derived_business_revenue"),
         ("Visitor spending", "visitor_spending"),
+        ("Unmet visitor spending", "unmet_visitor_spending"),
+        ("Tourism wages", "tourism_wages"),
+        ("Tourism tax revenue", "tourism_tax_revenue"),
         ("Business revenue", "business_revenue"),
         ("Taxes collected", "taxes_collected"),
         ("Economic leakage", "economic_leakage"),
