@@ -1,0 +1,7 @@
+services:
+  lab:
+    build: .
+    working_dir: /workspace/regional-economy-lab
+    volumes:
+      - .:/workspace/regional-economy-lab
+
