@@ -17,22 +17,22 @@ def test_dashboard_sections_and_money_alignment(baseline) -> None:
     report = dashboard(baseline)
     for section in ("Region", "Households", "Visitors", "Businesses", "Government", "Economic Flows"):
         assert f"[{section}]" in report
-    assert "$3,400,000.00" in report
+    assert "$6,242,000.00" in report
     money_lines = [line for line in report.splitlines() if "$" in line]
     assert len({len(line) for line in money_lines}) == 1
-    assert reconciliation_report(baseline).count("RECONCILIATION — PASS") == 3
+    assert reconciliation_report(baseline).count("RECONCILIATION — PASS") == 4
 
 
 def test_timeline_is_ordered_vertical_and_informative(baseline) -> None:
     report = timeline(baseline)
-    assert report.index("Month Started") < report.index("External Income Received") < report.index("Month Completed")
+    assert report.index("Month Started") < report.index("Household Gross Income Received") < report.index("Month Completed")
     assert report.count("↓") == len(baseline.timeline) - 1
     assert "Households received" in report
 
 
 def test_explain_and_trace_modes_are_educational(baseline, capsys) -> None:
-    assert "Why:" in explanation(baseline)
-    assert "not simulated" in trace(baseline)
+    assert "Gross income" in explanation(baseline)
+    assert "not spent again" in trace(baseline)
     assert main(["explain", "baseline"]) == 0
     assert "EXPLAIN MODE" in capsys.readouterr().out
     assert main(["trace", "baseline"]) == 0

@@ -7,6 +7,7 @@ def test_documentation_references_and_mermaid_fences() -> None:
         "book/chapter-00.md",
         "book/chapter-01.md",
         "book/chapter-02.md",
+        "book/chapter-03.md",
         "docs/methodology.md",
         "docs/diagrams/money-flow.mmd",
         ".vscode/launch.json",

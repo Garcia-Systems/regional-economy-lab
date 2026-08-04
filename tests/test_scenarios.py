@@ -13,10 +13,12 @@ def test_scenario_has_three_supported_sectors() -> None:
 def test_invalid_allocation_fails_clearly(tmp_path: Path) -> None:
     source = Path("scenarios/baseline.yml").read_text(encoding="utf-8")
     (tmp_path / "invalid.yml").write_text(
-        source.replace("name: baseline", "name: invalid").replace('retained: "0.15"', 'retained: "0.14"', 1),
+        source.replace("name: baseline", "name: invalid").replace(
+            'discretionary_spending_rate: "0.85"', 'discretionary_spending_rate: "1.00"', 1
+        ),
         encoding="utf-8",
     )
-    with pytest.raises(ValueError, match="household allocation shares must sum to 1"):
+    with pytest.raises(ValueError, match="target_savings_rate plus discretionary_spending_rate"):
         load_scenario("invalid", tmp_path)
 
 
@@ -45,8 +47,8 @@ def test_invalid_tax_rate_explains_location_and_fix(tmp_path: Path) -> None:
 def test_missing_households_explains_fix(tmp_path: Path) -> None:
     _write_changed(
         tmp_path,
-        "households: # fictional representative household groups, denominated as aggregate dollars",
-        "households: []\noriginal_households:",
+        "household_types:",
+        "household_types: []\noriginal_households:",
     )
     with pytest.raises(ValueError, match=r"(Missing household configuration|Unsupported scenario field).*Fix"):
         load_scenario("invalid", tmp_path)
@@ -59,7 +61,7 @@ def test_unknown_sector_lists_choices(tmp_path: Path) -> None:
 
 
 def test_packaged_scenarios_match_authoring_copies() -> None:
-    for name in ("baseline", "tourism-season"):
+    for name in ("baseline", "tourism-season", "income-growth", "cost-of-living-pressure"):
         assert load_scenario(name) == load_scenario(name, Path("scenarios"))
 
 

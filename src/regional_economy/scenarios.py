@@ -20,6 +20,8 @@ ROOT_FIELDS = {
     "household_allocation",
     "household_sector_shares",
     "households",
+    "household_types",
+    "affordability_thresholds",
     "businesses",
     "visitors",
 }
@@ -119,20 +121,80 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         reserve_balance=_nonnegative(parse_money(government_data.get("starting_reserve", 0)), "starting reserve"),
     )
 
-    household_shares = _shares(_require(raw, "household_allocation", "scenario"), "household")
-    household_items = _require(raw, "households", "scenario")
+    household_items = raw.get("household_types", raw.get("households"))
     if not isinstance(household_items, list) or not household_items:
-        raise ValueError("Missing household configuration at scenario.households. Fix: add at least one household entry.")
+        raise ValueError("Missing household configuration at scenario.household_types. Fix: add at least one household cohort.")
+    thresholds = raw.get("affordability_thresholds", {})
+    burden_threshold = _rate(thresholds.get("cost_burden", "0.30"), "affordability_thresholds.cost_burden")
+    severe_threshold = _rate(thresholds.get("severe_cost_burden", "0.50"), "affordability_thresholds.severe_cost_burden")
+    if severe_threshold <= burden_threshold:
+        raise ValueError("Invalid affordability thresholds. Fix: severe_cost_burden must exceed cost_burden.")
     households = []
     for item in household_items:
+        context = f"household_types.{item.get('id', '?')}"
+        classification = str(item.get("classification", "fictional"))
+        if classification not in {"fictional", "assumed", "transformed", "public-data placeholder"}:
+            raise ValueError(
+                f"Unsupported classification at {context}.classification. "
+                "Fix: use fictional, assumed, transformed, or public-data placeholder."
+            )
+        # The old aggregate schema remains readable for authored v0.1 files.
+        legacy = "monthly_income" in item
+        old_shares = _shares(_require(raw, "household_allocation", "scenario"), "household") if legacy else None
+        savings_rate = (
+            old_shares["retained"]
+            if old_shares
+            else _rate(_require(item, "target_savings_rate", context), f"{context}.target_savings_rate")
+        )
+        discretionary_rate = (
+            old_shares["local_spending"] + old_shares["nonlocal_spending"]
+            if old_shares
+            else _rate(_require(item, "discretionary_spending_rate", context), f"{context}.discretionary_spending_rate")
+        )
+        if savings_rate + discretionary_rate > 1:
+            raise ValueError(
+                f"Invalid allocation at {context}. Fix: target_savings_rate plus discretionary_spending_rate must not exceed 1."
+            )
         households.append(
             Household(
                 household_id=str(_require(item, "id", "household")),
-                monthly_income=_nonnegative(parse_money(_require(item, "monthly_income", "household")), "household income"),
-                housing_cost=_nonnegative(parse_money(_require(item, "housing_cost", "household")), "housing cost"),
-                local_spending_share=household_shares["local_spending"],
-                other_spending_share=household_shares["nonlocal_spending"],
-                retained_share=household_shares["retained"],
+                label=str(item.get("label", item["id"])),
+                classification=classification,
+                count=_nonnegative(int(item.get("count", "1")), f"{context}.count"),
+                workers_per_household=Decimal(str(item.get("workers_per_household", "0"))),
+                gross_monthly_income=_nonnegative(
+                    parse_money(item.get("monthly_income") if legacy else _require(item, "gross_monthly_income", context)),
+                    f"{context}.gross_monthly_income",
+                ),
+                income_deduction_rate=Decimal(0)
+                if legacy
+                else _rate(_require(item, "income_deduction_rate", context), f"{context}.income_deduction_rate"),
+                monthly_housing_cost=_nonnegative(
+                    parse_money(item.get("housing_cost") if legacy else _require(item, "monthly_housing_cost", context)),
+                    f"{context}.monthly_housing_cost",
+                ),
+                essential_nonhousing_cost=0
+                if legacy
+                else _nonnegative(
+                    parse_money(_require(item, "essential_nonhousing_cost", context)), f"{context}.essential_nonhousing_cost"
+                ),
+                essential_local_spending_share=Decimal(0)
+                if legacy
+                else _rate(_require(item, "essential_local_spending_share", context), f"{context}.essential_local_spending_share"),
+                discretionary_spending_rate=discretionary_rate,
+                discretionary_local_spending_share=(
+                    old_shares["local_spending"] / discretionary_rate
+                    if legacy
+                    else _rate(
+                        _require(item, "discretionary_local_spending_share", context), f"{context}.discretionary_local_spending_share"
+                    )
+                ),
+                target_savings_rate=savings_rate,
+                external_income_share=Decimal(1)
+                if legacy
+                else _rate(_require(item, "external_income_share", context), f"{context}.external_income_share"),
+                burden_threshold=burden_threshold,
+                severe_burden_threshold=severe_threshold,
             )
         )
     if len({household.household_id for household in households}) != len(households):

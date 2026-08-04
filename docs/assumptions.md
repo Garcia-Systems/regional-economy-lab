@@ -23,3 +23,6 @@ All figures are fictional educational values rather than observations about Will
 - One run represents one integer-numbered month. There is no annualization, feedback, wage
   recirculation, randomness, inflation, or time-dependent state beyond the month counter.
 
+
+## Chapter 3 household assumptions
+All household values are fictional or assumed monthly cohort values. Required costs are paid deductions, then housing, then essential nonhousing expenses. Savings and discretionary spending use only remaining cash; no debt is created. Deductions leave the household sector and are not local revenue. Housing burden uses strict >30% and severe >50% defaults. The model excludes borrowing, credit, eviction, homelessness, migration, and dynamic housing supply; indicators are educational, not official Williamsburg analysis.

@@ -13,7 +13,7 @@ class MonthStarted(Event):
 
 
 @dataclass(frozen=True)
-class ExternalIncomeReceived(Event):
+class HouseholdGrossIncomeReceived(Event):
     pass
 
 
@@ -23,7 +23,27 @@ class VisitorsArrived(Event):
 
 
 @dataclass(frozen=True)
-class HouseholdSpendingCompleted(Event):
+class HouseholdDeductionsApplied(Event):
+    pass
+
+
+class HousingCostsPaid(Event):
+    pass
+
+
+class EssentialSpendingCompleted(Event):
+    pass
+
+
+class HouseholdSavingsAllocated(Event):
+    pass
+
+
+class DiscretionarySpendingCompleted(Event):
+    pass
+
+
+class HouseholdShortfallRecorded(Event):
     pass
 
 

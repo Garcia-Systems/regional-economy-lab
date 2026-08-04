@@ -1,4 +1,4 @@
-"""Run the project-owned v0.1.0 release gate."""
+"""Run the project-owned v0.2.0 development release gate."""
 
 from __future__ import annotations
 
@@ -16,6 +16,9 @@ REQUIRED = (
     "docs/releasing.md",
     "scenarios/baseline.yml",
     "scenarios/tourism-season.yml",
+    "scenarios/income-growth.yml",
+    "scenarios/cost-of-living-pressure.yml",
+    "book/chapter-03.md",
 )
 COMMANDS = (
     ("ruff", "check", "."),
@@ -25,6 +28,10 @@ COMMANDS = (
     (sys.executable, "-m", "regional_economy.cli", "baseline"),
     (sys.executable, "-m", "regional_economy.cli", "tourism-season"),
     (sys.executable, "-m", "regional_economy.cli", "compare", "baseline", "tourism-season"),
+    (sys.executable, "-m", "regional_economy.cli", "income-growth"),
+    (sys.executable, "-m", "regional_economy.cli", "cost-of-living-pressure"),
+    (sys.executable, "-m", "regional_economy.cli", "households", "baseline"),
+    (sys.executable, "-m", "regional_economy.cli", "compare", "baseline", "income-growth"),
 )
 
 
@@ -45,9 +52,9 @@ def main() -> int:
     for command in COMMANDS[3:]:
         if run(command) != outputs[COMMANDS.index(command)]:
             raise SystemExit(f"FAILED: nondeterministic output: {' '.join(command)}")
-    wheel = next((ROOT / "dist").glob("regional_economy_lab-0.1.0-*.whl"), None)
+    wheel = next((ROOT / "dist").glob("regional_economy_lab-0.2.0.dev0-*.whl"), None)
     if wheel is None:
-        raise SystemExit("FAILED: expected v0.1.0 wheel was not built")
+        raise SystemExit("FAILED: expected v0.2.0.dev0 wheel was not built")
     print("\nRELEASE VERIFICATION PASS")
     return 0
 

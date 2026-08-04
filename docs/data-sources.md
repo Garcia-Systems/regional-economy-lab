@@ -14,3 +14,6 @@ public-data placeholders; they do not make the numeric values Williamsburg stati
 - **Limitations:** uncertainty, suppression, coverage gaps, and comparability
 - **License or usage notes:** license, attribution, redistribution, and access date
 
+
+## Chapter 3
+No real income, rent, demographic, or household-tax observations were added. Scenario comments classify household fields as **fictional** and policy/allocation thresholds as **assumed**. “Historic Triangle” remains only a public-data geographic-name placeholder.

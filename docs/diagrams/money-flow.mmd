@@ -1,8 +1,11 @@
 flowchart LR
-  Outside[External household income] --> Households
+  Outside[Gross household income] --> Households
+  Households -->|payroll/income deductions| Leakage
+  Households -->|housing and essentials first| RequiredCosts
+  Households -->|target savings| HouseholdSavings
   Visitors[Visitor spending] --> Businesses
   Households -->|local purchases| Businesses
-  Households -->|housing and nonlocal purchases| Leakage
+  Households -->|nonlocal purchases| Leakage
   Households -->|unspent| HouseholdRetention[Household retained funds]
   Businesses -->|wages| Employees
   Businesses -->|local inputs| LocalSuppliers

@@ -14,11 +14,19 @@ def test_baseline_flows_and_reconciliation() -> None:
         scenario.region.local_government.lodging_tax_rate,
     )
     assert metrics.taxes_collected == expected_sales + expected_lodging
-    assert metrics.economic_leakage == (metrics.housing_costs + metrics.household_nonlocal_spending + metrics.external_business_purchases)
+    assert metrics.economic_leakage == (
+        metrics.household_deductions + metrics.household_nonlocal_spending + metrics.external_business_purchases
+    )
     assert metrics.reconciled
     assert all(check.difference == 0 for check in metrics.reconciliations)
     assert all(
-        allocation.housing + allocation.local_spending + allocation.other_spending + allocation.retained <= household.monthly_income
+        allocation.deductions
+        + allocation.housing
+        + allocation.local_spending
+        + allocation.other_spending
+        + allocation.savings
+        + allocation.retained
+        <= household.monthly_income
         for household in scenario.region.households
         for allocation in [household.allocate()]
     )

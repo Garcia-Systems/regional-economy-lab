@@ -26,3 +26,16 @@
 - **Retained household funds:** household funds not spent during the month.
 - **Retained business funds:** after-tax business revenue not allocated to wages or purchases.
 - **Event timeline:** deterministic, integer-time ordering of the month's modeled steps.
+
+## Chapter 3 terms
+- **Gross income:** household cash before modeled deductions.
+- **After-tax income:** gross income less simplified household deductions.
+- **Household deductions:** assumed combined payroll/income deductions treated as an external outflow.
+- **Required expenses:** configured housing and essential nonhousing costs.
+- **Disposable income:** after-tax cash remaining after actual required payments.
+- **Discretionary spending:** optional local and nonlocal purchases made from remaining cash.
+- **Household savings:** explicit post-required allocation held rather than spent.
+- **Retained funds:** residual cash neither spent nor saved under a named target.
+- **Housing-cost burden / severe housing-cost burden:** housing above 30% / 50% of gross income, using assumed strict thresholds.
+- **Unmet essential expenses:** configured required costs that available cash could not pay; not spending or debt.
+- **Household cohort:** a deterministic group of similar fictional households processed as one unit.
