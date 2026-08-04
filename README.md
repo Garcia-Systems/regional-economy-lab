@@ -1,5 +1,9 @@
 # Executable Regional Economy Laboratory
 
+The deterministic monthly engine has twelve explicit, checked stages. See the
+[simulation architecture](docs/architecture.md) for their inputs, outputs, ownership,
+and reconciliation invariants.
+
 A deterministic, inspectable textbook for learning how selected flows enter a region, move among
 represented participants, leave as classified external outflows, and remain as ending positions. The fictional Historic
 Triangle setting makes abstract accounting concrete without claiming to describe the real economy.

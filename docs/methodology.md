@@ -5,6 +5,9 @@
 YAML is validated into regional dataclasses. The one-month engine calculates explicit flows and
 schedules typed events at integer times. A heap orders by `(time, insertion sequence)`, so events at
 the same time remain in insertion order. A fresh scenario produces byte-for-byte stable reports.
+The twelve explicit monthly boundaries, their contracts, ownership, and invariants are
+documented in [the simulation architecture](architecture.md). A completed result exposes the
+canonical stage trace, and the engine rejects skipped, reordered, or duplicate stages.
 
 ## Flow and reconciliation
 
