@@ -61,7 +61,7 @@ def test_documented_cli_examples_parse() -> None:
     ):
         assert parser.parse_args(argv).handler
     readme = Path("README.md").read_text()
-    assert all("regional-sim " + " ".join(argv) in readme for argv in (["baseline"], ["explain", "baseline"], ["trace", "baseline"]))
+    assert all("regional-sim " + " ".join(argv) in readme for argv in (["run", "baseline"], ["explain", "baseline"], ["trace", "baseline"]))
 
 
 def test_cli_help(capsys) -> None:

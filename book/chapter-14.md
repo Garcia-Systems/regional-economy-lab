@@ -52,24 +52,17 @@ This trace is conceptual; it does not track a shipment, item, or literal dollar.
 
 ## Baseline walkthrough
 
-Run `regional-sim supply-report baseline`. The mix is 25% local, 25% regional, 35% national, and 15% international. Every category is 100% available, lead time is normal, reliability and capacity are 100%, and supply-constrained activity is zero. Confirm local plus external business procurement equals total procurement.
+Run `regional-sim report supply baseline`. The mix is 25% local, 25% regional, 35% national, and 15% international. Every category is 100% available, lead time is normal, reliability and capacity are 100%, and supply-constrained activity is zero. Confirm local plus external business procurement equals total procurement.
 
 ## Supplier-delay walkthrough
 
-Run `regional-sim supplier-delay`, then `regional-sim compare baseline supplier-delay`. Category availability ranges from 98% to 92%, producing 95% weighted reliability. The moderate-delay assumption binds at 90%, reducing effective capacity, sales, payroll, procurement, and taxes even though configured customer demand is unchanged.
+Run `regional-sim run supplier-delay`, then `regional-sim compare baseline supplier-delay`. Category availability ranges from 98% to 92%, producing 95% weighted reliability. The moderate-delay assumption binds at 90%, reducing effective capacity, sales, payroll, procurement, and taxes even though configured customer demand is unchanged.
 
 `external-disruption` combines reduced regional/national/international availability with a severe delay. `local-sourcing` changes circulation without a disruption. These are deterministic teaching cases, not forecasts.
 
 ## Debugging laboratory: external procurement classified as local
 
-**Defect:** suppose a report adds the national allocation to local procurement.
-
-1. Inspect `supplier_mix` and confirm only the `local` key belongs inside the region.
-2. Verify `local share + external share = 1`, where external comprises regional, national, and international.
-3. Verify `local procurement + external procurement = total business procurement` in cents.
-4. Correct the classification and rerun `regional-sim supply-report baseline`.
-5. Confirm economic leakage now includes correctly classified external business purchases.
-6. Explain the outcome: the error did not create supplies, but overstated money retained locally and understated leakage, distorting the regional circulation story.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -90,3 +83,20 @@ Suppliers are aggregate categories, not firms. The model has no products, invent
 ## Chapter summary
 
 Businesses depend on available, timely inputs. Diverse and reliable supply supports capacity; disruptions prevent strong demand from becoming sales and payroll. Local sourcing can retain more procurement spending in the region. This laboratory explains those regional consequences, while the Inventory Synchronization Laboratory addresses operational inventory systems in depth.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 14 — Inspect Supply Stage**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

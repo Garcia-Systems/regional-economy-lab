@@ -35,29 +35,22 @@ flowchart LR
 Run:
 
 ```console
-regional-sim diversified-region
-regional-sim tourism-dependent
-regional-sim resilient-infrastructure
-regional-sim limited-redundancy
-regional-sim resilience-report baseline
+regional-sim run diversified-region
+regional-sim run tourism-dependent
+regional-sim run resilient-infrastructure
+regional-sim run limited-redundancy
+regional-sim resilience report baseline
 regional-sim compare baseline diversified-region
-regional-sim compare-resilience tourism-dependent diversified-region
-regional-sim resilience-trace resilient-infrastructure
-regional-sim resilience-explain
+regional-sim resilience compare tourism-dependent diversified-region
+regional-sim resilience trace resilient-infrastructure
+regional-sim resilience explain baseline
 ```
 
 `diversified-region` combines sector and supplier variety. `tourism-dependent` exposes concentration. `resilient-infrastructure` emphasizes alternate capacity and coordination. `limited-redundancy` shows that reasonable diversity cannot substitute for every infrastructure dependency. Recovery periods are a deterministic illustration derived from the configured summary, not dates or forecasts.
 
 ## Debugging laboratory — the indicator counted twice
 
-1. Set a **semantic breakpoint** in `build_resilience_report` on the line that sums `values`—the moment indicator aggregation becomes a composite.
-2. Run `regional-sim resilience-report diversified-region`.
-3. Inspect `values`: seven names must be unique. Record the sum and divisor.
-4. Introduce the bug locally by appending `economic_diversity` to `values` while retaining (or incorrectly changing) the divisor. Observe the inflated summary and changed illustrative recovery periods.
-5. Remove the duplicate and run `pytest tests/test_resilience.py`. Confirm the unique-name assertion and expected report.
-6. Explain why even the corrected equal-weight composite hides trade-offs and must accompany its components.
-
-This breakpoint is semantic because it stops where the economic meaning changes—not merely at program entry.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -65,6 +58,10 @@ This breakpoint is semantic because it stops where the economic meaning changes�
 2. When is spare capacity valuable despite reducing apparent efficiency?
 3. Which two indicator profiles could share a composite but imply different vulnerabilities?
 4. How do supplier options, payment continuity, and workforce retraining interact?
+
+## Integration boundary
+
+The equal-weight composite is an educational summary only—not an official rating, ranking, probability, or precise recovery forecast.
 
 ## Assumptions
 
@@ -85,3 +82,20 @@ Resilience emerges from interacting economic, workforce, infrastructure, supplie
 <!-- reporting-vocabulary -->
 Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
 [`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 18 — Inspect Resilience Summary**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

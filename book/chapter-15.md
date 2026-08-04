@@ -2,7 +2,7 @@
 
 ## Learning objectives
 
-After this chapter, you can define an indicator before calculating it; distinguish units, reporting periods, and data-quality notes; create monthly and year-to-date views; distinguish leading and lagging educational indicators; compare months and scenarios; and export deterministic Markdown and CSV reports without treating a trend as a prediction.
+After this chapter, you can define an indicator before calculating it; distinguish units, reporting periods, and data-quality notes; create monthly and caller-supplied multi-snapshot views; distinguish leading and lagging educational indicators; compare months and scenarios; and export deterministic Markdown and CSV reports without treating a trend as a prediction.
 
 ## Narrative introduction
 
@@ -29,7 +29,7 @@ flowchart LR
 
 ## Reporting periods and monthly history
 
-A `MonthlySnapshot` is an immutable scenario/month record. A `Dashboard` selects the latest snapshot as current, the immediately prior supplied snapshot as previous, and retains supplied snapshots through the current month for year-to-date sums. Stock measures such as population should not normally be summed; flow measures such as monthly tax collections may be. The caller chooses the economically appropriate aggregation.
+A `MonthlySnapshot` is an immutable scenario/month record. A `Dashboard` selects the latest snapshot as current, the immediately prior supplied snapshot as previous, and retains only the snapshots explicitly supplied by its caller. Stock measures such as population should not normally be summed; flow measures such as monthly tax collections may be. The caller chooses the economically appropriate aggregation.
 
 Months must be unique and are sorted deterministically. The CLI currently reports the completed one-month scenario, so its trend says “first reported month.” Programmatic histories can contain multiple completed results. This is historical reporting, not an annual simulation.
 
@@ -46,7 +46,7 @@ flowchart TD
 
 ## Dashboard walkthrough
 
-Run `regional-sim dashboard baseline`. Read the scenario and month first, then the value and unit together. Examine the trend line and classification. Finish with the data-quality statement. Use `regional-sim indicator-trace baseline` to see the interpretation chain:
+Run `regional-sim dashboard show baseline`. Read the scenario and month first, then the value and unit together. Examine the trend line and classification. Finish with the data-quality statement. Use `regional-sim dashboard trace baseline` to see the interpretation chain:
 
 ```mermaid
 flowchart TD
@@ -59,7 +59,7 @@ flowchart TD
 
 The final two steps occur outside the engine. Dashboards summarize the simulation rather than drive it.
 
-Export with `regional-sim export-dashboard baseline --format markdown` for a readable table or `--format csv` for deterministic plain-text interchange. Neither export requires a database, API, spreadsheet, or visualization server.
+Export with `regional-sim dashboard export baseline --format markdown` for a readable table or `--format csv` for deterministic plain-text interchange. Neither export requires a database, API, spreadsheet, or visualization server.
 
 ## Comparison walkthrough
 
@@ -67,21 +67,12 @@ Run `regional-sim dashboard compare baseline tourism-season`. The baseline and a
 
 ## Debugging laboratory: inconsistent income units
 
-**Defect:** imagine `household_income` divides cents by 100 in its calculation while its metadata still reports “USD cents.” The displayed value is then one hundred times too small relative to other money indicators.
-
-1. Set a semantic breakpoint in `snapshot` at the getter call in `src/regional_economy/dashboards.py`.
-2. Run `regional-sim dashboard baseline` and inspect the `household_income` metadata, raw metric, getter result, and formatted value.
-3. Step into `_GETTERS["household_income"]`; verify the calculation returns `gross_household_income` in integer cents without conversion.
-4. Continue into `_display`; verify conversion to dollars happens exactly once for human display.
-5. Run the CSV export and confirm its raw `value` remains cents and its `units` field says `USD cents`.
-6. Explain the consequence: inconsistent units can manufacture a hundredfold apparent difference and lead comparisons toward a false conclusion even when the underlying simulation is correct.
-
-A useful conditional breakpoint is `metadata.key == "household_income"`. The semantic boundary is “calculation produces the declared unit; presentation formats it once,” not a particular source line.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
 1. Why is a 5% reported trend not a prediction of another 5% change?
-2. Which year-to-date indicators are flows, and which are stocks that should not be summed?
+2. Which multi-snapshot indicators are flows, and which are stocks that should not be summed?
 3. Why can two correctly calculated indicators still be incomparable?
 4. What assumption makes visitor nights only a reservations proxy?
 5. Why should a scenario difference not be read as a causal policy estimate?
@@ -96,8 +87,25 @@ There is no forecasting, statistical inference, machine learning, predictive ana
 
 ## Chapter summary
 
-Good dashboards join values to definitions, units, periods, assumptions, limitations, and quality notes. Immutable snapshots enable transparent historical trends and year-to-date summaries. Scenario comparisons reveal model differences without predicting outcomes. Deterministic console, Markdown, and CSV output turns the simulation into an inspectable decision-support laboratory while preserving the boundary between measurement and prediction.
+Good dashboards join values to definitions, units, periods, assumptions, limitations, and quality notes. Immutable snapshots enable transparent historical trends and caller-supplied multi-snapshot summaries. Scenario comparisons reveal model differences without predicting outcomes. Deterministic console, Markdown, and CSV output turns the simulation into an inspectable decision-support laboratory while preserving the boundary between measurement and prediction.
 
 <!-- reporting-vocabulary -->
 Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
 [`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 15 — Inspect Indicator Metadata**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

@@ -65,14 +65,14 @@ flowchart TD
   H --> R[Regional Spending]
 ```
 
-Run `regional-sim workforce-trace baseline`. This is an educational systems trace rather than a prediction of labor-market outcomes or a literal tracked worker or dollar.
+Run `regional-sim trace baseline`. This is an educational systems trace rather than a prediction of labor-market outcomes or a literal tracked worker or dollar.
 
 ## Baseline walkthrough
 
 Run:
 
 ```console
-regional-sim workforce-report baseline
+regional-sim report workforce baseline
 regional-sim compare baseline workforce-shortage
 ```
 
@@ -86,17 +86,11 @@ The baseline intentionally permits unemployment and shortages to coexist. The ap
 
 ## Workforce-shortage walkthrough
 
-Run `regional-sim workforce-shortage`. Participation falls, out-commuting rises, and in-commuting falls while demand remains visible. Compare labor availability and unfilled positions with baseline. Then run `major-employer-arrival` to see demand rise without assuming people appear, and `workforce-training-expansion` to see selected availability expand deterministically.
+Run `regional-sim run workforce-shortage`. Participation falls, out-commuting rises, and in-commuting falls while demand remains visible. Compare labor availability and unfilled positions with baseline. Then run `major-employer-arrival` to see demand rise without assuming people appear, and `workforce-training-expansion` to see selected availability expand deterministically.
 
 ## Debugging laboratory: the worker in two sectors
 
-**Fault:** edit `WorkforceSystem.evaluate` so healthcare receives a worker count and retail/food service receives the same count without reducing `remaining`. This assigns the same aggregate workers twice.
-
-**Semantic breakpoint:** place a breakpoint after `base[skill] = amount` in `src/regional_economy/entities/workforce.py`. Stop when `skill` changes, rather than relying on a fragile line number. Inspect `available_labor`, `remaining`, `base`, and `sum(base.values())`.
-
-**Diagnosis:** if `sum(base.values()) > available_labor`, allocation has duplicated people. Observe how inflated category supply increases modeled employment and hides unfilled positions.
-
-**Repair and verification:** restore `remaining -= amount`, run `pytest tests/test_workforce.py`, and verify base skill availability reconciles to the single available pool. Explain in your notes: double-counting lets two sectors claim one person's capacity, inflating regional production potential even though population and participation never changed.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -105,6 +99,10 @@ Run `regional-sim workforce-shortage`. Participation falls, out-commuting rises,
 3. Why is a higher population insufficient evidence of greater local labor availability?
 4. Why should training capacity not be interpreted as instantaneous hiring?
 5. What information would be required before translating an unfilled position into lost dollars?
+
+## Integration boundary
+
+Workforce shortages are reported matching and capacity indicators; they do not directly impose an additional production constraint in the canonical transaction pipeline.
 
 ## Assumptions
 
@@ -122,3 +120,20 @@ There are no individual workers, occupations, credentials, hiring queues, recrui
 ## Chapter summary
 
 Regional employment depends jointly on workforce size, participation, commuting, skills, training, and employer demand. The model makes mismatch inspectable: available people do not guarantee the right aggregate skills, and openings do not create workers. Reconciled allocation prevents duplicate capacity and deterministic scenarios make assumptions reproducible.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 10 — Inspect Workforce Matching**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.
