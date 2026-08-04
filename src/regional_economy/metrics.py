@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
 
 from regional_economy.entities.banking import BankingResult
 from regional_economy.entities.business import BusinessSectorResult, Sector
@@ -25,6 +26,94 @@ class Reconciliation:
     @property
     def reconciled(self) -> bool:
         return self.difference == 0
+
+
+class MonetaryClassification(StrEnum):
+    """Accounting meaning of a monetary metric at the declared boundary."""
+
+    EXTERNAL_INFLOW = "external inflow"
+    INTERNAL_TRANSFER = "internal transfer"
+    EXTERNAL_OUTFLOW = "external outflow"
+    ENDING_POSITION = "ending position or stock"
+    UNMET_OR_INTERRUPTED = "unmet or interrupted amount"
+    DESCRIPTIVE = "descriptive indicator"
+
+
+@dataclass(frozen=True)
+class MonetaryMetricMetadata:
+    classification: MonetaryClassification
+    is_flow: bool
+    canonical: bool
+
+
+def _money(classification: MonetaryClassification, *, flow: bool = True, canonical: bool = True) -> MonetaryMetricMetadata:
+    return MonetaryMetricMetadata(classification, flow, canonical)
+
+
+# This inventory is deliberately kept beside RegionalMetrics. Detailed definitions,
+# calculations, and limitations are maintained in docs/accounting-boundary.md.
+MONETARY_METRICS: dict[str, MonetaryMetricMetadata] = {
+    "banking.household_deposits": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "banking.business_deposits": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "banking.total_deposits": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "banking.lending_capacity": _money(MonetaryClassification.DESCRIPTIVE, flow=False),
+    "banking.business_lending": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "banking.consumer_lending": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "banking.available_credit": _money(MonetaryClassification.DESCRIPTIVE, flow=False),
+    "external_household_income": _money(MonetaryClassification.EXTERNAL_INFLOW),
+    "gross_household_income": _money(MonetaryClassification.EXTERNAL_INFLOW),
+    "household_deductions": _money(MonetaryClassification.EXTERNAL_OUTFLOW),
+    "after_tax_household_income": _money(MonetaryClassification.DESCRIPTIVE),
+    "visitor_spending": _money(MonetaryClassification.EXTERNAL_INFLOW),
+    "demanded_visitor_spending": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
+    "tourism_revenue": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "tourism_wages": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "tourism_tax_revenue": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "unmet_visitor_demand": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
+    "unmet_visitor_spending": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
+    "tourism_leakage": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "local_household_spending": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "business_revenue": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "household_derived_business_revenue": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "wages_paid": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "local_business_purchases": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "external_business_purchases": _money(MonetaryClassification.EXTERNAL_OUTFLOW),
+    "taxes_collected": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "economic_leakage": _money(MonetaryClassification.EXTERNAL_OUTFLOW),
+    "retained_household_funds": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "household_savings": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "retained_business_funds": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "simulated_local_economic_activity": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "housing_costs": _money(MonetaryClassification.DESCRIPTIVE),
+    "essential_spending": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "discretionary_spending": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "household_nonlocal_spending": _money(MonetaryClassification.EXTERNAL_OUTFLOW),
+    "unmet_essential_expenses": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "disposable_income_after_required_expenses": _money(MonetaryClassification.DESCRIPTIVE),
+    "university_payroll": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "university_procurement": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "university_local_procurement": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "external_university_funding": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "student_spending": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "university_business_impact": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "university_contribution": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_spending": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_payroll": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_procurement": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_local_procurement": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "healthcare_external_procurement": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_business_activity": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "government_revenue": _money(MonetaryClassification.DESCRIPTIVE),
+    "government_operating_budget": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "government_capital_budget": _money(MonetaryClassification.DESCRIPTIVE),
+    "government_reserve_balance": _money(MonetaryClassification.ENDING_POSITION, flow=False),
+    "utility_constrained_activity": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
+    "completed_transactions": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "interrupted_transactions": _money(MonetaryClassification.UNMET_OR_INTERRUPTED),
+    "supply_constrained_business_activity": _money(MonetaryClassification.UNMET_OR_INTERRUPTED, canonical=False),
+    "business_tax_outflow": _money(MonetaryClassification.INTERNAL_TRANSFER),
+    "government_transaction_tax_inflow": _money(MonetaryClassification.INTERNAL_TRANSFER),
+}
 
 
 @dataclass(frozen=True)
@@ -125,6 +214,8 @@ class RegionalMetrics:
     interrupted_transactions: int
     supply_chain: SupplyChainResult
     supply_constrained_business_activity: int
+    business_tax_outflow: int
+    government_transaction_tax_inflow: int
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
@@ -136,5 +227,46 @@ class RegionalMetrics:
         )
 
     @property
+    def allocation_reconciliations(self) -> tuple[Reconciliation, ...]:
+        return (*self.reconciliations, self.government_budget_reconciliation)
+
+    @property
+    def transfer_reconciliations(self) -> tuple[Reconciliation, ...]:
+        return (
+            Reconciliation(
+                "BUSINESS TAXES TO GOVERNMENT REVENUE",
+                self.business_tax_outflow,
+                self.government_transaction_tax_inflow,
+            ),
+        )
+
+    @property
+    def recorded_business_revenue(self) -> int:
+        """Canonical name for the legacy activity value."""
+        return self.business_revenue
+
+    @property
+    def household_external_outflows(self) -> int:
+        return self.household_nonlocal_spending
+
+    @property
+    def household_deductions_outside_local_government(self) -> int:
+        return self.household_deductions
+
+    @property
+    def institutional_external_procurement(self) -> int:
+        """Canonical institutional outflow currently limited to university procurement."""
+        return self.economic_leakage - self.household_deductions - self.household_nonlocal_spending - self.external_business_purchases
+
+    @property
+    def total_classified_external_outflows(self) -> int:
+        """Precisely defined compatibility meaning of ``economic_leakage``."""
+        return self.economic_leakage
+
+    @property
+    def regional_sources_and_uses_status(self) -> str:
+        return "NOT YET CONSOLIDATED"
+
+    @property
     def reconciled(self) -> bool:
-        return all(item.reconciled for item in (*self.reconciliations, self.government_budget_reconciliation))
+        return all(item.reconciled for item in (*self.allocation_reconciliations, *self.transfer_reconciliations))

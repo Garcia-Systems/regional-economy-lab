@@ -2,6 +2,13 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased — Accounting boundary correction
+
+### Changed
+- Declared the accounting boundary and monetary classification vocabulary.
+- Separated allocation and tax-transfer reconciliations; regional sources and uses now report **NOT YET CONSOLIDATED**.
+- Narrowed legacy leakage to classified external outflows and publicly renamed simulated activity to Recorded business revenue.
+
 ## [0.1.0] - 2026-08-04
 
 ### Added

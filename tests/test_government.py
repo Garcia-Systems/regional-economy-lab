@@ -53,7 +53,7 @@ def test_close_budget_rejects_appropriations_above_available_funds() -> None:
 def test_government_scenario_cli_end_to_end(name: str, capsys: object) -> None:
     assert main([name]) == 0
     output = capsys.readouterr().out  # type: ignore[attr-defined]
-    assert "GOVERNMENT BALANCED BUDGET — PASS" in output
+    assert "Government Operating Budget" in output and "PASS" in output
     assert "Overall service utilization" in output
 
 

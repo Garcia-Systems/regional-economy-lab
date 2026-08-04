@@ -160,8 +160,10 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     scenario_name = supplied_path.stem if is_file_reference else name
     if not scenario_name or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for character in scenario_name):
         raise ValueError(f"invalid scenario name: {scenario_name!r}. Fix: use lowercase letters, numbers, hyphens, or underscores.")
-    path = supplied_path if is_file_reference else (
-        directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml")
+    path = (
+        supplied_path
+        if is_file_reference
+        else (directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml"))
     )
     if not path.is_file():
         raise ValueError(f"scenario not found: {name}")
@@ -186,9 +188,7 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         supported = {item.key for item in INDICATOR_METADATA}
         unknown = set(requested_indicators) - supported
         if unknown:
-            raise ValueError(
-                f"Unsupported indicator(s): {', '.join(sorted(unknown))}. Fix: choose from: {', '.join(sorted(supported))}."
-            )
+            raise ValueError(f"Unsupported indicator(s): {', '.join(sorted(unknown))}. Fix: choose from: {', '.join(sorted(supported))}.")
 
     region_data = _require(raw, "region", "scenario")
     population = _nonnegative(int(_require(region_data, "population", "region")), "population")

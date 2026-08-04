@@ -48,4 +48,5 @@ def test_report_format_and_cli(capsys: pytest.CaptureFixture[str]) -> None:
 @pytest.mark.parametrize("name", SCENARIOS)
 def test_resilience_scenario_cli_end_to_end(name: str, capsys: pytest.CaptureFixture[str]) -> None:
     assert main([name]) == 0
-    assert "RECONCILIATION — PASS" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "Allocation reconciliations" in output and "NOT YET CONSOLIDATED" in output

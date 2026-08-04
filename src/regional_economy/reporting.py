@@ -183,8 +183,8 @@ def dashboard(result: SimulationResult) -> str:
             "Economic Flows",
             (
                 ("External household income", format_money(m.external_household_income)),
-                ("Local economic activity", format_money(m.simulated_local_economic_activity)),
-                ("Total leakage", format_money(m.economic_leakage)),
+                ("Recorded business revenue", format_money(m.recorded_business_revenue)),
+                ("Total classified external outflows", format_money(m.total_classified_external_outflows)),
             ),
         ),
         (
@@ -229,26 +229,29 @@ def timeline(result):
 
 def reconciliation_report(result):
     m = result.metrics
-    lines = ["FORMAL RECONCILIATION REPORT"]
-    for check in m.reconciliations:
+    lines = ["RECONCILIATION STATUS", "", "Allocation reconciliations"]
+    for check in m.allocation_reconciliations:
         lines.extend(
             (
-                "",
-                f"{check.label} RECONCILIATION — {'PASS' if check.reconciled else 'FAIL'}",
-                f"  Left: {format_money(check.left)}",
-                f"  Right: {format_money(check.right)}",
-                f"  Difference: {format_money(check.difference)}",
+                f"  {check.label.title():<42} {'PASS' if check.reconciled else 'FAIL'}",
+                f"    Left {format_money(check.left)}; right {format_money(check.right)}; difference {format_money(check.difference)}",
             )
         )
-    check = m.government_budget_reconciliation
+    lines.extend(("", "Transfer reconciliations"))
+    for check in m.transfer_reconciliations:
+        lines.append(f"  {check.label.title():<42} {'PASS' if check.reconciled else 'FAIL'}")
     lines.extend(
         (
             "",
-            f"GOVERNMENT BALANCED BUDGET — {'PASS' if check.reconciled else 'FAIL'}",
-            f"  Difference: {format_money(check.difference)}",
+            "Regional sources and uses",
+            f"  Status .................................. {m.regional_sources_and_uses_status}",
+            "",
+            "The current release proves subsystem allocations and selected transfers.",
+            "It does not yet consolidate every institution, stock, transfer, and external",
+            "outflow into a single regional ledger.",
+            "Unmet expenses and interrupted transactions are not cash uses or leakage.",
         )
     )
-    lines.extend(("", "Unmet expenses are reported obligations, not cash uses. Customer revenue is repeated circulation."))
     return "\n".join(lines)
 
 
@@ -275,16 +278,15 @@ def shock_summary(result, baseline=None):
     ]
     if baseline is not None:
         before, after = baseline.metrics, result.metrics
-        impact = after.simulated_local_economic_activity - before.simulated_local_economic_activity
+        impact = after.recorded_business_revenue - before.recorded_business_revenue
         lines.extend(
             (
                 "Key indicators before → after:",
-                f"  Local economic activity: {format_money(before.simulated_local_economic_activity)} → "
-                f"{format_money(after.simulated_local_economic_activity)}",
-                f"  Business revenue: {format_money(before.business_revenue)} → {format_money(after.business_revenue)}",
+                f"  Recorded business revenue: {format_money(before.recorded_business_revenue)} → "
+                f"{format_money(after.recorded_business_revenue)}",
                 f"  Household spending: {format_money(before.local_household_spending)} → {format_money(after.local_household_spending)}",
                 f"  Government taxes: {format_money(before.taxes_collected)} → {format_money(after.taxes_collected)}",
-                f"Estimated regional impact: {format_money(impact)}",
+                f"Recorded business revenue change: {format_money(impact)}",
             )
         )
     lines.append("Educational deterministic scenario; not a forecast or emergency-planning tool.")
@@ -311,7 +313,7 @@ def cascade_trace(result):
             "  ↓",
             f"Government: taxes {format_money(result.metrics.taxes_collected)}",
             "  ↓",
-            f"Regional Indicators: activity {format_money(result.metrics.simulated_local_economic_activity)}",
+            f"Regional indicator: recorded business revenue {format_money(result.metrics.recorded_business_revenue)}",
             "Each arrow is an inspectable educational relationship, not a prediction of an actual event.",
         )
     )
@@ -667,7 +669,7 @@ def comparison(first, second):
         ("Business revenue", "business_revenue"),
         ("Business operating surplus", "retained_business_funds"),
         ("Taxes collected", "taxes_collected"),
-        ("Economic leakage", "economic_leakage"),
+        ("Classified external outflows", "economic_leakage"),
         ("Student spending", "student_spending"),
         ("University procurement", "university_procurement"),
         ("External university funding", "external_university_funding"),

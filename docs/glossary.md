@@ -1,26 +1,42 @@
 # Glossary
 
+- **Accounting boundary:** participants and transactions included in canonical regional flow.
+- **Flow:** money moving during the simulated month.
+- **Stock / ending position:** money or capacity held at a point in time or month end.
+- **External inflow:** completed money entering from an external participant.
+- **Internal transfer:** money moving between represented participants; not new regional money.
+- **External outflow:** completed money leaving the boundary.
+- **Unmet demand:** demand not served; neither spending nor leakage.
+- **Interrupted transaction:** intended demand not payment-completed; neither spending nor leakage.
+- **Allocation reconciliation:** proof that one subsystem allocates a defined total completely.
+- **Transfer reconciliation:** proof that represented payer and receiver amounts match.
+- **Regional sources-and-uses reconciliation:** consolidated identity covering sources, uses,
+  transfers, and position changes; currently **NOT YET CONSOLIDATED**.
+- **Classified external outflow:** completed exit included in the narrow current total.
+- **Recorded business revenue:** capacity- and supply-served customer revenue; not GDP or total activity.
+
 - **External income:** money entering the modeled boundary from outside.
 - **Local spending:** customer spending received by a modeled regional business.
-- **Leakage:** a modeled payment leaving the boundary: external housing, nonlocal household
-  spending, or external business purchasing.
+- **Leakage (legacy):** compatibility name for classified external outflows: deductions outside the
+  local-government flow, household nonlocal spending, business external procurement, and university
+  external procurement. Housing is excluded because its destination is not modeled.
 - **Business revenue:** customer transaction flow recorded by a business, not its ending balance.
 - **Wages:** a business use of operating revenue paid for labor.
 - **Taxes:** modeled sales and lodging amounts collected by local government.
 - **Retained funds:** cash not spent during this time step.
-- **Simulated local economic activity:** unique modeled customer transactions, equal here to
-  business revenue and explicitly not GDP.
+- **Simulated local economic activity (legacy):** compatibility field equal to recorded business
+  revenue; public reports use the narrower name.
 - **Scenario:** a validated YAML set of entities and assumptions.
 - **Deterministic simulation:** a run with no randomness whose identical inputs yield identical output.
 - **Event:** a typed, integer-time record in the inspectable timeline.
-- **Reconciliation:** proof that classified final uses equal external sources.
+- **Reconciliation:** a specified allocation or transfer identity, not proof of consolidated regional accounting.
 
 - **External household income:** household funds originating outside the modeled boundary, recorded once at entry.
 - **Visitor spending:** fictional external customer payments allocated by sector.
 - **Local household spending:** household customer payments received by modeled businesses.
-- **Household leakage:** household nonlocal spending; housing is separately shown as an externally paid cost.
+- **Household external outflow:** household nonlocal spending; deductions outside the local-government flow are separate.
 - **Business external purchases:** business input payments leaving the boundary.
-- **Economic leakage:** housing costs + household nonlocal spending + business external purchases, each counted once.
+- **Economic leakage:** legacy field described above; not a complete measure of regional exits.
 - **Wages paid:** an after-tax business-revenue use; wages do not recirculate in v0.1.0.
 - **Taxes collected:** tax-inclusive sales and lodging amounts remitted by businesses and retained by modeled government.
 - **Retained household funds:** household funds not spent during the month.

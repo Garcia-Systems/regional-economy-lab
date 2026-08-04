@@ -1,17 +1,20 @@
 # Chapter 2 — Where Money Enters and Leaves
 
-External household income and visitor spending are this model's two entry channels. What happens
+External household income and visitor spending are two canonical entry indicators; other configured
+funding values can remain descriptive. What happens
 next depends on **local retention**: households choose local rather than nonlocal purchases, and
 businesses choose local rather than external inputs. An import is represented by an external
-purchase. Housing paid outside the modeled business set, household nonlocal spending, and business
-external purchases are leakage.
+purchase. Housing is a completed cash use whose recipient is not modeled. Classified external
+outflows include deductions outside the local-government flow, household nonlocal spending,
+business external purchases, and university external procurement.
 
 ```mermaid
 flowchart TD
   Inflows[External household income + visitor spending] --> Choice{Allocated use}
   Choice -->|household retention| HRetained[Household retained funds]
   Choice -->|local customer purchase| Revenue[Business revenue]
-  Choice -->|housing / nonlocal purchase| Leakage
+  Choice -->|nonlocal purchase| Leakage
+  Choice -->|recipient not modeled| Housing
   Revenue -->|wages, local inputs, tax, retention| LocalUses[Classified local uses]
   Revenue -->|external inputs| Leakage
 ```
@@ -48,11 +51,10 @@ local purchases, and retained business funds. Repeat with `household_nonlocal`.
 
 ## Limitations and summary
 
-The boundary treatment is simplified: all housing leaves, all modeled local purchases remain, and
-there are no supplier rounds or empirical import propensities. The scenarios are fictional, not
-Williamsburg measurements. Still, the lesson is testable: identical inflows can have different
-regional consequences because retention assumptions control how quickly money leaves, and explicit
-reconciliation prevents leakage from also masquerading as retained money.
+Housing destination, supplier receipts, institutional payroll recipients, and healthcare external
+procurement are not consolidated. Deposits, credit, and reserves are positions/capacity; unmet and
+interrupted amounts are not spending. Allocation and tax-transfer checks remain testable, while
+regional sources and uses truthfully remain **NOT YET CONSOLIDATED**.
 
 
 See the canonical [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.mmd) and
@@ -61,12 +63,12 @@ See the canonical [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.m
 ### Complete debugging exercise
 
 1. **Launch configuration:** **Run Tourism-Season Scenario**.
-2. **Breakpoint:** `engine.py`, the line `leakage = housing + household_nonlocal + external_purchases`.
-3. **Expected variables:** all three components are integer cents and their sum equals
-   `metrics.economic_leakage` after construction.
+2. **Breakpoint:** `engine.py`, the `RegionalMetrics(...)` construction.
+3. **Expected variables:** deductions, household nonlocal spending, business external procurement,
+   and university external procurement sum to `metrics.economic_leakage`.
 4. **Question / incorrect behavior to inspect:** temporarily omit `external_purchases` from the expression;
    leakage becomes too small while final uses still contain the external payment.
-5. **Correct behavior:** leakage includes each boundary exit exactly once, while reconciliation uses
-   still classify every cent and finish at zero.
+5. **Correct behavior:** the compatibility total includes each currently classified exit once;
+   housing and descriptive healthcare/tourism values remain disclosed omissions.
 6. **Economic importance:** omitted imports exaggerate local retention even when the books happen
    to reconcile through a separately classified use.

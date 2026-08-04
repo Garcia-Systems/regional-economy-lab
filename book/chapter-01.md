@@ -8,7 +8,8 @@ Our small fictional case makes those connections visible.
 Households receive external or wage income, pay housing, shop locally or elsewhere, and retain
 funds. Tourism/hospitality, retail, and food-service businesses receive local customer revenue and
 use it for wages, purchases, tax, and retention. Visitors bring external spending. Government
-collects simplified sales and lodging taxes. **Leakage** identifies modeled money sent outside.
+collects simplified sales and lodging taxes. **Classified external outflows** identify only the
+completed exits currently captured; they are not a complete regional ledger.
 
 ```mermaid
 flowchart LR
@@ -26,9 +27,10 @@ flowchart LR
 
 Run `regional-sim baseline`. `MonthStarted` precedes external household income and visitors.
 Household allocation then completes; combined household and visitor customer payments become
-business revenue; wages and taxes follow; `MonthCompleted` reports a zero reconciliation difference.
+sector demand; capacity- and supply-served demand becomes recorded business revenue; wages and taxes
+follow. `MonthCompleted` reports implemented allocation and transfer checks.
 The dashboard distinguishes population context, external inflows, unique customer revenue, later
-uses, retained balances, leakage, and simulated local activity. Revenue is not an ending local cash
+uses, ending positions, classified external outflows, and recorded business revenue. Revenue is not an ending local cash
 balance, and wages are not added to revenue to manufacture a larger activity number.
 
 ## Debugging laboratory
@@ -55,8 +57,9 @@ without exceeding capacity. Predict the dashboard before running it.
 
 Representative groups hide household and firm diversity. There are no prices, inventories,
 commuting, housing market, workforce dynamics, multiplier rounds, or forecasts. Yet the experiment
-establishes the essential system: outside inflows become customer transactions, then explicit uses,
-with leakage and retention visible and every cent reconciled.
+establishes inspectable subsystem allocations and one matched tax transfer. Institutional flows,
+housing recipients, suppliers, and financial positions are not consolidated, so regional sources
+and uses remain **NOT YET CONSOLIDATED**.
 
 
 The canonical relationship diagram is [`docs/diagrams/entity-relationships.mmd`](../docs/diagrams/entity-relationships.mmd); the canonical money-flow source is [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.mmd).

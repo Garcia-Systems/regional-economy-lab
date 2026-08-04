@@ -1,10 +1,26 @@
 # v0.1.0 Assumptions
 
+## Accounting-boundary assumptions
+
+The authoritative boundary and metric inventory are in
+[`accounting-boundary.md`](accounting-boundary.md). Housing payments are completed household uses
+whose recipients are not modeled, so they are neither assumed local nor called leakage. Household
+deductions have mixed/unknown destinations outside the modeled local-government flow and are shown
+separately within classified external outflows.
+
+University and healthcare payrolls are descriptive and are not injected into household income in
+the same month. Accessible local institutional procurement and student spending enter canonical
+business demand. University external procurement is classified canonically; healthcare external
+procurement remains a disclosed descriptive omission. Deposits, lending, retained funds, and
+government reserves are stocks or ending positions. Available credit is capacity. Interrupted and
+unmet amounts are not spending or leakage. Permits and fees remain an educational government-demand
+proxy pending a later transaction-stage correction.
+
 All figures are fictional educational values rather than observations about Williamsburg.
 
 - Population (1,000) and employment (620) are fictional scale markers.
-- Household income and housing are aggregate representative groups. Housing is paid outside the
-  modeled local business set and therefore treated as leakage; no housing market is modeled.
+- Household income and housing are aggregate representative groups. Housing recipients are outside
+  the modeled business network but their regional destination is unknown, so housing is an unclassified cash use.
 - After housing, household local, nonlocal, and retained shares sum to one. Local spending is split
   among all three sectors using explicit scenario shares.
 - Visitor category totals are fictional aggregate spending, not count × stay estimates; count and
@@ -13,9 +29,9 @@ All figures are fictional educational values rather than observations about Will
   purchases, and retained funds. These shares sum to one. Capacity is a validation ceiling.
 - Sales tax applies to all modeled customer revenue. Lodging tax additionally applies only to
   visitor tourism/hospitality spending. Rates are deliberately simplified assumptions.
-- Leakage is housing paid outside the modeled business set + nonlocal household spending + external
-  business purchases. Local purchases remain as recipient balances at the model boundary.
-- **Simulated local economic activity** equals unique customer transactions (business revenue).
+- The legacy leakage field is deductions + nonlocal household spending + external business
+  purchases + university external procurement; it is publicly labeled classified external outflows.
+- Legacy **simulated local economic activity** equals recorded business revenue.
   Wages and purchases are subsequent uses of that revenue and are not added again. It is not GDP.
 - Dollars parse to integer cents. Decimal calculations use `ROUND_HALF_UP` (nearest cent; an exact
   half-cent rounds away from zero). Residual cents go to household retention, business retention,
