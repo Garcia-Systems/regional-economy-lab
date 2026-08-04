@@ -3,9 +3,13 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Reconciliation:
-    sources: int
-    uses: int
-    difference: int
+    label: str
+    left: int
+    right: int
+
+    @property
+    def difference(self) -> int:
+        return self.left - self.right
 
     @property
     def reconciled(self) -> bool:
@@ -30,5 +34,14 @@ class RegionalMetrics:
     simulated_local_economic_activity: int
     housing_costs: int
     household_nonlocal_spending: int
-    reconciliation: Reconciliation
+    household_reconciliation: Reconciliation
+    customer_reconciliation: Reconciliation
+    business_reconciliation: Reconciliation
 
+    @property
+    def reconciliations(self) -> tuple[Reconciliation, ...]:
+        return (self.household_reconciliation, self.customer_reconciliation, self.business_reconciliation)
+
+    @property
+    def reconciled(self) -> bool:
+        return all(item.reconciled for item in self.reconciliations)

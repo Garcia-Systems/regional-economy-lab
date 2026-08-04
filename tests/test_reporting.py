@@ -4,7 +4,7 @@ import pytest
 
 from regional_economy.cli import build_parser, main
 from regional_economy.engine import run_scenario
-from regional_economy.reporting import comparison, dashboard, explanation, timeline, trace
+from regional_economy.reporting import comparison, dashboard, explanation, reconciliation_report, timeline, trace
 from regional_economy.scenarios import load_scenario
 
 
@@ -15,11 +15,12 @@ def baseline():
 
 def test_dashboard_sections_and_money_alignment(baseline) -> None:
     report = dashboard(baseline)
-    for section in ("Region", "Households", "Visitors", "Businesses", "Government", "Economic Flows", "Reconciliation"):
+    for section in ("Region", "Households", "Visitors", "Businesses", "Government", "Economic Flows"):
         assert f"[{section}]" in report
     assert "$3,400,000.00" in report
     money_lines = [line for line in report.splitlines() if "$" in line]
     assert len({len(line) for line in money_lines}) == 1
+    assert reconciliation_report(baseline).count("RECONCILIATION — PASS") == 3
 
 
 def test_timeline_is_ordered_vertical_and_informative(baseline) -> None:

@@ -14,4 +14,3 @@ class Region:
     businesses: list[Business]
     local_government: Government
     current_simulation_month: int = 0
-

@@ -18,7 +18,7 @@ from regional_economy.events import (
     WagesPaid,
 )
 from regional_economy.metrics import Reconciliation, RegionalMetrics
-from regional_economy.money import format_money, multiply
+from regional_economy.money import allocate, format_money, multiply
 from regional_economy.scenarios import Scenario
 
 
@@ -33,10 +33,8 @@ class SimulationResult:
 
 
 def _allocate_total(total: int, shares: dict[Sector, Decimal]) -> dict[Sector, int]:
-    sectors = list(Sector)
-    allocated = {sector: multiply(total, shares[sector]) for sector in sectors[:-1]}
-    allocated[sectors[-1]] = total - sum(allocated.values())
-    return allocated
+    amounts = allocate(total, ((sector.value, shares[sector]) for sector in Sector))
+    return {sector: amounts[sector.value] for sector in Sector}
 
 
 def run_scenario(scenario: Scenario) -> SimulationResult:
@@ -59,10 +57,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HouseholdSpendingCompleted(3, f"Households spent {format_money(local_household)} locally"))
 
     household_by_sector = _allocate_total(local_household, scenario.household_sector_shares)
-    revenue_by_sector = {
-        sector: household_by_sector[sector] + scenario.visitors.spending_by_category[sector]
-        for sector in Sector
-    }
+    revenue_by_sector = {sector: household_by_sector[sector] + scenario.visitors.spending_by_category[sector] for sector in Sector}
     sales_taxes = {sector: multiply(revenue, region.local_government.sales_tax_rate) for sector, revenue in revenue_by_sector.items()}
     lodging_tax = multiply(
         scenario.visitors.spending_by_category[Sector.TOURISM],
@@ -83,10 +78,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     external_purchases = sum(business.external_purchases for business in region.businesses)
     business_retained = sum(business.retained_operating_funds for business in region.businesses)
     leakage = housing + household_nonlocal + external_purchases
-    sources = external_income + visitor_spending
-    uses = housing + household_nonlocal + household_retained + wages + local_purchases + external_purchases + taxes + business_retained
-    reconciliation = Reconciliation(sources, uses, sources - uses)
-    scheduler.schedule(MonthCompleted(7, f"Month reconciled with difference {format_money(reconciliation.difference)}"))
+    household_reconciliation = Reconciliation(
+        "HOUSEHOLD FUNDS", external_income, housing + local_household + household_nonlocal + household_retained
+    )
+    customer_reconciliation = Reconciliation("CUSTOMER SPENDING", local_household + visitor_spending, business_revenue)
+    business_reconciliation = Reconciliation(
+        "BUSINESS REVENUE", business_revenue, wages + local_purchases + external_purchases + taxes + business_retained
+    )
+    reconciliations = (household_reconciliation, customer_reconciliation, business_reconciliation)
+    status = "PASS" if all(item.reconciled for item in reconciliations) else "FAIL"
+    scheduler.schedule(MonthCompleted(7, f"Month reconciliations: {status}"))
     metrics = RegionalMetrics(
         population=region.population,
         employed_residents=region.employed_residents,
@@ -104,6 +105,8 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         simulated_local_economic_activity=business_revenue,
         housing_costs=housing,
         household_nonlocal_spending=household_nonlocal,
-        reconciliation=reconciliation,
+        household_reconciliation=household_reconciliation,
+        customer_reconciliation=customer_reconciliation,
+        business_reconciliation=business_reconciliation,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())

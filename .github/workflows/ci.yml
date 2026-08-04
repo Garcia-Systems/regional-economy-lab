@@ -1,5 +1,10 @@
 name: CI
 on: [push, pull_request]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   quality:
@@ -17,4 +22,12 @@ jobs:
         with:
           files: coverage.xml
           fail_ci_if_error: false
-
+      - run: python -m build
+      - name: Installed-wheel CLI smoke test
+        run: |
+          python -m venv /tmp/wheel-test
+          /tmp/wheel-test/bin/pip install dist/*.whl
+          cd /tmp
+          /tmp/wheel-test/bin/regional-sim baseline >/dev/null
+          /tmp/wheel-test/bin/regional-sim tourism-season >/dev/null
+          /tmp/wheel-test/bin/regional-sim compare baseline tourism-season >/dev/null

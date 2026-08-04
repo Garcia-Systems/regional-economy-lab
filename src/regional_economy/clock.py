@@ -20,4 +20,3 @@ class DeterministicScheduler:
         while self._queue:
             ordered.append(heappop(self._queue)[2])
         return tuple(ordered)
-

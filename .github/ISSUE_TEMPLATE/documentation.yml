@@ -1,0 +1,9 @@
+name: Documentation problem
+description: Report unclear, missing, or inconsistent learning material
+body:
+  - type: input
+    attributes: {label: Page or file}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Problem and suggested correction}
+    validations: {required: true}

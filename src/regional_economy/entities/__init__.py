@@ -7,4 +7,3 @@ from .region import Region
 from .visitor import Visitor
 
 __all__ = ["Business", "Government", "Household", "HouseholdAllocation", "Region", "Sector", "Visitor"]
-

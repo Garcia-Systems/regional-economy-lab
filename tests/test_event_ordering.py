@@ -8,4 +8,3 @@ def test_events_at_same_time_keep_insertion_order() -> None:
     scheduler.schedule(Event(1, "earlier"))
     scheduler.schedule(Event(2, "second"))
     assert [event.detail for event in scheduler.run()] == ["earlier", "first", "second"]
-

@@ -45,4 +45,3 @@ class TaxesCollected(Event):
 @dataclass(frozen=True)
 class MonthCompleted(Event):
     pass
-
