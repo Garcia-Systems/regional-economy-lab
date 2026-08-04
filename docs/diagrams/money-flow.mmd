@@ -1,0 +1,11 @@
+flowchart LR
+  Outside[External household income] --> Households
+  Visitors[Visitor spending] --> Businesses
+  Households -->|local purchases| Businesses
+  Households -->|housing and nonlocal purchases| Leakage
+  Households -->|unspent| HouseholdRetention[Household retained funds]
+  Businesses -->|wages| Employees
+  Businesses -->|local inputs| LocalSuppliers
+  Businesses -->|sales and lodging taxes| Government
+  Businesses -->|external inputs| Leakage
+  Businesses -->|unspent| BusinessRetention[Business retained funds]

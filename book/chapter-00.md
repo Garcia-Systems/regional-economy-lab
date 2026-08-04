@@ -10,8 +10,8 @@ fictional or assumed.
 ## Project map and setup
 
 Narrative lives in `book/`; assumptions and method in `docs/`; fictional YAML in `scenarios/`; the
-reusable engine in `src/regional_economy/`; and checks in `tests/`. Generated diagrams may later go
-in `images/`, while `data/` explains the current no-empirical-data status.
+reusable engine in `src/regional_economy/`; and checks in `tests/`. Mermaid diagram sources live in
+`docs/diagrams/`, while `data/` explains the current no-empirical-data status.
 
 **Dev Container:** install Docker and VS Code's Dev Containers extension, open this repository, and
 choose **Dev Containers: Reopen in Container**. It opens `/workspace/regional-economy-lab` as user
@@ -55,3 +55,24 @@ the household `allocations`, `revenue_by_sector`, each `business`, `sales_taxes`
 `business.record_and_allocate(...)`: inspect the customer revenue just before it becomes business
 revenue. Confirm all money is integer cents and the final difference is zero.
 
+
+## Reading the reports
+
+The dashboard groups context, households, visitors, businesses, government, flows, and
+reconciliation. Labels in parentheses answer whether money **entered**, **moved**, **left**, or
+**remained**. `regional-sim explain baseline` connects each event to a lesson;
+`regional-sim trace baseline` follows a conceptual dollar and states why it is not an accounting
+identity. Event ordering is summarized in [`docs/diagrams/event-ordering.mmd`](../docs/diagrams/event-ordering.mmd), and entity connections in [`docs/diagrams/entity-relationships.mmd`](../docs/diagrams/entity-relationships.mmd).
+
+## Complete debugging exercise
+
+1. **Breakpoint:** `engine.py`, the `reconciliation = Reconciliation(...)` statement.
+2. **Expected variables:** `sources` equals external household income plus visitor spending;
+   `uses` contains housing, nonlocal and retained household funds, wages, local and external
+   business purchases, taxes, and business retention; `sources - uses` is zero.
+3. **Incorrect behavior to inspect:** in a temporary scenario, change the first household retained
+   share from `0.15` to `0.14`. Loading must stop before simulation and identify a 99% allocation.
+4. **Correct behavior:** restore shares to exactly `1.00`; execution reaches the breakpoint and the
+   reconciliation difference is zero.
+5. **Economic importance:** an unclassified cent would make retained money or leakage disappear,
+   undermining every interpretation of the regional boundary.

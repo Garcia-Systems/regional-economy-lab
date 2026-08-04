@@ -58,3 +58,17 @@ commuting, housing market, workforce dynamics, multiplier rounds, or forecasts. 
 establishes the essential system: outside inflows become customer transactions, then explicit uses,
 with leakage and retention visible and every cent reconciled.
 
+
+The canonical relationship diagram is [`docs/diagrams/entity-relationships.mmd`](../docs/diagrams/entity-relationships.mmd); the canonical money-flow source is [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.mmd).
+
+### Complete debugging exercise
+
+1. **Breakpoint:** `engine.py`, the call `business.record_and_allocate(...)`.
+2. **Expected variables:** for the current `business`, `revenue_by_sector[business.sector]` equals
+   household sector spending plus visitor category spending; `sales_taxes` is nonnegative.
+3. **Incorrect behavior to inspect:** temporarily reduce that business's `monthly_capacity` below
+   its revenue and observe the capacity error rather than a silent truncation.
+4. **Correct behavior:** capacity is at least revenue; stepping into `record_and_allocate` records
+   the complete payment and divides after-tax funds into mutually exclusive uses.
+5. **Economic importance:** silently dropping demand would understate customer activity and break
+   the connection between household/visitor payments and business receipts.

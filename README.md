@@ -1,78 +1,82 @@
 # Executable Regional Economy Laboratory
 
-An interactive textbook and deterministic Python model showing how external income enters a
-region, circulates through households and businesses, produces wages and taxes, and partly leaves
-through leakage. Williamsburg, Virginia, and the surrounding Historic Triangle provide the
-v0.1.0 case-study setting; the engine contains no Williamsburg-specific rules.
+A deterministic, inspectable textbook for learning how money enters a region, moves among its
+participants, leaves through leakage, and remains as retained funds. The fictional Historic
+Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
 
-> **Educational disclaimer:** every v0.1.0 quantity is fictional or assumed. This laboratory is
-> not an official statistic, economic-impact study, policy recommendation, or forecast.
+> **Educational disclaimer:** v0.1.0 values are fictional assumptions—not official statistics, an
+> impact study, advice, policy analysis, or a forecast.
 
-## Current scope
+## Philosophy and educational value
 
-Version 0.1.0 implements Chapters 0–2 and one transparent month: external household and visitor
-inflows; household allocations; customer revenue in tourism/hospitality, retail, and food service;
-business wages, purchases, tax, retention; leakage; and cash reconciliation. It does not implement
-the later roadmap topics.
+Read a claim, run it, pause it in a debugger, change one assumption, and test the result. The model
+prefers a small reconciled system over false realism. Identical YAML always produces identical
+integer-cent results: there is no randomness, hidden calibration, or machine learning. Students can
+therefore distinguish **sources**, **transaction flows**, **leakage**, and **ending uses**.
 
-## Architecture
+## Install and explore
 
-```text
-YAML scenario → regional dataclasses → insertion-stable scheduler → flow engine
-              → metrics and reconciliation → dashboard/timeline CLI
-```
-
-Money is always integer cents. Rates use `Decimal`; multiplication rounds to the nearest cent with
-`ROUND_HALF_UP`. Explicit YAML shares replace hidden behavioral assumptions.
-
-## Install and run
-
-Python 3.13 is required.
+Python 3.13 is required. Run `python -m pip install -e '.[dev]'`, then:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev]'
 regional-sim baseline
 regional-sim tourism-season
 regional-sim compare baseline tourism-season
-python -m regional_economy.cli baseline
+regional-sim explain baseline
+regional-sim trace baseline
+regional-sim --help
 ```
 
-Or use containers:
+Docker equivalents are `docker compose run --rm lab regional-sim baseline` and
+`docker compose run --rm lab pytest`.
 
-```bash
-docker compose run --rm lab regional-sim baseline
-docker compose run --rm lab pytest
+## Repository architecture
+
+```text
+scenarios/*.yml → validation/domain entities → deterministic scheduler/engine
+                → metrics → dashboard, timeline, explanation, trace, comparison
+book/           narrative chapters       tests/          executable claims
+docs/           method and diagrams       .vscode/        learner debug launches
 ```
 
-VS Code users can select **Dev Containers: Reopen in Container**. The non-root Python 3.13 image
-installs the editable project and Python, debugger, and Jupyter extensions.
+Money is integer cents, rates are `Decimal`, and multiplication uses `ROUND_HALF_UP`. Scenario
+shares expose assumptions rather than burying them in code.
 
-## Tests and quality
+## Scenario and chapter maps
+
+| Scenario | Purpose |
+|---|---|
+| `baseline` | Reference one-month flow and reconciliation |
+| `tourism-season` | Controlled comparison with larger fictional visitor demand |
+
+| Chapter | Laboratory |
+|---|---|
+| [0 — Use the laboratory](book/chapter-00.md) | Setup, reports, explain/trace, debugging |
+| [1 — Regional system](book/chapter-01.md) | Entities and customer revenue |
+| [2 — Entry and exit](book/chapter-02.md) | Inflows, retention, and leakage |
+
+Diagrams: [money flow](docs/diagrams/money-flow.mmd), [entity relationships](docs/diagrams/entity-relationships.mmd), and [event ordering](docs/diagrams/event-ordering.mmd). GitHub and Mermaid-compatible editors render these files.
+
+## Debugging workflow
+
+Select a named configuration in VS Code's **Run and Debug** view. Pause at `run_scenario`, predict a
+value, step through allocations, and compare `reconciliation.sources` with `uses`. The launch names
+state what to inspect; each chapter provides a breakpoint, expected variables, an intentional
+configuration mistake to try, the correct behavior, and its economic meaning. For terminal checks:
 
 ```bash
 ruff check .
 pytest
+pytest --cov=regional_economy --cov-report=term-missing
 ```
 
-Pytest writes `coverage.xml` for Codecov. CI performs both commands on pushes and pull requests.
+Friendly validation errors identify the YAML location and a repair. Start by testing a copied
+scenario rather than editing the reference files.
 
-## Scenarios and reading map
+## Documentation and roadmap
 
-`scenarios/*.yml` contains all place-specific values, classification comments, allocations, and
-tax assumptions. Copy a scenario, keep required shares equal to one, and run it by filename stem.
-
-- [`book/chapter-00.md`](book/chapter-00.md): setup, running, and debugging
-- [`book/chapter-01.md`](book/chapter-01.md): the regional system
-- [`book/chapter-02.md`](book/chapter-02.md): inflows, retention, and leakage
-- [`docs/assumptions.md`](docs/assumptions.md) and [`docs/methodology.md`](docs/methodology.md)
-- [`docs/data-sources.md`](docs/data-sources.md), [`docs/glossary.md`](docs/glossary.md), and
-  [`docs/roadmap.md`](docs/roadmap.md)
-
-## Roadmap and laboratory family
-
-Future milestones may add the topics listed in the roadmap, one testable concept at a time. They
-are plans, not current functionality. This repository follows the Garcia Systems executable
-laboratory approach: narrative, inspectable source, configuration, experiments, and tests form a
-single learning artifact. It stands alone and does not require another laboratory.
+Method details live in [methodology](docs/methodology.md), assumptions in
+[assumptions](docs/assumptions.md), terminology in the [glossary](docs/glossary.md), and provenance
+rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
+not promised functionality. Version 0.1.0 intentionally stops after Chapter 2 and does not model
+additional economic systems.
