@@ -1,0 +1,12 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+body:
+  - type: textarea
+    attributes: {label: What happened?, description: Include the command and complete error.}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Reproduction steps}
+    validations: {required: true}
+  - type: input
+    attributes: {label: Environment, description: OS and Python version}
+    validations: {required: true}

@@ -34,7 +34,7 @@ retention *rate* when total inflow is much larger; compare both level and propor
 
 ## Debugging laboratory
 
-Break after `external_purchases` is calculated in `run_scenario`. Select one business and trace its
+Select **Run Tourism-Season Scenario** and break after `external_purchases` is calculated in `run_scenario`. Select one business and trace its
 integer-cent revenue through tax, operating amount, and `external_purchases`. Confirm that amount is
 included once in `economic_leakage`, included among reconciliation uses, and absent from wages,
 local purchases, and retained business funds. Repeat with `household_nonlocal`.
@@ -60,12 +60,13 @@ See the canonical [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.m
 
 ### Complete debugging exercise
 
-1. **Breakpoint:** `engine.py`, the line `leakage = housing + household_nonlocal + external_purchases`.
-2. **Expected variables:** all three components are integer cents and their sum equals
+1. **Launch configuration:** **Run Tourism-Season Scenario**.
+2. **Breakpoint:** `engine.py`, the line `leakage = housing + household_nonlocal + external_purchases`.
+3. **Expected variables:** all three components are integer cents and their sum equals
    `metrics.economic_leakage` after construction.
-3. **Incorrect behavior to inspect:** temporarily omit `external_purchases` from the expression;
+4. **Question / incorrect behavior to inspect:** temporarily omit `external_purchases` from the expression;
    leakage becomes too small while final uses still contain the external payment.
-4. **Correct behavior:** leakage includes each boundary exit exactly once, while reconciliation uses
+5. **Correct behavior:** leakage includes each boundary exit exactly once, while reconciliation uses
    still classify every cent and finish at zero.
-5. **Economic importance:** omitted imports exaggerate local retention even when the books happen
+6. **Economic importance:** omitted imports exaggerate local retention even when the books happen
    to reconcile through a separately classified use.

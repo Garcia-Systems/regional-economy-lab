@@ -12,4 +12,3 @@ class Government:
     def collect(self, amount: int) -> None:
         self.taxes_collected += amount
         self.reserve_balance += amount
-

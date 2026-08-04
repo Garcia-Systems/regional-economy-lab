@@ -48,8 +48,7 @@ YAML supplies entities, money, rates, capacities, and every allocation share. Re
 must total one. Values carry nearby classification comments; see `docs/assumptions.md`.
 
 In VS Code, open `src/regional_economy/engine.py`, place a breakpoint on the first line of
-`run_scenario`, select **Python Debugger: Current File** while invoking the module with `baseline`,
-or create a launch configuration for `regional_economy.cli` with argument `baseline`. Step through
+`run_scenario`, select **Run Baseline Scenario**. Step through
 the household `allocations`, `revenue_by_sector`, each `business`, `sales_taxes`, `metrics`, and
 `reconciliation`. A particularly useful breakpoint is the call to
 `business.record_and_allocate(...)`: inspect the customer revenue just before it becomes business
@@ -66,13 +65,9 @@ identity. Event ordering is summarized in [`docs/diagrams/event-ordering.mmd`](.
 
 ## Complete debugging exercise
 
-1. **Breakpoint:** `engine.py`, the `reconciliation = Reconciliation(...)` statement.
-2. **Expected variables:** `sources` equals external household income plus visitor spending;
-   `uses` contains housing, nonlocal and retained household funds, wages, local and external
-   business purchases, taxes, and business retention; `sources - uses` is zero.
-3. **Incorrect behavior to inspect:** in a temporary scenario, change the first household retained
-   share from `0.15` to `0.14`. Loading must stop before simulation and identify a 99% allocation.
-4. **Correct behavior:** restore shares to exactly `1.00`; execution reaches the breakpoint and the
-   reconciliation difference is zero.
-5. **Economic importance:** an unclassified cent would make retained money or leakage disappear,
-   undermining every interpretation of the regional boundary.
+1. **Launch configuration:** **Run Baseline Scenario**.
+2. **Breakpoint:** in `engine.py`, where `household_reconciliation` is constructed (find it by semantic name, not line number).
+3. **Objects and expected values:** inspect each reconciliation's `left`, `right`, and zero `difference`.
+4. **Question / incorrect behavior:** why must loading stop if a temporary scenario changes the first household retained share from `0.15` to `0.14`?
+5. **Correct behavior:** shares total exactly `1.00`; all three checks display `PASS` and zero difference.
+6. **Economic importance:** an unclassified cent would make retained money or leakage disappear, undermining every interpretation of the boundary.

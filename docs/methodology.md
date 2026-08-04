@@ -21,3 +21,17 @@ This small accounting experiment is not an input-output model, official impact e
 forecast. It deliberately excludes machine learning, stochastic methods, and calibration so a
 reader can trace every cent and understand every assumption.
 
+
+## Formal accounting identities and tax treatment
+
+The report deliberately uses three identities rather than adding repeated circulation to initial funds:
+
+1. **Household funds:** external household income = externally paid housing + local household spending + household nonlocal spending + retained household funds.
+2. **Customer spending:** local household spending + visitor spending = recorded business customer revenue.
+3. **Business revenue:** customer revenue = wages + local business purchases + business external purchases + taxes remitted + retained business funds.
+
+Thus a household purchase is counted once as customer activity even though the same transfer appears as a household use and a business receipt. Wages and local purchases are later uses, never new external inflows in this one-month model.
+
+Customer spending is a tax-inclusive budget: displayed business revenue includes tax rather than adding tax on top. The simplified sales levy is `ROUND_HALF_UP(gross sector customer revenue × sales_tax_rate)` for every sector. Lodging is represented by **visitor tourism/hospitality category spending only**; the additional lodging levy is `ROUND_HALF_UP(visitor tourism/hospitality spending × lodging_tax_rate)`. Modeled businesses remit both levies from gross revenue to local government. Tax remains inside the regional boundary and is not economic leakage. This is an educational convention, not a representation of a jurisdiction's tax law.
+
+All dollar YAML scalars are loaded as text and converted directly to integer cents. Rates become `Decimal`; tax multiplication rounds half away from zero. Share allocation uses the largest-remainder method: floor each exact allocation, then award remaining cents by descending fractional remainder, breaking ties in declared order. Reports always format integer cents with two decimal places.

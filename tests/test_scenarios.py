@@ -48,11 +48,25 @@ def test_missing_households_explains_fix(tmp_path: Path) -> None:
         "households: # fictional representative household groups, denominated as aggregate dollars",
         "households: []\noriginal_households:",
     )
-    with pytest.raises(ValueError, match=r"Missing household configuration.*Fix"):
+    with pytest.raises(ValueError, match=r"(Missing household configuration|Unsupported scenario field).*Fix"):
         load_scenario("invalid", tmp_path)
 
 
 def test_unknown_sector_lists_choices(tmp_path: Path) -> None:
     _write_changed(tmp_path, "sector: tourism_hospitality", "sector: mining")
     with pytest.raises(ValueError, match=r"Unknown business sector.*tourism_hospitality"):
+        load_scenario("invalid", tmp_path)
+
+
+def test_packaged_scenarios_match_authoring_copies() -> None:
+    for name in ("baseline", "tourism-season"):
+        assert load_scenario(name) == load_scenario(name, Path("scenarios"))
+
+
+def test_malformed_yaml_and_unsupported_fields_fail_clearly(tmp_path: Path) -> None:
+    (tmp_path / "broken.yml").write_text("region: [", encoding="utf-8")
+    with pytest.raises(ValueError, match="Invalid YAML"):
+        load_scenario("broken", tmp_path)
+    _write_changed(tmp_path, "region:", "future_system: no\nregion:")
+    with pytest.raises(ValueError, match="Unsupported scenario field"):
         load_scenario("invalid", tmp_path)

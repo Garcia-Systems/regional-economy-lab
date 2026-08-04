@@ -60,7 +60,7 @@ Diagrams: [money flow](docs/diagrams/money-flow.mmd), [entity relationships](doc
 ## Debugging workflow
 
 Select a named configuration in VS Code's **Run and Debug** view. Pause at `run_scenario`, predict a
-value, step through allocations, and compare `reconciliation.sources` with `uses`. The launch names
+value, step through allocations, and inspect the household, customer-spending, and business-revenue reconciliations. The launch names
 state what to inspect; each chapter provides a breakpoint, expected variables, an intentional
 configuration mistake to try, the correct behavior, and its economic meaning. For terminal checks:
 
@@ -80,3 +80,7 @@ Method details live in [methodology](docs/methodology.md), assumptions in
 rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
 not promised functionality. Version 0.1.0 intentionally stops after Chapter 2 and does not model
 additional economic systems.
+
+## Release and community
+
+Bundled scenarios are package resources, so installed commands work outside the checkout; root `scenarios/` copies are maintained for readable authoring and checked against packaged data. See [release instructions](docs/releasing.md), [changelog](CHANGELOG.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), and [code of conduct](CODE_OF_CONDUCT.md). Run the complete release gate with `python scripts/verify_release.py`.

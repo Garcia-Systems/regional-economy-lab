@@ -33,7 +33,7 @@ balance, and wages are not added to revenue to manufacture a larger activity num
 
 ## Debugging laboratory
 
-Break in `run_scenario` at `business.record_and_allocate(...)`. Inspect `household_by_sector`, the
+Select **Run Baseline Scenario** and break in `run_scenario` at `business.record_and_allocate(...)`. Inspect `household_by_sector`, the
 visitor's `spending_by_category`, and `revenue_by_sector`. Verify for each sector that household plus
 visitor spending becomes exactly the recorded customer revenue. Step into the business method and
 watch that flow split into taxes and operating uses.
@@ -63,12 +63,13 @@ The canonical relationship diagram is [`docs/diagrams/entity-relationships.mmd`]
 
 ### Complete debugging exercise
 
-1. **Breakpoint:** `engine.py`, the call `business.record_and_allocate(...)`.
-2. **Expected variables:** for the current `business`, `revenue_by_sector[business.sector]` equals
+1. **Launch configuration:** **Run Baseline Scenario**.
+2. **Breakpoint:** `engine.py`, the call `business.record_and_allocate(...)`.
+3. **Expected variables:** for the current `business`, `revenue_by_sector[business.sector]` equals
    household sector spending plus visitor category spending; `sales_taxes` is nonnegative.
-3. **Incorrect behavior to inspect:** temporarily reduce that business's `monthly_capacity` below
+4. **Question / incorrect behavior to inspect:** temporarily reduce that business's `monthly_capacity` below
    its revenue and observe the capacity error rather than a silent truncation.
-4. **Correct behavior:** capacity is at least revenue; stepping into `record_and_allocate` records
+5. **Correct behavior:** capacity is at least revenue; stepping into `record_and_allocate` records
    the complete payment and divides after-tax funds into mutually exclusive uses.
-5. **Economic importance:** silently dropping demand would understate customer activity and break
+6. **Economic importance:** silently dropping demand would understate customer activity and break
    the connection between household/visitor payments and business receipts.

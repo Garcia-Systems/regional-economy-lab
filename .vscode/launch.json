@@ -1,35 +1,10 @@
 {
   "version": "0.2.0",
   "configurations": [
-    {
-      // Break in run_scenario; inspect household allocations and the zero reconciliation difference.
-      "name": "Baseline Scenario — inspect allocations and reconciliation",
-      "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["baseline"], "console": "integratedTerminal",
-      "justMyCode": true
-    },
-    {
-      // Compare visitor spending by category with each business capacity.
-      "name": "Tourism Scenario — inspect visitor spending and sector capacity",
-      "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["tourism-season"], "console": "integratedTerminal",
-      "justMyCode": true
-    },
-    {
-      // Inspect both SimulationResult objects and each signed metric delta.
-      "name": "Scenario Comparison — inspect metric deltas",
-      "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["compare", "baseline", "tourism-season"], "console": "integratedTerminal",
-      "justMyCode": true
-    },
-    {
-      // Inspect how numeric metrics become student-facing Why and Change statements.
-      "name": "Explain Mode — inspect event-to-lesson mapping",
-      "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["explain", "baseline"], "console": "integratedTerminal",
-      "justMyCode": true
-    },
-    {
-      // Confirm this conceptual path never mutates balances or claims an accounting identity.
-      "name": "Trace Mode — inspect conceptual assumptions",
-      "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["trace", "baseline"], "console": "integratedTerminal",
-      "justMyCode": true
-    }
+    {"name": "Run Baseline Scenario", "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["baseline"], "console": "integratedTerminal", "justMyCode": true},
+    {"name": "Run Tourism-Season Scenario", "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["tourism-season"], "console": "integratedTerminal", "justMyCode": true},
+    {"name": "Compare Scenarios", "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["compare", "baseline", "tourism-season"], "console": "integratedTerminal", "justMyCode": true},
+    {"name": "Explain Baseline", "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["explain", "baseline"], "console": "integratedTerminal", "justMyCode": true},
+    {"name": "Trace Baseline", "type": "debugpy", "request": "launch", "module": "regional_economy.cli", "args": ["trace", "baseline"], "console": "integratedTerminal", "justMyCode": true}
   ]
 }

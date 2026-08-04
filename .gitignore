@@ -6,8 +6,17 @@ coverage.xml
 .pytest_cache/
 .ruff_cache/
 .venv/
+venv/
+.env
+.env.*
 dist/
 build/
+.ipynb_checkpoints/
+*.code-workspace
+.idea/
+.DS_Store
+Thumbs.db
+scenario-output/
 .vscode/
 
 

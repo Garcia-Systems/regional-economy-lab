@@ -1,7 +1,7 @@
 """Integer-cent money operations with explicit decimal rounding."""
 
 from collections.abc import Iterable
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal
 
 CENT = Decimal("0.01")
 
@@ -22,6 +22,22 @@ def parse_rate(value: str | int | Decimal) -> Decimal:
 def multiply(cents: int, rate: Decimal) -> int:
     """Multiply cents by a rate and round half away from zero to a whole cent."""
     return int((Decimal(cents) * rate).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def allocate(cents: int, shares: Iterable[tuple[str, Decimal]]) -> dict[str, int]:
+    """Allocate nonnegative cents by largest remainder, ties in input order."""
+    if cents < 0:
+        raise ValueError("cannot allocate negative money")
+    ordered = tuple(shares)
+    if sum((share for _, share in ordered), Decimal(0)) != Decimal(1):
+        raise ValueError("allocation shares must sum to 1")
+    exact = [(name, Decimal(cents) * share) for name, share in ordered]
+    result = {name: int(value.to_integral_value(rounding=ROUND_FLOOR)) for name, value in exact}
+    remainder = cents - sum(result.values())
+    ranked = sorted(enumerate(exact), key=lambda item: (-(item[1][1] % 1), item[0]))
+    for index, _ in ranked[:remainder]:
+        result[ordered[index][0]] += 1
+    return result
 
 
 def sum_money(values: Iterable[int]) -> int:

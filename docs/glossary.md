@@ -15,3 +15,14 @@
 - **Event:** a typed, integer-time record in the inspectable timeline.
 - **Reconciliation:** proof that classified final uses equal external sources.
 
+- **External household income:** household funds originating outside the modeled boundary, recorded once at entry.
+- **Visitor spending:** fictional external customer payments allocated by sector.
+- **Local household spending:** household customer payments received by modeled businesses.
+- **Household leakage:** household nonlocal spending; housing is separately shown as an externally paid cost.
+- **Business external purchases:** business input payments leaving the boundary.
+- **Economic leakage:** housing costs + household nonlocal spending + business external purchases, each counted once.
+- **Wages paid:** an after-tax business-revenue use; wages do not recirculate in v0.1.0.
+- **Taxes collected:** tax-inclusive sales and lodging amounts remitted by businesses and retained by modeled government.
+- **Retained household funds:** household funds not spent during the month.
+- **Retained business funds:** after-tax business revenue not allocated to wages or purchases.
+- **Event timeline:** deterministic, integer-time ordering of the month's modeled steps.

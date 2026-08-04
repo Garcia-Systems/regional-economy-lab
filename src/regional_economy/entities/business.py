@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from regional_economy.money import multiply
+from regional_economy.money import allocate
 
 
 class Sector(StrEnum):
@@ -36,10 +36,18 @@ class Business:
         operating = revenue - taxes
         self.local_revenue = revenue
         self.taxes = taxes
-        self.wages_paid = multiply(operating, self.wage_share)
-        self.local_purchases = multiply(operating, self.local_purchase_share)
-        self.external_purchases = multiply(operating, self.external_purchase_share)
-        self.retained_operating_funds = operating - self.wages_paid - self.local_purchases - self.external_purchases
+        amounts = allocate(
+            operating,
+            (
+                ("wages", self.wage_share),
+                ("local", self.local_purchase_share),
+                ("external", self.external_purchase_share),
+                ("retained", self.retained_share),
+            ),
+        )
+        self.wages_paid = amounts["wages"]
+        self.local_purchases = amounts["local"]
+        self.external_purchases = amounts["external"]
+        self.retained_operating_funds = amounts["retained"]
         if self.retained_operating_funds < 0:
             raise ValueError(f"business {self.business_id} allocations exceed revenue")
-

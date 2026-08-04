@@ -13,4 +13,3 @@ class Visitor:
     @property
     def total_spending(self) -> int:
         return sum(self.spending_by_category.values())
-

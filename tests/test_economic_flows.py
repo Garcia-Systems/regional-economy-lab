@@ -14,13 +14,11 @@ def test_baseline_flows_and_reconciliation() -> None:
         scenario.region.local_government.lodging_tax_rate,
     )
     assert metrics.taxes_collected == expected_sales + expected_lodging
-    assert metrics.economic_leakage == (
-        metrics.housing_costs + metrics.household_nonlocal_spending + metrics.external_business_purchases
-    )
-    assert metrics.reconciliation.reconciled
+    assert metrics.economic_leakage == (metrics.housing_costs + metrics.household_nonlocal_spending + metrics.external_business_purchases)
+    assert metrics.reconciled
+    assert all(check.difference == 0 for check in metrics.reconciliations)
     assert all(
-        allocation.housing + allocation.local_spending + allocation.other_spending + allocation.retained
-        <= household.monthly_income
+        allocation.housing + allocation.local_spending + allocation.other_spending + allocation.retained <= household.monthly_income
         for household in scenario.region.households
         for allocation in [household.allocate()]
     )
@@ -34,8 +32,8 @@ def test_repeated_fresh_runs_are_identical() -> None:
 def test_both_scenarios_end_to_end() -> None:
     baseline = run_scenario(load_scenario("baseline"))
     season = run_scenario(load_scenario("tourism-season"))
-    assert baseline.metrics.reconciliation.reconciled
-    assert season.metrics.reconciliation.reconciled
+    assert baseline.metrics.reconciled
+    assert season.metrics.reconciled
     assert season.metrics.visitor_spending > baseline.metrics.visitor_spending
     assert season.metrics.wages_paid > baseline.metrics.wages_paid
     assert season.metrics.taxes_collected > baseline.metrics.taxes_collected

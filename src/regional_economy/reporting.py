@@ -53,22 +53,17 @@ def dashboard(result: SimulationResult) -> str:
         (
             "Economic Flows",
             [
-                ("Total external inflows", format_money(m.reconciliation.sources)),
+                ("Total external inflows", format_money(m.external_household_income + m.visitor_spending)),
                 ("Local economic activity", format_money(m.simulated_local_economic_activity)),
                 ("Total leakage", format_money(m.economic_leakage)),
             ],
         ),
-        (
-            "Reconciliation",
-            [
-                ("Sources", format_money(m.reconciliation.sources)),
-                ("Classified ending uses", format_money(m.reconciliation.uses)),
-                ("Difference", format_money(m.reconciliation.difference)),
-                ("Status", "PASS" if m.reconciliation.reconciled else "FAIL"),
-            ],
-        ),
     ]
-    lines = [f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD", f"Scenario: {result.scenario_label} ({result.scenario_name})"]
+    lines = [
+        f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD",
+        f"Scenario: {result.scenario_label} ({result.scenario_name})",
+        "Educational simulation using fictional assumptions; not an official forecast.",
+    ]
     for title, rows in sections:
         lines.extend(("", *_section(title, rows)))
     return "\n".join(lines)
@@ -95,17 +90,44 @@ def timeline(result: SimulationResult) -> str:
 
 
 def reconciliation_report(result: SimulationResult) -> str:
-    r = result.metrics.reconciliation
-    status = "PASS" if r.reconciled else "FAIL"
-    return "\n".join(
+    m = result.metrics
+    blocks = ["FORMAL RECONCILIATION REPORT"]
+    details = (
         (
-            "RECONCILIATION NOTE",
-            f"Result: {status}",
-            f"{status}: external sources {format_money(r.sources)} - "
-            f"classified uses {format_money(r.uses)} = {format_money(r.difference)}.",
-            "Business revenue is a movement of money, not an additional source or an ending balance.",
-        )
+            m.household_reconciliation,
+            (
+                ("Available household funds", m.external_household_income),
+                ("Housing costs", m.housing_costs),
+                ("Local household spending", m.local_household_spending),
+                ("Household leakage", m.household_nonlocal_spending),
+                ("Retained household funds", m.retained_household_funds),
+            ),
+        ),
+        (
+            m.customer_reconciliation,
+            (
+                ("Local household spending + visitor spending", m.local_household_spending + m.visitor_spending),
+                ("Recorded business customer revenue", m.business_revenue),
+            ),
+        ),
+        (
+            m.business_reconciliation,
+            (
+                ("Business revenue", m.business_revenue),
+                ("Wages paid", m.wages_paid),
+                ("Local business purchases", m.local_business_purchases),
+                ("Business external purchases", m.external_business_purchases),
+                ("Taxes remitted", m.taxes_collected),
+                ("Retained business funds", m.retained_business_funds),
+            ),
+        ),
     )
+    for check, rows in details:
+        blocks.extend(("", f"{check.label} RECONCILIATION — {'PASS' if check.reconciled else 'FAIL'}"))
+        blocks.extend(f"  {label}: {format_money(value)}" for label, value in rows)
+        blocks.append(f"  Difference: {format_money(check.difference)}")
+    blocks.extend(("", "Customer revenue is repeated circulation, not an additional external source."))
+    return "\n".join(blocks)
 
 
 def full_report(result: SimulationResult) -> str:
@@ -154,8 +176,7 @@ def explanation(result: SimulationResult) -> str:
         (
             "Month Completed",
             "All external sources are compared with mutually exclusive ending uses.",
-            f"The difference is {format_money(m.reconciliation.difference)} "
-            f"({'reconciled' if m.reconciliation.reconciled else 'not reconciled'}).",
+            f"All three independent checks are {'PASS' if m.reconciled else 'FAIL'}.",
         ),
     )
     lines = [f"EXPLAIN MODE — {result.scenario_label}", "A student guide to why the month unfolds in this order."]

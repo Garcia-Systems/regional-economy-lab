@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from decimal import Decimal
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,18 @@ import yaml
 from regional_economy.entities import Business, Government, Household, Region, Sector, Visitor
 from regional_economy.money import parse_money, parse_rate
 
-SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "scenarios"
+SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "scenarios"  # compatibility for custom authoring/tests
+ROOT_FIELDS = {
+    "name",
+    "label",
+    "region",
+    "government",
+    "household_allocation",
+    "household_sector_shares",
+    "households",
+    "businesses",
+    "visitors",
+}
 
 
 @dataclass(frozen=True)
@@ -77,15 +89,22 @@ def _rate(value: object, location: str) -> Decimal:
 def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     if not name or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for character in name):
         raise ValueError(f"invalid scenario name: {name!r}")
-    path = (directory or SCENARIO_DIRECTORY) / f"{name}.yml"
+    path = directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml")
     if not path.is_file():
         raise ValueError(f"scenario not found: {name}")
     try:
-        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+        # BaseLoader preserves every scalar as text, preventing YAML float construction.
+        raw = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
     except yaml.YAMLError as error:
         raise ValueError(f"Invalid YAML in {path}. Fix the syntax near: {error}") from error
     if not isinstance(raw, dict):
         raise ValueError("Invalid scenario root. Fix: define named YAML sections such as region, households, and businesses.")
+    unsupported = set(raw) - ROOT_FIELDS
+    if unsupported:
+        raise ValueError(f"Unsupported scenario field(s): {', '.join(sorted(unsupported))}. Fix: remove unsupported fields.")
+    configured_name = str(raw.get("name", name))
+    if configured_name != name:
+        raise ValueError(f"Scenario name mismatch: requested {name!r}, file declares {configured_name!r}.")
 
     region_data = _require(raw, "region", "scenario")
     population = _nonnegative(int(_require(region_data, "population", "region")), "population")
@@ -116,6 +135,8 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
                 retained_share=household_shares["retained"],
             )
         )
+    if len({household.household_id for household in households}) != len(households):
+        raise ValueError("Duplicate household id. Fix: give every household a unique id.")
 
     business_items = _require(raw, "businesses", "scenario")
     if not isinstance(business_items, list) or not business_items:
@@ -135,10 +156,10 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
                 retained_share=allocation["retained"],
             )
         )
-    if {business.sector for business in businesses} != set(Sector):
-        raise ValueError(
-            f"Invalid business sectors at scenario.businesses. Fix: include exactly one or more entries covering: {', '.join(Sector)}."
-        )
+    if len({business.business_id for business in businesses}) != len(businesses):
+        raise ValueError("Duplicate business id. Fix: give every business a unique id.")
+    if len(businesses) != len(Sector) or {business.sector for business in businesses} != set(Sector):
+        raise ValueError(f"Invalid business sectors at scenario.businesses. Fix: include exactly one entry for each: {', '.join(Sector)}.")
 
     visitor_data = _require(raw, "visitors", "scenario")
     visitor_count = _nonnegative(int(_require(visitor_data, "count", "visitors")), "visitor count")
@@ -161,7 +182,7 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         local_government=government,
     )
     return Scenario(
-        name=str(raw.get("name", name)),
+        name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
         region=region,
         visitors=Visitor(visitor_count, average_stay, category_spending),

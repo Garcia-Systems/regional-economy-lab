@@ -9,9 +9,16 @@ from regional_economy.scenarios import load_scenario
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="regional-sim", description="Run a regional economy scenario")
-    parser.add_argument("command", help="scenario name, or compare, explain, trace")
-    parser.add_argument("scenarios", nargs="*", help="scenario names required by the command")
+    parser = argparse.ArgumentParser(
+        prog="regional-sim",
+        description="Run deterministic, fictional one-month regional economy scenarios.",
+        epilog=(
+            "examples: regional-sim baseline | regional-sim tourism-season | "
+            "regional-sim compare baseline tourism-season | regional-sim explain baseline | regional-sim trace baseline"
+        ),
+    )
+    parser.add_argument("command", metavar="SCENARIO|MODE", help="scenario name, or compare, explain, trace")
+    parser.add_argument("scenarios", metavar="SCENARIO", nargs="*", help="scenario names required by the selected mode")
     return parser
 
 
@@ -25,15 +32,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             first = run_scenario(load_scenario(args.scenarios[0]))
             second = run_scenario(load_scenario(args.scenarios[1]))
             print(comparison(first, second))
+            if not first.metrics.reconciled or not second.metrics.reconciled:
+                return 1
         elif args.command in {"explain", "trace"}:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one scenario name")
             result = run_scenario(load_scenario(args.scenarios[0]))
             print(explanation(result) if args.command == "explain" else trace(result))
+            if not result.metrics.reconciled:
+                return 1
         else:
             if args.scenarios:
                 parser.error("a scenario command accepts only one scenario name")
-            print(full_report(run_scenario(load_scenario(args.command))))
+            result = run_scenario(load_scenario(args.command))
+            print(full_report(result))
+            if not result.metrics.reconciled:
+                return 1
     except ValueError as error:
         parser.error(str(error))
     return 0

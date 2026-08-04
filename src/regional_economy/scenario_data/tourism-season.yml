@@ -1,0 +1,54 @@
+# v0.1.0 FICTIONAL seasonal experiment; no value is an actual Williamsburg statistic.
+name: tourism-season # fictional label
+label: Tourism Season # fictional label
+region:
+  name: Historic Triangle # public-data geographic-name placeholder
+  population: 1000 # fictional; held equal for comparison
+  employed_residents: 620 # fictional; held equal for comparison
+government:
+  sales_tax_rate: "0.05" # assumed simplified rate
+  lodging_tax_rate: "0.08" # assumed simplified rate
+  starting_reserve: "100000.00" # fictional
+household_allocation: # assumed shares after housing; must sum to one
+  local_spending: "0.65"
+  nonlocal_spending: "0.20"
+  retained: "0.15"
+household_sector_shares: # transformed toward seasonal retail and food activity
+  tourism_hospitality: "0.10"
+  retail: "0.52"
+  food_service: "0.38"
+households: # fictional representative household groups
+  - id: resident-households-a
+    monthly_income: "1840000.00" # fictional seasonal wage increase
+    housing_cost: "360000.00" # fictional
+  - id: resident-households-b
+    monthly_income: "1640000.00" # fictional seasonal wage increase
+    housing_cost: "320000.00" # fictional
+businesses: # fictional sector representatives with increased capacity
+  - id: tourism-sector
+    sector: tourism_hospitality
+    employees: 270 # fictional seasonal staffing
+    monthly_capacity: "2000000.00" # fictional
+    operating_allocation: &seasonal # assumed after-tax shares
+      wages: "0.57"
+      local_purchases: "0.15"
+      external_purchases: "0.18"
+      retained: "0.10"
+  - id: retail-sector
+    sector: retail
+    employees: 205 # fictional seasonal staffing
+    monthly_capacity: "1900000.00" # fictional
+    operating_allocation: *seasonal # assumed
+  - id: food-sector
+    sector: food_service
+    employees: 195 # fictional seasonal staffing
+    monthly_capacity: "1800000.00" # fictional
+    operating_allocation: *seasonal # assumed
+visitors:
+  count: 18000 # fictional seasonal increase
+  average_stay: "2.4" # assumed nights
+  spending_by_category: # fictional aggregate monthly dollars
+    tourism_hospitality: "460000.00"
+    retail: "140000.00"
+    food_service: "190000.00"
+
