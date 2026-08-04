@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: payment-outage
+label: Temporary Payment Outage
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -338,5 +338,5 @@ banking:
   lending_capacity_rate: "0.80"
   business_lending: "12000000.00"
   consumer_lending: "6000000.00"
-  payment_availability: "1.00"
-  payment_reliability: "0.999"
+  payment_availability: "0.65"
+  payment_reliability: "0.92"

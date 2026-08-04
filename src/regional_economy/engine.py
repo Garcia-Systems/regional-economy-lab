@@ -98,6 +98,11 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         + multiply(multiply(healthcare.local_procurement, transportation.freight_accessibility), utility_factor),
         "government": multiply(government.permits_and_fees, utility_factor),
     }
+    banking = scenario.banking.evaluate()
+    intended_transactions = sum(demand_sources.values())
+    demand_sources = {source: multiply(amount, banking.payment_availability) for source, amount in demand_sources.items()}
+    completed_transactions = sum(demand_sources.values())
+    interrupted_transactions = intended_transactions - completed_transactions
     demand_by_source = {
         source: _allocate_total(amount, scenario.business_demand_shares[source]) for source, amount in demand_sources.items()
     }
@@ -281,5 +286,8 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
             ),
             0,
         ),
+        banking,
+        completed_transactions,
+        interrupted_transactions,
     )
     return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())

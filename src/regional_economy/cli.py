@@ -5,6 +5,8 @@ from collections.abc import Sequence
 
 from regional_economy.engine import run_scenario
 from regional_economy.reporting import (
+    banking_report,
+    banking_trace,
     business_report,
     business_trace,
     comparison,
@@ -80,6 +82,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             "transportation-trace",
             "utilities-report",
             "utilities-trace",
+            "banking-report",
+            "banking-trace",
         }:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one scenario name")
@@ -125,6 +129,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if args.command == "utilities-report"
                 else utilities_trace(result)
                 if args.command == "utilities-trace"
+                else banking_report(result)
+                if args.command == "banking-report"
+                else banking_trace(result)
+                if args.command == "banking-trace"
                 else household_report(result)
             )
             if not result.metrics.reconciled:

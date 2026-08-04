@@ -113,3 +113,13 @@
 **Infrastructure reliability** — Scenario-configured share of aggregate service capacity available for the modeled month, not an engineering reliability statistic.
 
 **Unmet utility demand** — Demand above available aggregate electric, water, wastewater, or broadband capacity.
+
+## Banking and payments
+
+- **Available credit:** Aggregate lending capacity remaining after outstanding simplified lending; it is not income.
+- **Completed transactions:** Intended local transaction value multiplied by payment availability and recorded as business revenue once.
+- **Deposits:** Fictional aggregate household and business balances, never individual accounts.
+- **Interrupted transactions:** Intended value not completed this month because payment capacity was unavailable; reported as delayed demand.
+- **Lending capacity:** Total deposits multiplied by the configured educational capacity rate.
+- **Payment availability:** Deterministic share of otherwise accessible transactions that can complete.
+- **Payment reliability:** Descriptive aggregate operating-quality indicator; it does not drive random events.

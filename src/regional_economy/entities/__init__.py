@@ -1,5 +1,6 @@
 """Regional domain entities."""
 
+from .banking import BankingResult, BankingSystem
 from .business import Business, Sector
 from .government import DepartmentName, Government, PublicServiceDepartment
 from .healthcare import AgeCohort, HealthcareSystem
@@ -14,6 +15,8 @@ from .workforce import SkillCategory, SkillResult, WorkforceResult, WorkforceSys
 
 __all__ = [
     "AgeCohort",
+    "BankingResult",
+    "BankingSystem",
     "Business",
     "DepartmentName",
     "Government",

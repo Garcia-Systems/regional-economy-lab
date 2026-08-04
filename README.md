@@ -168,3 +168,17 @@ regional-sim maintenance-window
 regional-sim utilities-report baseline
 regional-sim compare baseline power-outage
 ```
+
+## Chapter 13 — Banking, credit, and payments
+
+Chapter 13 adds fictional aggregate institutions, household and business deposits, lending and available-credit indicators, and deterministic payment availability. An outage lowers completed transactions and current business revenue while reporting interrupted demand rather than deleting it.
+
+```bash
+regional-sim payment-outage
+regional-sim credit-tightening
+regional-sim expanded-business-lending
+regional-sim banking-report baseline
+regional-sim compare baseline payment-outage
+```
+
+This is not a payment network: accounts, ACH, cards, authorization, routing, settlement, messages, ledgers, and fraud controls belong in the **Digital Banking Systems Laboratory**. The **Inventory Synchronization Laboratory**, **Digital Banking Systems Laboratory**, and **Marketplace Pricing and Solutions Engineering Lab** each teach a subsystem deeply; this laboratory demonstrates how those subsystems conceptually interact in a regional economy. No repository has a runtime dependency on another. See [Chapter 13](book/chapter-13.md).

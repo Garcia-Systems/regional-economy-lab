@@ -177,6 +177,16 @@ def dashboard(result: SimulationResult) -> str:
                 ("Total leakage", format_money(m.economic_leakage)),
             ),
         ),
+        (
+            "Banking, Credit, and Payments",
+            (
+                ("Deposits", format_money(m.banking.total_deposits)),
+                ("Available credit", format_money(m.banking.available_credit)),
+                ("Payment availability", _percent(m.banking.payment_availability)),
+                ("Completed transactions", format_money(m.completed_transactions)),
+                ("Interrupted transactions", format_money(m.interrupted_transactions)),
+            ),
+        ),
     )
     lines = [
         f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD",
@@ -258,6 +268,10 @@ def explanation(result):
         + ".",
         "Savings remains held rather than spent; nonlocal purchases become leakage. "
         "Cohorts can differ because costs and preferences differ.",
+        "Payments are economic infrastructure: an interruption delays purchases and business receipts even when demand remains. "
+        "Credit is borrowing capacity, not income.",
+        "Aggregate banking supports payroll, purchases, hiring, and investment. Payment-network mechanics belong in the "
+        "Digital Banking Systems Laboratory.",
         "Unmet essential expenses measure financial stress without inventing debt. Indicators are not an official affordability analysis.",
         "Visitor spending is external income because visitors bring purchasing power from outside the region. "
         "It becomes lodging, restaurant, attraction, and retail revenue.",
@@ -542,13 +556,21 @@ def comparison(first, second):
         ("Government revenue", "government_revenue"),
         ("Government operating budget", "government_operating_budget"),
         ("Government capital budget", "government_capital_budget"),
+        ("Deposits", "banking.total_deposits"),
+        ("Available credit", "banking.available_credit"),
+        ("Completed transactions", "completed_transactions"),
+        ("Interrupted transactions", "interrupted_transactions"),
     )
     first_label = first.scenario_label[:20]
     second_label = second.scenario_label[:20]
     lines = ["SCENARIO COMPARISON", f"{'Metric':<29}{first_label:>20}{second_label:>20}{'Change':>20}"]
     for label, attr in rows:
-        a = getattr(first.metrics, attr)
-        b = getattr(second.metrics, attr)
+        if attr.startswith("banking."):
+            a = getattr(first.metrics.banking, attr.split(".")[1])
+            b = getattr(second.metrics.banking, attr.split(".")[1])
+        else:
+            a = getattr(first.metrics, attr)
+            b = getattr(second.metrics, attr)
         formatter = (
             (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}") if attr == "healthcare_employment" else format_money
         )
@@ -604,6 +626,40 @@ def utilities_report(result):
         )
     )
     return "\n".join(lines)
+
+
+def banking_report(result):
+    m = result.metrics
+    b = m.banking
+    return "\n".join(
+        (
+            f"BANKING REPORT — {result.scenario_label}",
+            "Fictional aggregate institutions; no accounts, routing, authorization, settlement, or payment messages.",
+            f"Institutions: {b.institution_count}",
+            f"Household deposits: {format_money(b.household_deposits)}",
+            f"Business deposits: {format_money(b.business_deposits)}",
+            f"Total deposits: {format_money(b.total_deposits)}",
+            f"Lending capacity: {format_money(b.lending_capacity)}",
+            f"Available credit: {format_money(b.available_credit)}",
+            f"Payment availability: {_percent(b.payment_availability)}",
+            f"Payment reliability: {_percent(b.payment_reliability)}",
+            f"Completed transactions: {format_money(m.completed_transactions)}",
+            f"Interrupted activity: {format_money(m.interrupted_transactions)}",
+            "Interrupted activity is delayed demand, not permanently deleted demand.",
+        )
+    )
+
+
+def banking_trace(result):
+    return "\n".join(
+        (
+            f"BANKING EDUCATIONAL SYSTEMS TRACE — {result.scenario_label}",
+            "Household Income ↓ Deposits ↓ Payments ↓ Business Revenue",
+            "↓ Payroll ↓ Household Spending ↓ Regional Economic Activity",
+            "This chapter models regional economic effects, not payment-network mechanics; see the Digital Banking Systems "
+            "Laboratory for implementation depth.",
+        )
+    )
 
 
 def utilities_trace(result):

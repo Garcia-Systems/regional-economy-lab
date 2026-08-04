@@ -71,3 +71,7 @@ Chapter 11 evaluates aggregate transportation before economic demand. Each confi
 ## Utilities and digital infrastructure
 
 For each aggregate service, available capacity is the integer floor of installed capacity × (1 − maintenance reserve) × deterministic reliability. Utilization divides demand by available capacity, and unmet demand is `max(0, demand − available capacity)`. The minimum available-to-demand ratio constrains effective cross-sector demand. Calculations use `Decimal` rates and integer units/cents, fixed service ordering, and no forecasting, optimization, network solver, or engineering-grade simulation.
+
+## Chapter 13 method
+
+After transportation and utilities determine accessible intended demand, payment availability is multiplied into each demand source using the integer-cent allocator. Completed source totals are allocated once to business sectors; their sum reconciles to customer revenue. Interrupted activity is intended less completed value. Deposit-based lending capacity and available credit are simultaneous indicators and do not inject spending. Stable source/sector iteration and Decimal rates preserve deterministic output. Implementation-level payment behavior is intentionally delegated conceptually—not as a dependency—to the Digital Banking Systems Laboratory.
