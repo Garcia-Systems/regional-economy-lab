@@ -19,11 +19,13 @@ from regional_economy.entities import (
     HousingSystem,
     Region,
     Sector,
+    SkillCategory,
     StudentCohort,
     TourismBusiness,
     TourismSector,
     University,
     Visitor,
+    WorkforceSystem,
 )
 from regional_economy.money import parse_money, parse_rate
 
@@ -45,6 +47,7 @@ ROOT_FIELDS = {
     "university",
     "healthcare",
     "housing",
+    "workforce",
 }
 
 
@@ -59,6 +62,7 @@ class Scenario:
     university: University
     healthcare: HealthcareSystem
     housing: HousingSystem
+    workforce: WorkforceSystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -462,6 +466,36 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
             _nonnegative(int(housing_data.get("construction_units", "0")), "housing construction"),
             _rate(housing_data.get("annual_construction_rate", "0"), "housing.annual_construction_rate"),
         )
+    workforce_data = raw.get("workforce")
+    if workforce_data is None:
+        # Backward-compatible neutral aggregate for Chapters 0-9.
+        working_age = population
+        participation = Decimal(employed) / Decimal(population) if population else Decimal(0)
+        workforce = WorkforceSystem(working_age, participation, 0, 0, 0,
+            {skill: Decimal(1) / Decimal(len(SkillCategory)) for skill in SkillCategory},
+            {skill: employed // len(SkillCategory) for skill in SkillCategory},
+            {skill: Decimal(0) for skill in SkillCategory})
+    else:
+        working_age = _nonnegative(int(_require(workforce_data, "working_age_population", "workforce")), "working-age population")
+        participation = _rate(_require(workforce_data, "participation_rate", "workforce"), "workforce.participation_rate")
+        commuters_in = _nonnegative(int(_require(workforce_data, "commuters_in", "workforce")), "in-commuters")
+        commuters_out = _nonnegative(int(_require(workforce_data, "commuters_out", "workforce")), "out-commuters")
+        if commuters_out > int(Decimal(working_age) * participation):
+            raise ValueError("workforce.commuters_out cannot exceed the resident labor force.")
+        skill_shares = _shares(_require(workforce_data, "skill_shares", "workforce"), "workforce skill")
+        training = _require(workforce_data, "training", "workforce")
+        training_shares = _shares(_require(training, "allocation", "workforce.training"), "workforce training")
+        expected_skills = {skill.value for skill in SkillCategory}
+        if set(skill_shares) != expected_skills or set(training_shares) != expected_skills:
+            raise ValueError(f"Workforce skill allocations must include exactly: {', '.join(sorted(expected_skills))}.")
+        demand_data = _require(workforce_data, "employment_demand", "workforce")
+        if set(demand_data) != expected_skills:
+            raise ValueError(f"Workforce employment demand must include exactly: {', '.join(sorted(expected_skills))}.")
+        workforce = WorkforceSystem(working_age, participation, commuters_in, commuters_out,
+            _nonnegative(int(_require(training, "capacity", "workforce.training")), "training capacity"),
+            {SkillCategory(k): v for k, v in skill_shares.items()},
+            {SkillCategory(k): _nonnegative(int(v), f"{k} employment demand") for k, v in demand_data.items()},
+            {SkillCategory(k): v for k, v in training_shares.items()})
     demand_share_data = _require(raw, "business_demand_shares", "scenario")
     if set(demand_share_data) != {"households", "visitors", "institutions", "government"}:
         raise ValueError("business_demand_shares must include households, visitors, institutions, and government.")
@@ -485,4 +519,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         university=university,
         healthcare=healthcare,
         housing=housing,
+        workforce=workforce,
     )

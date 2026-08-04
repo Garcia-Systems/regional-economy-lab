@@ -85,3 +85,17 @@
 **Unmet housing demand** — Aggregate demand above available regional housing capacity.
 **Workforce housing utilization** — Served workforce demand divided by configured workforce units; workforce demand is not added twice to total demand.
 **Housing pressure index** — Bounded educational indicator equal to 70% of occupancy rate plus 30% of unmet-demand share; not a price or forecast.
+
+**Labor force** — Working-age population multiplied by the configured aggregate participation rate.
+
+**Labor-force participation rate** — Decimal share of working-age residents participating in work or work availability.
+
+**Available regional labor** — Resident labor force less out-commuters plus in-commuters and configured training capacity.
+
+**Skill category** — One of six simplified aggregate workforce groups, not an occupation or credential.
+
+**Unfilled position** — Configured skill demand exceeding matched availability; no hiring process is simulated.
+
+**In-commuter / out-commuter** — Aggregate nonresident working inside / resident working outside the modeled boundary.
+
+**Training capacity** — Deterministic scenario-horizon addition to selected skill availability, without individual learners.

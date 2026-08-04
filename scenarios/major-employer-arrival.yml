@@ -1,0 +1,334 @@
+# Chapter 10 fictional aggregate workforce assumptions.
+name: major-employer-arrival
+label: Major Employer Arrival
+region:
+  name: Historic Triangle
+  population: 1000
+  employed_residents: 620
+government:
+  sales_tax_rate: '0.05'
+  lodging_tax_rate: '0.08'
+  starting_reserve: '100000.00'
+  property_tax_revenue: '750000.00'
+  permits_and_fees: '100000.00'
+  intergovernmental_transfers: '350000.00'
+  operating_budget: '1200000.00'
+  capital_budget: '200000.00'
+  departments:
+    public_safety:
+      allocation_share: '0.30'
+      cost_per_capacity_unit: '3000.00'
+      demand: '125'
+    education_support:
+      allocation_share: '0.20'
+      cost_per_capacity_unit: '2400.00'
+      demand: '90'
+    parks_recreation:
+      allocation_share: '0.15'
+      cost_per_capacity_unit: '1800.00'
+      demand: '105'
+    public_works:
+      allocation_share: '0.25'
+      cost_per_capacity_unit: '2700.00'
+      demand: '115'
+    administration:
+      allocation_share: '0.10'
+      cost_per_capacity_unit: '1500.00'
+      demand: '75'
+affordability_thresholds:
+  cost_burden: '0.30'
+  severe_cost_burden: '0.50'
+household_sector_shares:
+  retail: '0.40'
+  restaurants: '0.25'
+  personal_services: '0.20'
+  entertainment: '0.15'
+business_demand_shares:
+  households:
+    retail: '0.40'
+    restaurants: '0.25'
+    personal_services: '0.20'
+    entertainment: '0.15'
+  visitors:
+    retail: '0.25'
+    restaurants: '0.40'
+    personal_services: '0.05'
+    entertainment: '0.30'
+  institutions:
+    retail: '0.45'
+    restaurants: '0.15'
+    personal_services: '0.30'
+    entertainment: '0.10'
+  government:
+    retail: '0.30'
+    restaurants: '0.10'
+    personal_services: '0.50'
+    entertainment: '0.10'
+household_types:
+- id: lower-income-renter
+  label: Lower-Income Renter
+  classification: fictional
+  count: 180
+  workers_per_household: '1.0'
+  gross_monthly_income: '3200.00'
+  income_deduction_rate: '0.12'
+  monthly_housing_cost: '1450.00'
+  essential_nonhousing_cost: '1150.00'
+  essential_local_spending_share: '0.72'
+  target_savings_rate: '0.02'
+  discretionary_spending_rate: '0.85'
+  discretionary_local_spending_share: '0.55'
+  external_income_share: '0.90'
+- id: middle-income-renter
+  label: Middle-Income Renter
+  classification: fictional
+  count: 180
+  workers_per_household: '1.3'
+  gross_monthly_income: '5200.00'
+  income_deduction_rate: '0.17'
+  monthly_housing_cost: '1750.00'
+  essential_nonhousing_cost: '1500.00'
+  essential_local_spending_share: '0.70'
+  target_savings_rate: '0.08'
+  discretionary_spending_rate: '0.82'
+  discretionary_local_spending_share: '0.60'
+  external_income_share: '0.85'
+- id: middle-income-homeowner
+  label: Middle-Income Homeowner
+  classification: fictional
+  count: 260
+  workers_per_household: '1.4'
+  gross_monthly_income: '6800.00'
+  income_deduction_rate: '0.19'
+  monthly_housing_cost: '1950.00'
+  essential_nonhousing_cost: '1750.00'
+  essential_local_spending_share: '0.68'
+  target_savings_rate: '0.10'
+  discretionary_spending_rate: '0.80'
+  discretionary_local_spending_share: '0.62'
+  external_income_share: '0.80'
+- id: higher-income-homeowner
+  label: Higher-Income Homeowner
+  classification: fictional
+  count: 140
+  workers_per_household: '1.7'
+  gross_monthly_income: '11200.00'
+  income_deduction_rate: '0.24'
+  monthly_housing_cost: '2600.00'
+  essential_nonhousing_cost: '2300.00'
+  essential_local_spending_share: '0.65'
+  target_savings_rate: '0.18'
+  discretionary_spending_rate: '0.72'
+  discretionary_local_spending_share: '0.65'
+  external_income_share: '0.75'
+- id: retired-household
+  label: Retired Household
+  classification: fictional
+  count: 140
+  workers_per_household: '0.0'
+  gross_monthly_income: '4100.00'
+  income_deduction_rate: '0.10'
+  monthly_housing_cost: '1250.00'
+  essential_nonhousing_cost: '1600.00'
+  essential_local_spending_share: '0.74'
+  target_savings_rate: '0.12'
+  discretionary_spending_rate: '0.75'
+  discretionary_local_spending_share: '0.58'
+  external_income_share: '0.55'
+- id: remote-worker-household
+  label: Remote-Worker Household
+  classification: fictional
+  count: 100
+  workers_per_household: '1.5'
+  gross_monthly_income: '8200.00'
+  income_deduction_rate: '0.21'
+  monthly_housing_cost: '2100.00'
+  essential_nonhousing_cost: '1900.00'
+  essential_local_spending_share: '0.66'
+  target_savings_rate: '0.14'
+  discretionary_spending_rate: '0.76'
+  discretionary_local_spending_share: '0.64'
+  external_income_share: '0.95'
+businesses:
+- id: retail-sector
+  sector: retail
+  employees: 240
+  monthly_capacity: '2800000.00'
+  operating_allocation: &id001
+    wages: '0.55'
+    local_purchases: '0.15'
+    external_purchases: '0.20'
+    retained: '0.10'
+- id: restaurant-sector
+  sector: restaurants
+  employees: 210
+  monthly_capacity: '1900000.00'
+  operating_allocation: *id001
+- id: personal-services-sector
+  sector: personal_services
+  employees: 130
+  monthly_capacity: '1400000.00'
+  operating_allocation: *id001
+- id: entertainment-sector
+  sector: entertainment
+  employees: 100
+  monthly_capacity: '1250000.00'
+  operating_allocation: *id001
+tourism:
+  visitor_count: 10000
+  average_length_of_stay: '2.0'
+  average_daily_spending: '215.00'
+  month: April
+  seasonal_multipliers:
+    January: '0.45'
+    April: '0.90'
+    July: '1.50'
+    October: '1.10'
+  spending_allocation:
+    lodging: '0.40'
+    restaurants: '0.25'
+    attractions: '0.20'
+    visitor_retail: '0.15'
+  businesses:
+  - sector: lodging
+    employees: 110
+    monthly_capacity: '3500000.00'
+    operating_allocation: &id002
+      wages: '0.45'
+      local_purchases: '0.20'
+      external_purchases: '0.25'
+      retained: '0.10'
+  - sector: restaurants
+    employees: 90
+    monthly_capacity: '2500000.00'
+    operating_allocation: *id002
+  - sector: attractions
+    employees: 70
+    monthly_capacity: '2000000.00'
+    operating_allocation: *id002
+  - sector: visitor_retail
+    employees: 45
+    monthly_capacity: '1500000.00'
+    operating_allocation: *id002
+university:
+  name: Tidewater Regional University
+  faculty_count: 420
+  staff_count: 580
+  payroll: '6200000.00'
+  operating_budget: '10000000.00'
+  procurement_budget: '2400000.00'
+  research_funding: '1800000.00'
+  local_purchasing_share: '0.45'
+  external_funding_share: '0.70'
+  season: Fall
+  students:
+    resident: 6000
+    commuter: 2000
+    average_monthly_local_spending: '740.00'
+    average_housing_spending: '900.00'
+    spending_shares:
+      retail: '0.30'
+      food: '0.50'
+      entertainment: '0.20'
+  seasonal_patterns:
+    Fall:
+      enrollment: '1.00'
+      spending: '1.00'
+    Spring:
+      enrollment: '0.95'
+      spending: '0.95'
+    Summer:
+      enrollment: '0.35'
+      spending: '0.80'
+healthcare:
+  name: Peninsula Community Health Network
+  institutions:
+    hospitals: 1
+    clinics: 4
+    urgent_care_centers: 2
+    pharmacies: 6
+  employment: 145
+  monthly_payroll: '820000.00'
+  monthly_procurement: '310000.00'
+  local_purchasing_share: '0.40'
+  cohorts:
+  - id: children
+    label: Children
+    population: 200
+    outpatient_visits: '0.18'
+    inpatient_services: '0.010'
+    pharmacy_demand: '0.25'
+    preventive_care: '0.10'
+    average_monthly_spending: '210.00'
+    labor_force_participation: '0.00'
+    dependent: true
+    retirement_age: false
+  - id: working-age
+    label: Working-Age Adults
+    population: 620
+    outpatient_visits: '0.16'
+    inpatient_services: '0.008'
+    pharmacy_demand: '0.35'
+    preventive_care: '0.08'
+    average_monthly_spending: '300.00'
+    labor_force_participation: '0.78'
+    dependent: false
+    retirement_age: false
+  - id: retirees
+    label: Retirees
+    population: 180
+    outpatient_visits: '0.34'
+    inpatient_services: '0.025'
+    pharmacy_demand: '0.90'
+    preventive_care: '0.12'
+    average_monthly_spending: '650.00'
+    labor_force_participation: '0.12'
+    dependent: true
+    retirement_age: true
+housing:
+  categories:
+  - name: owner_occupied
+    units: 900
+    occupied_units: 820
+  - name: rental
+    units: 700
+    occupied_units: 650
+  - name: workforce
+    units: 250
+    occupied_units: 210
+  demand:
+    households: 860
+    students: 600
+    retirees: 140
+    seasonal_residents: 50
+    workforce: 220
+  construction_units: 0
+  annual_construction_rate: '0.02'
+workforce:
+  working_age_population: 800
+  participation_rate: '0.75'
+  commuters_in: 120
+  commuters_out: 60
+  skill_shares:
+    hospitality: '0.15'
+    healthcare: '0.15'
+    education: '0.15'
+    professional_services: '0.15'
+    trades: '0.15'
+    retail_food_service: '0.25'
+  employment_demand:
+    hospitality: 70
+    healthcare: 125
+    education: 110
+    professional_services: 240
+    trades: 70
+    retail_food_service: 195
+  training:
+    capacity: 30
+    allocation:
+      hospitality: '0.10'
+      healthcare: '0.20'
+      education: '0.10'
+      professional_services: '0.10'
+      trades: '0.25'
+      retail_food_service: '0.25'

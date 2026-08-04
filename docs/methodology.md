@@ -59,3 +59,7 @@ Four downtown sectors receive integer-cent demand allocations from households, v
 ## Aggregate housing method
 
 The loader validates nonnegative aggregate category units and rejects configured occupied units above category capacity. Scenario construction units are added to existing supply. Demand sums household, student, retiree, and seasonal-resident components in declared order; workforce demand is reported separately because it is a subset lens. Realized occupancy is `min(demand, supply)`, vacancy is `supply - occupancy`, and unmet demand is `max(0, demand - supply)`. Decimal division produces occupancy, vacancy, utilization, and a documented 70/30 pressure index. No stochastic process or market-clearing price is used, so repeated runs and comparisons are reproducible.
+
+## Workforce and skills
+
+Chapter 10 calculates `labor_force = round_half_up(working_age_population × participation_rate)`. Local base availability is `labor_force − commuters_out + commuters_in`. Stable category order partitions that pool using Decimal shares, with the final category receiving the integer remainder so base workers cannot be double-counted. Training capacity is allocated by explicit shares. Per-skill employment is the lesser of availability and configured demand; the difference is unfilled demand. Totals are category sums. This deterministic stock-and-capacity method is transparent but is not labor matching, behavioral estimation, optimization, or prediction. Workforce counts do not automatically manufacture household income or monetary output.

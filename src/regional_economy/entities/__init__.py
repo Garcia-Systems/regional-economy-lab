@@ -8,6 +8,7 @@ from .housing import HousingCategory, HousingSystem
 from .region import Region
 from .university import StudentCohort, University
 from .visitor import TourismBusiness, TourismSector, Visitor
+from .workforce import SkillCategory, SkillResult, WorkforceResult, WorkforceSystem
 
 __all__ = [
     "AgeCohort",
@@ -22,9 +23,13 @@ __all__ = [
     "PublicServiceDepartment",
     "Region",
     "Sector",
+    "SkillCategory",
+    "SkillResult",
     "StudentCohort",
     "TourismBusiness",
     "TourismSector",
     "University",
     "Visitor",
+    "WorkforceResult",
+    "WorkforceSystem",
 ]

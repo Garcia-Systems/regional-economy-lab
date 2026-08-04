@@ -148,3 +148,7 @@ Chapter 8 models a fictional downtown through aggregate retail, restaurant, pers
 ## Chapter 9: housing and affordability
 
 Chapter 9 treats owner, rental, and workforce housing as aggregate regional capacity. Occupancy cannot exceed supply; vacancy, unmet demand, workforce utilization, and a transparent pressure index expose growth pressures. Try `regional-sim housing-boom`, `regional-sim housing-shortage`, `regional-sim workforce-housing-expansion`, `regional-sim housing-report baseline`, or `regional-sim compare baseline housing-shortage`. Housing costs are educational assumptions and no real housing market is modeled. See [Chapter 9](book/chapter-09.md).
+
+## Chapter 10: workforce and skills
+
+Chapter 10 adds aggregate labor-force participation, six simplified skill categories, commuting, employer demand, training capacity, employment, unemployment, and unfilled-position indicators. Try `regional-sim major-employer-arrival`, `regional-sim workforce-shortage`, `regional-sim workforce-training-expansion`, `regional-sim workforce-report baseline`, and `regional-sim workforce-trace baseline`. Workforce groups are deterministic educational aggregates, not individual workers or forecasts. See [Chapter 10](book/chapter-10.md).
