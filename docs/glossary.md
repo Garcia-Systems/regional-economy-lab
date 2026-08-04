@@ -69,3 +69,11 @@
 **Government operating budget** — Fixed monthly funds allocated across five aggregate public-service departments and reconciled exactly in cents.
 
 **Public-service utilization** — Configured demand divided by modeled capacity; it may exceed 100% and is not a performance score.
+
+## Chapter 8 terms
+
+**Business capacity** — Maximum monthly revenue an aggregate sector can serve.
+**Excess capacity** — Capacity above current demand.
+**Unmet business demand** — Demand above capacity that produces no revenue.
+**Retained operating surplus** — Simplified educational residual after tax, payroll, and purchases; not GAAP profit.
+**Business opening / closure** — Deterministic aggregate scenario count, never an identified firm.

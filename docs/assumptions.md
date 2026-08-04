@@ -39,3 +39,7 @@ Peninsula Community Health Network and every cohort, institution count, utilizat
 ## Chapter 7 government assumptions
 
 Government uses fictional monthly property revenue, transaction-based local sales and lodging taxes, aggregate permits/fees, and aggregate intergovernmental transfers. A fixed operating budget is allocated in integer cents by Decimal shares totaling 100%; a separate high-level capital amount is not assigned to projects. Capacity equals budget divided by an assumed capacity-unit cost, and utilization equals demand divided by capacity. Remaining available funds become reserves. These educational department indices omit service quality, distribution, debt, and detailed governmental accounting and imply no policy recommendation.
+
+## Chapter 8 business assumptions
+
+Business sectors are aggregate fictional educational models, not real businesses. Household, visitor, institutional, and government demand is allocated with explicit Decimal shares. Monthly revenue cannot exceed configured capacity. Profitability is the simplified retained operating surplus after sales tax, payroll, and local/external purchases; it is not GAAP profit. Openings and closures are deterministic aggregate scenario inputs.

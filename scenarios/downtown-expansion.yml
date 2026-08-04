@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: enrollment-growth
-label: Enrollment Growth
+name: downtown-expansion
+label: Downtown Expansion
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -138,7 +138,8 @@ businesses:
   - id: retail-sector
     sector: retail
     employees: 240
-    monthly_capacity: "2800000.00"
+    monthly_capacity: "3500000.00"
+    openings: 2
     operating_allocation: &operating
       wages: "0.55"
       local_purchases: "0.15"
@@ -147,17 +148,20 @@ businesses:
   - id: restaurant-sector
     sector: restaurants
     employees: 210
-    monthly_capacity: "1900000.00"
+    monthly_capacity: "2375000.00"
+    openings: 2
     operating_allocation: *operating
   - id: personal-services-sector
     sector: personal_services
     employees: 130
-    monthly_capacity: "1400000.00"
+    monthly_capacity: "1750000.00"
+    openings: 2
     operating_allocation: *operating
   - id: entertainment-sector
     sector: entertainment
     employees: 100
-    monthly_capacity: "1250000.00"
+    monthly_capacity: "1562500.00"
+    openings: 2
     operating_allocation: *operating
 tourism:
   # All values are fictional educational assumptions, not official statistics.
@@ -209,8 +213,8 @@ university:
   external_funding_share: "0.70"
   season: Fall
   students:
-    resident: 6900
-    commuter: 2300
+    resident: 6000
+    commuter: 2000
     average_monthly_local_spending: "740.00"
     average_housing_spending: "900.00"
     spending_shares:

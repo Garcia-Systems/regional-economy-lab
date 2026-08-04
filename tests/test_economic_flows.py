@@ -7,9 +7,10 @@ def test_baseline_flows_and_reconciliation() -> None:
     scenario = load_scenario("baseline")
     result = run_scenario(scenario)
     metrics = result.metrics
-    assert metrics.business_revenue == (
-        metrics.local_household_spending + metrics.visitor_spending + metrics.university_business_impact
-    )
+    total_demand = sum(sum(source.values()) for source in metrics.business_demand_by_source.values())
+    assert total_demand == sum(sector.demand for sector in metrics.business_sectors)
+    assert metrics.business_revenue == sum(sector.revenue for sector in metrics.business_sectors)
+    assert metrics.business_revenue <= total_demand
     expected_sales = multiply(metrics.business_revenue, scenario.region.local_government.sales_tax_rate)
     expected_lodging = multiply(
         scenario.visitors.spending_by_category[next(iter(scenario.visitors.spending_by_category))],

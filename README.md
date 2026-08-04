@@ -140,3 +140,7 @@ All providers and values are educational assumptions. Public aggregate demograph
 ## Chapter 7: Government and public services
 
 Chapter 7 adds a simplified fictional local-government budget, aggregate departments, capacity indicators, and policy-neutral fixed-budget comparisons. Try `regional-sim public-safety-focus`, `regional-sim parks-investment`, `regional-sim balanced-services`, `regional-sim government-report baseline`, and `regional-sim compare baseline public-safety-focus`. Department budgets are educational abstractions; no policy recommendation is implied. See [Chapter 7](book/chapter-07.md).
+
+## Chapter 8: local business
+
+Chapter 8 models a fictional downtown through aggregate retail, restaurant, personal-service, and entertainment sectors. Try `regional-sim business-report baseline`, `regional-sim downtown-expansion`, `regional-sim restaurant-boom`, or `regional-sim retail-decline`. Capacity constrains revenue, and simplified profitability is educational—not GAAP accounting. No real or individual businesses are represented.

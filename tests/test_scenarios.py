@@ -5,9 +5,9 @@ import pytest
 from regional_economy.scenarios import load_scenario
 
 
-def test_scenario_has_three_supported_sectors() -> None:
+def test_scenario_has_four_supported_sectors() -> None:
     scenario = load_scenario("baseline")
-    assert len(scenario.region.businesses) == 3
+    assert len(scenario.region.businesses) == 4
 
 
 def test_invalid_allocation_fails_clearly(tmp_path: Path) -> None:
@@ -55,8 +55,8 @@ def test_missing_households_explains_fix(tmp_path: Path) -> None:
 
 
 def test_unknown_sector_lists_choices(tmp_path: Path) -> None:
-    _write_changed(tmp_path, "sector: tourism_hospitality", "sector: mining")
-    with pytest.raises(ValueError, match=r"Unknown business sector.*tourism_hospitality"):
+    _write_changed(tmp_path, "sector: retail", "sector: mining")
+    with pytest.raises(ValueError, match=r"Unknown business sector.*retail"):
         load_scenario("invalid", tmp_path)
 
 

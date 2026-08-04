@@ -21,3 +21,7 @@ Aggregate fictional healthcare institutions, mutually exclusive demographic coho
 ## Chapter 7 — complete
 
 Implemented simplified local revenue, balanced operating and high-level capital budgets, five aggregate public-service departments, deterministic allocation scenarios, capacity/utilization indicators, government report and trace modes, and a reconciliation debugging laboratory. The model makes no policy recommendation. Later systems such as housing, transportation, utilities, banking, and supply chains remain out of scope.
+
+## Chapter 8 — complete
+
+Aggregate retail, restaurants, personal services, and entertainment now share regional demand, enforce capacity, report simplified profitability, and support deterministic expansion, restaurant-boom, and retail-decline scenarios. Supply chains, finance, transport, housing, and later chapters remain out of scope.

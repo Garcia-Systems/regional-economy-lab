@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: enrollment-growth
-label: Enrollment Growth
+name: restaurant-boom
+label: Restaurant Boom
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -46,7 +46,7 @@ household_sector_shares:
   entertainment: "0.15"
 business_demand_shares:
   households: {retail: "0.40", restaurants: "0.25", personal_services: "0.20", entertainment: "0.15"}
-  visitors: {retail: "0.25", restaurants: "0.40", personal_services: "0.05", entertainment: "0.30"}
+  visitors: {retail: "0.15", restaurants: "0.60", personal_services: "0.05", entertainment: "0.20"}
   institutions: {retail: "0.45", restaurants: "0.15", personal_services: "0.30", entertainment: "0.10"}
   government: {retail: "0.30", restaurants: "0.10", personal_services: "0.50", entertainment: "0.10"}
 household_types:
@@ -147,7 +147,8 @@ businesses:
   - id: restaurant-sector
     sector: restaurants
     employees: 210
-    monthly_capacity: "1900000.00"
+    monthly_capacity: "2200000.00"
+    openings: 3
     operating_allocation: *operating
   - id: personal-services-sector
     sector: personal_services
@@ -209,8 +210,8 @@ university:
   external_funding_share: "0.70"
   season: Fall
   students:
-    resident: 6900
-    commuter: 2300
+    resident: 6000
+    commuter: 2000
     average_monthly_local_spending: "740.00"
     average_housing_spending: "900.00"
     spending_shares:

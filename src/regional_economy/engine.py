@@ -84,46 +84,32 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(StudentSpendingCompleted(8, f"{university.enrollment:,} students spent {format_money(student_spending)} locally"))
     scheduler.schedule(UniversityProcurementCompleted(8, f"University purchased {format_money(local_procurement)} locally"))
     healthcare = scenario.healthcare
-    scheduler.schedule(
-        HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents")
-    )
-    scheduler.schedule(
-        HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households")
-    )
-    household_by_sector = _allocate_total(local_household, scenario.household_sector_shares)
-    student_categories = university.student_spending_by_category()
-    student_by_sector = {
-        Sector.RETAIL: student_categories["retail"],
-        Sector.FOOD: student_categories["food"],
-        Sector.TOURISM: student_categories["entertainment"],
+    government = region.local_government
+    scheduler.schedule(HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents"))
+    scheduler.schedule(HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households"))
+    demand_sources = {
+        "households": local_household,
+        "visitors": visitor_spending,
+        "institutions": local_procurement + healthcare.local_procurement,
+        "government": government.permits_and_fees,
     }
-    procurement_by_sector = _allocate_total(local_procurement, scenario.household_sector_shares)
-    revenue_by_sector = {
-        sector: household_by_sector[sector] + student_by_sector[sector] + procurement_by_sector[sector] for sector in Sector
+    demand_by_source = {
+        source: _allocate_total(amount, scenario.business_demand_shares[source]) for source, amount in demand_sources.items()
     }
-    total_sales_tax = multiply(sum(revenue_by_sector.values()), region.local_government.sales_tax_rate)
-    tax_parts = allocate(
-        total_sales_tax, ((s.value, Decimal(revenue_by_sector[s]) / Decimal(sum(revenue_by_sector.values()))) for s in Sector)
-    )
-    taxes_by_sector = {s: tax_parts[s.value] for s in Sector}
+    revenue_by_sector = {sector: sum(demand_by_source[source][sector] for source in demand_sources) for sector in Sector}
     for business in region.businesses:
-        business.record_and_allocate(revenue_by_sector[business.sector], taxes_by_sector[business.sector])
-    household_business_revenue = sum(b.local_revenue for b in region.businesses)
+        business.record_and_allocate(revenue_by_sector[business.sector], government.sales_tax_rate)
+    business_revenue = sum(b.local_revenue for b in region.businesses)
+    # Chapter 2 tourism indicators remain available, but Chapter 8 allocates visitor
+    # spending once across the downtown sectors rather than recording it twice.
     tourism_revenue = visitor_spending
-    tourism_sales_tax = multiply(tourism_revenue, region.local_government.sales_tax_rate)
-    lodging_tax = multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], region.local_government.lodging_tax_rate)
+    tourism_sales_tax = multiply(tourism_revenue, government.sales_tax_rate)
+    lodging_tax = multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], government.lodging_tax_rate)
     tourism_tax = tourism_sales_tax + lodging_tax
-    if tourism_revenue:
-        tourism_sectors = tuple(TourismSector)
-        proportional = [Decimal(scenario.visitors.spending_by_category[s]) / Decimal(tourism_revenue) for s in tourism_sectors[:-1]]
-        proportional.append(Decimal(1) - sum(proportional, Decimal(0)))
-        tourism_tax_parts = allocate(tourism_tax, ((s.value, share) for s, share in zip(tourism_sectors, proportional, strict=True)))
-    else:
-        tourism_tax_parts = {s.value: 0 for s in TourismSector}
     tourism_wages = tourism_local = tourism_external = tourism_retained = 0
     for sector in TourismSector:
         revenue = scenario.visitors.spending_by_category[sector]
-        operating = revenue - tourism_tax_parts[sector.value]
+        operating = revenue - multiply(revenue, government.sales_tax_rate)
         parts = allocate(
             operating,
             (
@@ -137,14 +123,12 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         tourism_local += parts["local"]
         tourism_external += parts["external"]
         tourism_retained += parts["retained"]
-    business_revenue = household_business_revenue + tourism_revenue
     scheduler.schedule(BusinessRevenueRecorded(9, f"Businesses recorded {format_money(business_revenue)}"))
-    wages = sum(b.wages_paid for b in region.businesses) + tourism_wages
+    wages = sum(b.wages_paid for b in region.businesses)
     scheduler.schedule(WagesPaid(10, f"Businesses paid {format_money(wages)} in wages"))
-    taxes = sum(b.taxes for b in region.businesses) + tourism_tax
+    taxes = sum(b.taxes for b in region.businesses) + lodging_tax
     region.local_government.collect(taxes)
     scheduler.schedule(TaxesCollected(11, f"Government collected {format_money(taxes)}"))
-    government = region.local_government
     departments = government.departments
     government_budget = Reconciliation(
         "GOVERNMENT OPERATING BUDGET", government.operating_budget, sum(department.operating_budget for department in departments)
@@ -154,17 +138,17 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         GovernmentBudgetAllocated(12, f"Government allocated {format_money(government.operating_budget)} among five departments")
     )
     scheduler.schedule(PublicServicesProvided(13, "Aggregate public-service capacity was made available"))
-    local_purchases = sum(b.local_purchases for b in region.businesses) + tourism_local
-    external_purchases = sum(b.external_purchases for b in region.businesses) + tourism_external
-    business_retained = sum(b.retained_operating_funds for b in region.businesses) + tourism_retained
+    local_purchases = sum(b.local_purchases for b in region.businesses)
+    external_purchases = sum(b.external_purchases for b in region.businesses)
+    business_retained = sum(b.retained_operating_funds for b in region.businesses)
     cash = Reconciliation("HOUSEHOLD AVAILABLE CASH", gross, deductions + housing + essential + discretionary + savings + retained)
     required_configured = sum(a.configured_required_expenses for a in allocations)
     required = Reconciliation("HOUSEHOLD REQUIRED EXPENSES", required_configured, housing + essential + unmet)
-    customer = Reconciliation(
-        "CUSTOMER SPENDING", local_household + visitor_spending + student_spending + local_procurement, business_revenue
-    )
+    customer = Reconciliation("CUSTOMER SPENDING", sum(demand_sources.values()), sum(revenue_by_sector.values()))
     business = Reconciliation(
-        "BUSINESS REVENUE", business_revenue, wages + local_purchases + external_purchases + taxes + business_retained
+        "BUSINESS REVENUE",
+        business_revenue,
+        wages + local_purchases + external_purchases + sum(b.taxes for b in region.businesses) + business_retained,
     )
     scheduler.schedule(
         MonthCompleted(
@@ -198,6 +182,8 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         local_household,
         business_revenue,
         local_household,
+        tuple(b.result() for b in region.businesses),
+        demand_by_source,
         wages,
         local_purchases,
         external_purchases,

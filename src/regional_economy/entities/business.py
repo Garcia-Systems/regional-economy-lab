@@ -6,9 +6,42 @@ from regional_economy.money import allocate
 
 
 class Sector(StrEnum):
-    TOURISM = "tourism_hospitality"
     RETAIL = "retail"
-    FOOD = "food_service"
+    RESTAURANTS = "restaurants"
+    PERSONAL_SERVICES = "personal_services"
+    ENTERTAINMENT = "entertainment"
+
+
+@dataclass(frozen=True)
+class BusinessSectorResult:
+    sector: Sector
+    demand: int
+    capacity: int
+    revenue: int
+    payroll: int
+    local_purchases: int
+    external_purchases: int
+    taxes: int
+    retained_operating_surplus: int
+    employees: int
+    openings: int
+    closures: int
+
+    @property
+    def utilization(self) -> Decimal:
+        return Decimal(self.revenue) / Decimal(self.capacity) if self.capacity else Decimal(0)
+
+    @property
+    def unmet_demand(self) -> int:
+        return max(0, self.demand - self.capacity)
+
+    @property
+    def excess_capacity(self) -> int:
+        return max(0, self.capacity - self.demand)
+
+    @property
+    def operating_costs(self) -> int:
+        return self.payroll + self.local_purchases + self.external_purchases
 
 
 @dataclass
@@ -21,21 +54,22 @@ class Business:
     local_purchase_share: Decimal
     external_purchase_share: Decimal
     retained_share: Decimal
+    openings: int = 0
+    closures: int = 0
     local_revenue: int = 0
+    demand: int = 0
     wages_paid: int = 0
     local_purchases: int = 0
     external_purchases: int = 0
     taxes: int = 0
     retained_operating_funds: int = 0
 
-    def record_and_allocate(self, revenue: int, taxes: int) -> None:
-        if revenue > self.monthly_capacity:
-            raise ValueError(f"business {self.business_id} revenue exceeds capacity")
-        if taxes > revenue:
-            raise ValueError(f"business {self.business_id} taxes exceed revenue")
+    def record_and_allocate(self, demand: int, tax_rate: Decimal) -> None:
+        self.demand = demand
+        revenue = min(demand, self.monthly_capacity)
+        taxes = int(Decimal(revenue) * tax_rate)
         operating = revenue - taxes
-        self.local_revenue = revenue
-        self.taxes = taxes
+        self.local_revenue, self.taxes = revenue, taxes
         amounts = allocate(
             operating,
             (
@@ -45,9 +79,21 @@ class Business:
                 ("retained", self.retained_share),
             ),
         )
-        self.wages_paid = amounts["wages"]
-        self.local_purchases = amounts["local"]
-        self.external_purchases = amounts["external"]
-        self.retained_operating_funds = amounts["retained"]
-        if self.retained_operating_funds < 0:
-            raise ValueError(f"business {self.business_id} allocations exceed revenue")
+        self.wages_paid, self.local_purchases = amounts["wages"], amounts["local"]
+        self.external_purchases, self.retained_operating_funds = amounts["external"], amounts["retained"]
+
+    def result(self) -> BusinessSectorResult:
+        return BusinessSectorResult(
+            self.sector,
+            self.demand,
+            self.monthly_capacity,
+            self.local_revenue,
+            self.wages_paid,
+            self.local_purchases,
+            self.external_purchases,
+            self.taxes,
+            self.retained_operating_funds,
+            self.employees,
+            self.openings,
+            self.closures,
+        )
