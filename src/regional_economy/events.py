@@ -38,6 +38,16 @@ class UniversityProcurementCompleted(Event):
 
 
 @dataclass(frozen=True)
+class HealthcareDemandCalculated(Event):
+    pass
+
+
+@dataclass(frozen=True)
+class HealthcarePayrollPaid(Event):
+    pass
+
+
+@dataclass(frozen=True)
 class HouseholdDeductionsApplied(Event):
     pass
 

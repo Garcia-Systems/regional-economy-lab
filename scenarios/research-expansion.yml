@@ -184,3 +184,50 @@ university:
     Fall: {enrollment: "1.00", spending: "1.00"}
     Spring: {enrollment: "0.95", spending: "0.95"}
     Summer: {enrollment: "0.35", spending: "0.80"}
+
+healthcare:
+  # Fictional aggregate network and monthly educational assumptions; no patients are modeled.
+  name: Peninsula Community Health Network
+  institutions:
+    hospitals: 1
+    clinics: 4
+    urgent_care_centers: 2
+    pharmacies: 6
+  employment: 145
+  monthly_payroll: "820000.00"
+  monthly_procurement: "310000.00"
+  local_purchasing_share: "0.40"
+  cohorts:
+    - id: children
+      label: Children
+      population: 200
+      outpatient_visits: "0.18"
+      inpatient_services: "0.010"
+      pharmacy_demand: "0.25"
+      preventive_care: "0.10"
+      average_monthly_spending: "210.00"
+      labor_force_participation: "0.00"
+      dependent: true
+      retirement_age: false
+    - id: working-age
+      label: Working-Age Adults
+      population: 620
+      outpatient_visits: "0.16"
+      inpatient_services: "0.008"
+      pharmacy_demand: "0.35"
+      preventive_care: "0.08"
+      average_monthly_spending: "300.00"
+      labor_force_participation: "0.78"
+      dependent: false
+      retirement_age: false
+    - id: retirees
+      label: Retirees
+      population: 180
+      outpatient_visits: "0.34"
+      inpatient_services: "0.025"
+      pharmacy_demand: "0.90"
+      preventive_care: "0.12"
+      average_monthly_spending: "650.00"
+      labor_force_participation: "0.12"
+      dependent: true
+      retirement_age: true

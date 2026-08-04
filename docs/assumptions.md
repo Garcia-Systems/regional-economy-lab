@@ -32,3 +32,6 @@ Visitor counts, stays, daily spending, sector allocations, seasonal multipliers,
 
 ## Higher education
 The university and every operational value are fictional educational assumptions. Faculty and staff are aggregate employment; payroll is represented in existing household income cohorts and is not re-spent on receipt. Research funding is an aggregate external inflow. Procurement uses a configured local share; its remainder leaks outside. Student housing spending is input-only. Fall, Spring, and Summer enrollment/spending multipliers are deterministic. Public aggregate datasets could later replace explicitly classified inputs, but no real institution's internal operations are modeled.
+
+## Chapter 6 healthcare and demographics
+Peninsula Community Health Network and every cohort, institution count, utilization rate, spending amount, job, payroll, and purchasing value are fictional educational assumptions. Demand is population times a Decimal cohort rate. Healthcare payroll reaches the aggregate household sector but is not re-spent in the same month. Local plus external procurement equals procurement. No patients, claims, billing, schedules, diseases, capacity forecasting, staffing shortages, optimization, or clinical conclusions are modeled.

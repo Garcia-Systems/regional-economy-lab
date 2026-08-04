@@ -55,3 +55,9 @@
 **Student cohort** — Aggregate resident and commuter students, adjusted by a deterministic seasonal multiplier.
 
 **University contribution** — Descriptive sum of modeled payroll, student spending, and local procurement; not GDP or a causal impact estimate.
+
+**Age cohort:** A mutually exclusive aggregate demographic group counted once in regional population.
+**Healthcare demand:** Cohort population multiplied by configured service-use rates; not observed patients or appointments.
+**Healthcare-related business activity:** Modeled healthcare spending plus local healthcare procurement; not provider revenue or an impact estimate.
+**Retirement-age share:** Population in cohorts marked retirement age divided by total cohort population.
+**Dependency characteristic:** An educational cohort flag indicating greater aggregate reliance on working-age economic support; not an individual classification.
