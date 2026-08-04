@@ -253,7 +253,68 @@ def reconciliation_report(result):
 
 
 def full_report(result):
-    return "\n\n".join((dashboard(result), timeline(result), reconciliation_report(result)))
+    parts = [dashboard(result)]
+    if result.shock:
+        parts.append(shock_summary(result))
+    parts.extend((timeline(result), reconciliation_report(result)))
+    return "\n\n".join(parts)
+
+
+def shock_summary(result, baseline=None):
+    """Report configured effects and, when supplied, before/after indicators."""
+    shock = result.shock
+    if shock is None:
+        return f"SHOCK REPORT — {result.scenario_label}\nActive shocks: none"
+    lines = [
+        f"SHOCK REPORT — {shock.label}",
+        f"Active shocks: {'yes' if shock.active else 'no'}",
+        f"Recovery stage: {shock.stage.value}",
+        f"Affected sectors: {', '.join(shock.affected_sectors)}",
+        "Configured remaining availability:",
+        *(f"  {name.replace('_', ' ').title()}: {_percent(value)}" for name, value in shock.effects.items() if value < 1),
+    ]
+    if baseline is not None:
+        before, after = baseline.metrics, result.metrics
+        impact = after.simulated_local_economic_activity - before.simulated_local_economic_activity
+        lines.extend(
+            (
+                "Key indicators before → after:",
+                f"  Local economic activity: {format_money(before.simulated_local_economic_activity)} → "
+                f"{format_money(after.simulated_local_economic_activity)}",
+                f"  Business revenue: {format_money(before.business_revenue)} → {format_money(after.business_revenue)}",
+                f"  Household spending: {format_money(before.local_household_spending)} → {format_money(after.local_household_spending)}",
+                f"  Government taxes: {format_money(before.taxes_collected)} → {format_money(after.taxes_collected)}",
+                f"Estimated regional impact: {format_money(impact)}",
+            )
+        )
+    lines.append("Educational deterministic scenario; not a forecast or emergency-planning tool.")
+    return "\n".join(lines)
+
+
+def cascade_trace(result):
+    shock = result.shock
+    if shock is None:
+        return f"CASCADE TRACE — {result.scenario_label}\nShock: none"
+    affected = " + ".join(shock.affected_sectors)
+    return "\n".join(
+        (
+            f"CASCADE TRACE — {shock.label}",
+            "Shock",
+            "  ↓ configured availability multipliers applied once",
+            f"Affected System: {affected}",
+            "  ↓ access, operating capacity, transactions, or demand",
+            "Secondary Effects: fewer completed sales and constrained activity",
+            "  ↓",
+            f"Households: local spending {format_money(result.metrics.local_household_spending)}",
+            "  ↓",
+            f"Businesses: revenue {format_money(result.metrics.business_revenue)}; payroll {format_money(result.metrics.wages_paid)}",
+            "  ↓",
+            f"Government: taxes {format_money(result.metrics.taxes_collected)}",
+            "  ↓",
+            f"Regional Indicators: activity {format_money(result.metrics.simulated_local_economic_activity)}",
+            "Each arrow is an inspectable educational relationship, not a prediction of an actual event.",
+        )
+    )
 
 
 def household_report(result):
@@ -333,6 +394,10 @@ def explanation(result):
         "when customer demand remains strong.",
         "This chapter intentionally omits inventory, warehouses, barcodes, replenishment, purchase orders, routing, and ERP workflows. "
         "Those operational implementation details belong in the Inventory Synchronization Laboratory.",
+        "Economic shocks cascade because connected systems supply access, labor, inputs, payments, and demand to one another. "
+        "Different configured constraints therefore produce different regional outcomes.",
+        "Deterministic shock scenarios hold assumptions explicit and reproducible for learning. They are not forecasts, "
+        "probabilities, emergency plans, or claims about a real event.",
     )
     return "\n".join(lines)
 

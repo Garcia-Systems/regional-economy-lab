@@ -62,3 +62,7 @@ resilience remain out of scope.
 ## Chapter 16 — complete: decision support
 
 Business and public scenario reports, qualitative opportunity costs, deterministic descriptive scoring, comparisons, explain mode, and trace mode reuse monthly dashboards. The boundary excludes automated recommendations, policy ranking, political/voting models, optimization, forecasting, annual projections, AI, machine learning, shocks, and resilience analysis. A future milestone may improve scenario authoring and provenance while preserving these boundaries.
+
+## Chapter 17 — complete: economic shocks and cascading effects
+
+Implemented reusable deterministic shock factors, explicit cross-system propagation, configured recovery stages, normal/disrupted comparisons, resilience reporting, cascade traces, four fictional scenarios, and a double-propagation debugging laboratory. The boundary excludes emergency operations, probability, forecasting, insurance, optimization, detailed disaster logistics, machine learning, and the integrated annual simulation.

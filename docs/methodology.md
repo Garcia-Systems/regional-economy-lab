@@ -98,3 +98,7 @@ statistical inference, causal estimate, optimization, or recommendation is produ
 ## Decision-support reporting
 
 Chapter 16 evaluates a named catalog entry by running the bundled baseline and its alternative for the same month, building Chapter 15 dashboards, and selecting existing indicator values by metadata key. Report generation rejects mismatched reporting periods. It then presents configured narrative assumptions and opportunity costs without feeding results back into the engine. The scenario score counts nonzero indicator differences only. No weighting, optimization, probability, causality, recommendation, ranking, forecasting, or duplicate indicator calculation is introduced.
+
+## Deterministic shock methodology
+
+Chapter 17 loads validated remaining-availability rates with the scenario and applies each rate at a named engine boundary. Visitor demand, workforce, transport, utilities, payments, suppliers, and institutions retain their existing models; a shock modifies rather than replaces them. Stable event order, Decimal rates, integer-cent allocation, reconciliation, and byte-stable runs make propagation inspectable. Comparisons subtract baseline indicators from disrupted indicators. Recovery requires a separately authored set of factors. No random sampling, likelihood, forecast, optimization, or emergency-response behavior is present.

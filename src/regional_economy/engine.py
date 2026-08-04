@@ -32,6 +32,7 @@ from regional_economy.events import (
 from regional_economy.metrics import Reconciliation, RegionalMetrics
 from regional_economy.money import allocate, format_money, multiply
 from regional_economy.scenarios import Scenario
+from regional_economy.shocks import Shock
 
 
 @dataclass(frozen=True)
@@ -42,6 +43,7 @@ class SimulationResult:
     month: int
     metrics: RegionalMetrics
     timeline: tuple[Event, ...]
+    shock: Shock | None = None
 
 
 def _allocate_total(total: int, shares: dict[Sector, Decimal]) -> dict[Sector, int]:
@@ -55,6 +57,10 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     month = region.current_simulation_month
     scheduler = DeterministicScheduler()
     scheduler.schedule(MonthStarted(0, f"Month {month} started"))
+    shock = scenario.shock
+    factor = shock.factor if shock else lambda _name: Decimal(1)
+    for household in region.households:
+        household.gross_monthly_income = multiply(household.gross_monthly_income, factor("workforce_availability"))
     allocations = tuple(h.allocate() for h in region.households)
     gross = sum(a.gross_income for a in allocations)
     deductions = sum(a.deductions for a in allocations)
@@ -77,13 +83,19 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HouseholdShortfallRecorded(7, f"Unmet essential expenses were {format_money(unmet)}"))
     transportation = scenario.transportation.evaluate()
     utilities = scenario.utilities.evaluate()
-    utility_factor = utilities.activity_factor
-    accessible_visitors = int(Decimal(scenario.visitors.visitor_count) * transportation.visitor_accessibility)
-    visitor_spending = multiply(multiply(scenario.visitors.total_spending, transportation.visitor_accessibility), utility_factor)
+    utility_factor = utilities.activity_factor * factor("utility_capacity")
+    transport_factor = factor("transportation_accessibility")
+    visitor_factor = factor("visitor_demand")
+    visitor_access = transportation.visitor_accessibility * transport_factor * visitor_factor
+    freight_access = transportation.freight_accessibility * transport_factor
+    commuter_access = transportation.commuter_accessibility * transport_factor
+    accessible_visitors = int(Decimal(scenario.visitors.visitor_count) * visitor_access)
+    visitor_spending = multiply(multiply(scenario.visitors.total_spending, visitor_access), utility_factor)
     scheduler.schedule(VisitorsArrived(8, f"{accessible_visitors:,} accessible visitors spent {format_money(visitor_spending)}"))
     university = scenario.university
     student_spending = university.student_spending
-    local_procurement = multiply(multiply(university.local_procurement, transportation.freight_accessibility), utility_factor)
+    institution_factor = factor("institutional_activity")
+    local_procurement = multiply(multiply(multiply(university.local_procurement, freight_access), utility_factor), institution_factor)
     scheduler.schedule(UniversityFundingReceived(8, f"University received {format_money(university.external_funding)} externally"))
     scheduler.schedule(StudentSpendingCompleted(8, f"{university.enrollment:,} students spent {format_money(student_spending)} locally"))
     scheduler.schedule(UniversityProcurementCompleted(8, f"University purchased {format_money(local_procurement)} locally"))
@@ -92,15 +104,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents"))
     scheduler.schedule(HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households"))
     demand_sources = {
-        "households": multiply(multiply(local_household, transportation.commuter_accessibility), utility_factor),
+        "households": multiply(multiply(local_household, commuter_access), utility_factor),
         "visitors": visitor_spending,
         "institutions": local_procurement
-        + multiply(multiply(healthcare.local_procurement, transportation.freight_accessibility), utility_factor),
-        "government": multiply(government.permits_and_fees, utility_factor),
+        + multiply(multiply(multiply(healthcare.local_procurement, freight_access), utility_factor), institution_factor),
+        "government": multiply(multiply(government.permits_and_fees, utility_factor), institution_factor),
     }
     banking = scenario.banking.evaluate()
     intended_transactions = sum(demand_sources.values())
-    demand_sources = {source: multiply(amount, banking.payment_availability) for source, amount in demand_sources.items()}
+    payment_factor = banking.payment_availability * factor("payment_availability")
+    demand_sources = {source: multiply(amount, payment_factor) for source, amount in demand_sources.items()}
     completed_transactions = sum(demand_sources.values())
     interrupted_transactions = intended_transactions - completed_transactions
     demand_by_source = {
@@ -115,7 +128,9 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         procurement_share = business.local_purchase_share + business.external_purchase_share
         business.local_purchase_share = procurement_share * supply_chain.local_purchasing_share
         business.external_purchase_share = procurement_share * supply_chain.external_purchasing_share
-        business.record_and_allocate(revenue_by_sector[business.sector], government.sales_tax_rate, supply_chain.capacity_factor)
+        business.record_and_allocate(
+            revenue_by_sector[business.sector], government.sales_tax_rate, supply_chain.capacity_factor * factor("supplier_reliability")
+        )
     business_revenue = sum(b.local_revenue for b in region.businesses)
     # Chapter 2 tourism indicators remain available, but Chapter 8 allocates visitor
     # spending once across the downtown sectors rather than recording it twice.
@@ -123,14 +138,14 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     tourism_sales_tax = multiply(tourism_revenue, government.sales_tax_rate)
     lodging_tax = multiply(
         multiply(
-            multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], transportation.visitor_accessibility), utility_factor
+            multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], visitor_access), utility_factor
         ),
         government.lodging_tax_rate,
     )
     tourism_tax = tourism_sales_tax + lodging_tax
     tourism_wages = tourism_local = tourism_external = tourism_retained = 0
     for sector in TourismSector:
-        revenue = multiply(multiply(scenario.visitors.spending_by_category[sector], transportation.visitor_accessibility), utility_factor)
+        revenue = multiply(multiply(scenario.visitors.spending_by_category[sector], visitor_access), utility_factor)
         operating = revenue - multiply(revenue, government.sales_tax_rate)
         parts = allocate(
             operating,
@@ -183,9 +198,9 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     weighted_burden = sum((a.housing_burden * a.count for a in allocations), Decimal(0)) / Decimal(count) if count else Decimal(0)
     accessible_workforce = replace(
         scenario.workforce,
-        participation_rate=scenario.workforce.participation_rate * transportation.commuter_accessibility,
-        commuters_in=int(Decimal(scenario.workforce.commuters_in) * transportation.commuter_accessibility),
-        commuters_out=int(Decimal(scenario.workforce.commuters_out) * transportation.commuter_accessibility),
+        participation_rate=scenario.workforce.participation_rate * commuter_access * factor("workforce_availability"),
+        commuters_in=int(Decimal(scenario.workforce.commuters_in) * commuter_access),
+        commuters_out=int(Decimal(scenario.workforce.commuters_out) * commuter_access),
     )
     workforce = accessible_workforce.evaluate()
     metrics = RegionalMetrics(
@@ -299,4 +314,4 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         supply_chain,
         unconstrained_business_revenue - business_revenue,
     )
-    return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run())
+    return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock)
