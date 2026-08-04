@@ -48,33 +48,24 @@ stateDiagram-v2
 
 ## Baseline walkthrough
 
-Run `regional-sim baseline`. It has no active shock. Record local activity, business revenue, household spending, and taxes. Then run `regional-sim compare baseline severe-storm`. Comparison changes are disrupted minus baseline and retain the ordinary reconciliation checks.
+Run `regional-sim run baseline`. It has no active shock. Record local activity, business revenue, household spending, and taxes. Then run `regional-sim compare baseline severe-storm`. Comparison changes are disrupted minus baseline and retain the ordinary reconciliation checks.
 
 ## Severe-storm walkthrough
 
 Run:
 
 ```console
-regional-sim severe-storm
-regional-sim shock-report severe-storm
-regional-sim cascade-trace severe-storm
-regional-sim dashboard severe-storm
+regional-sim run severe-storm
+regional-sim report shock severe-storm
+regional-sim report cascade severe-storm
+regional-sim dashboard show severe-storm
 ```
 
 Inspect configured remaining availability before reading outcomes. Reduced workforce availability scales current household labor income; transport affects commuter, visitor, and freight access; utility capacity constrains activity; payment availability constrains completed transactions; and supplier reliability constrains realized revenue. Lower receipts then reduce allocated payroll and taxes. This is a teaching sequence, not an operational description of a storm.
 
 ## Debugging laboratory — the double cascade
 
-**Defect:** a learner multiplies institutional demand by `utility_capacity` in the demand-source calculation even though local university and healthcare procurement were already constrained by it. The same shock now propagates twice through one subsystem.
-
-1. Run `regional-sim shock-report severe-storm` and save the indicators.
-2. Set semantic breakpoints at `run_scenario`, `utility_factor`, `local_procurement`, `demand_sources`, `record_and_allocate`, and `TaxesCollected`—break on concepts rather than fragile line numbers.
-3. Inspect the value as it crosses each boundary. Mark every application of `utility_capacity`.
-4. Observe that institutional procurement has the factor once before entering `demand_sources`. Find and remove the accidental second multiplication.
-5. Re-run the shock report and `regional-sim compare baseline severe-storm`; verify all reconciliations and deterministic repeat output.
-6. Explain the defect: multiplying a remaining-availability rate twice compounds the loss and exaggerates business revenue, payroll, household, tax, and regional impacts.
-
-A reconciliation can still pass when the wrong input was propagated consistently. Trace inspection therefore complements accounting checks.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -95,3 +86,20 @@ The framework omits probability, weather and epidemiology, emergency operations,
 ## Chapter summary
 
 Interconnection turns a subsystem disruption into a regional cascade. Explicit deterministic factors make the path inspectable, comparable, debuggable, and reproducible. The results explain relationships under fictional assumptions; they do not predict events or prescribe emergency action.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 17 — Inspect Shock Stage**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

@@ -32,7 +32,7 @@ flowchart TD
 
 ## Baseline walkthrough
 
-Run `regional-sim banking-report baseline`. Two fictional institutions hold $30 million in aggregate deposits. The 80% capacity assumption produces $24 million of lending capacity; after $18 million of outstanding lending, $6 million remains available. At 100% payment availability, all otherwise accessible demand completes.
+Run `regional-sim report banking baseline`. Two fictional institutions hold $30 million in aggregate deposits. The 80% capacity assumption produces $24 million of lending capacity; after $18 million of outstanding lending, $6 million remains available. At 100% payment availability, all otherwise accessible demand completes.
 
 ## Payment-outage walkthrough
 
@@ -42,14 +42,7 @@ Run `regional-sim compare baseline payment-outage`. The outage makes 65% of inte
 
 ## Debugging laboratory — duplicated completed payments
 
-**Fault:** At the semantic breakpoint immediately after `completed_transactions = sum(demand_sources.values())` in `run_scenario`, temporarily add the same total again. Continue to business aggregation.
-
-1. Inspect `demand_sources`, `completed_transactions`, and `revenue_by_sector`.
-2. Confirm each completed source/sector amount should appear once.
-3. Remove the duplicate addition and verify `business_revenue == completed_transactions`.
-4. Explain why the bug inflates revenue, wages, purchases, taxes, and the apparent regional activity even though no additional demand completed.
-
-Prefer this semantic breakpoint—“payment aggregation complete”—over a line number. Also inspect the customer and business reconciliations. A reconciliation can catch inconsistent duplication, while equal duplication on both sides requires the explicit one-source/one-record invariant.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -58,6 +51,10 @@ Prefer this semantic breakpoint—“payment aggregation complete”—over a li
 3. Which business decisions might tighter credit constrain without changing current demand?
 4. Why does duplicated payment volume overstate regional activity?
 5. Which questions require the Digital Banking Systems Laboratory instead?
+
+## Integration boundary
+
+Deposits are stocks and available credit is capacity, not income. Payment completion constrains current transactions; interrupted demand is neither leakage nor recorded revenue.
 
 ## Assumptions
 
@@ -74,3 +71,20 @@ The **Inventory Synchronization Laboratory** teaches inventory consistency deepl
 ## Chapter summary
 
 Deposits support an aggregate lending-capacity indicator, credit supports potential growth, and available payments translate demand into current business revenue. A disruption delays transaction activity and propagates through business allocations. The regional model stops at economic effects; implementation-level payment behavior stays in its dedicated laboratory.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 13 — Inspect Payment Stage**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

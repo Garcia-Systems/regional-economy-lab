@@ -21,13 +21,13 @@ flowchart TD
 
 ## Reusable regional models and templates
 
-`tourism-region`, `university-region`, `manufacturing-region`, and `diversified-region` are complete fictional starting points. They deliberately use the same schema and engine. The root `scenarios/` directory is the readable authoring collection; identical package-resource copies make installed commands reproducible. `regional-sim list-templates` lists capstone starters.
+`tourism-region`, `university-region`, `manufacturing-region`, and `diversified-region` are complete fictional starting points. They deliberately use the same schema and engine. The root `scenarios/` directory is the readable authoring collection; identical package-resource copies make installed commands reproducible. `regional-sim template list` lists capstone starters.
 
 A configuration defines population, household cohorts, four supported local business sectors, university and healthcare institutions, housing, workforce, tourism, government departments, transportation, utilities, banking, supply chain, and resilience assumptions. Money is written as quoted decimal dollars and converted to integer cents. Rates are quoted decimals and parsed as `Decimal`.
 
 ## Validation philosophy
 
-Validation stops before execution and reports the location, problem, and repair. It checks required sections, nonnegative counts and money, rates within zero and one, shares totaling exactly 100%, supported sectors and indicators, compatible population/employment and affordability assumptions, unique entities, and subsystem-specific capacities. Runtime reconciliation then verifies sources equal uses. The scheduler supplies stable event ordering; YAML list order never changes engine phases.
+Validation stops before execution and reports the location, problem, and repair. It checks required sections, nonnegative counts and money, rates within zero and one, shares totaling exactly 100%, supported sectors and indicators, compatible population/employment and affordability assumptions, unique entities, and subsystem-specific capacities. Runtime reconciliation then verifies sources equal uses. The scheduler orders events by `(time, insertion sequence)`; YAML list order does not create a separate phase key.
 
 ```mermaid
 flowchart LR
@@ -42,20 +42,20 @@ flowchart LR
 ## Laboratory workflow
 
 ```console
-regional-sim create-template my-region
-regional-sim validate my-region.yml
-regional-sim run my-region.yml
-regional-sim compare my-region.yml baseline
-regional-sim dashboard my-region.yml
-regional-sim annual-report my-region.yml
-regional-sim laboratory-explain
-regional-sim laboratory-trace
+regional-sim template create university-region my-region.yml
+regional-sim scenario validate my-region.yml
+regional-sim custom run my-region.yml
+regional-sim custom compare my-region.yml baseline
+regional-sim dashboard show my-region.yml
+regional-sim annual report my-region.yml
+regional-sim custom explain my-region.yml
+regional-sim custom trace my-region.yml
 ```
 
-1. Copy a template with `create-template NAME [TEMPLATE]`; existing files are never overwritten.
+1. Create a template with `regional-sim template create TEMPLATE DESTINATION`; an existing destination is never overwritten.
 2. Change one explicit assumption and preserve the fictional disclaimer.
 3. Validate before running. Correct every error rather than weakening checks.
-4. Run the integrated laboratory report, then individual dashboard, annual, decision, or resilience commands as needed.
+4. Run the integrated laboratory report, then individual dashboard or supported custom-file annual commands as needed; decision catalogs and resilience scenario reports remain separate command resources.
 5. Compare with a named or file-based scenario. Change one family of assumptions when causal interpretation matters.
 6. Save the YAML, command, version, and output together for reproducibility.
 
@@ -67,15 +67,7 @@ Create it from `university-region`, rename the file and `name`, then lower resid
 
 ## Debugging laboratory: inconsistent assumptions
 
-Copy a template to `broken-region.yml` and set `name: broken-region`. Introduce each defect separately:
-
-* set `region.population: -1`;
-* make tourism spending shares total `1.10`;
-* change a local business sector to `mining`.
-
-Run `regional-sim validate broken-region.yml`. Read the path and **Fix** clause, locate that YAML field, correct it, and validate again. Then run `regional-sim run broken-region.yml` and confirm every reconciliation says `PASS`.
-
-**Semantic breakpoints:** pause in `load_scenario` immediately after YAML loading to inspect `raw`; pause in `_shares` before its sum check to inspect `parsed`; pause at `run_scenario` only after validation succeeds; and pause where engine events are sorted to inspect their stable `(month, phase, sequence)` meaning. Predict whether execution should begin before stepping. A validation error is correct behavior, not a simulation crash.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -93,3 +85,20 @@ All entities are aggregates; supported business sectors remain retail, restauran
 ## Summary
 
 A regional economy is a configurable system. Templates make assumptions reusable, validation protects accounting and subsystem contracts, deterministic scheduling makes results reproducible, and shared reports allow meaningful controlled comparisons. The capstone changes regions by changing YAML—not by rewriting the engine.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 20 — Validate Custom Region**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

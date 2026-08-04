@@ -50,25 +50,17 @@ flowchart LR
 
 ## Baseline walkthrough
 
-Run `regional-sim transportation-report baseline`. Baseline has neutral access and enough trip-equivalent capacity for configured demand. Compare the dashboard's transportation capacity, utilization, three access rates, and accessibility index. Then run `regional-sim transportation-trace baseline`; it is a systems-thinking visualization, not a literal trip trace.
+Run `regional-sim report transportation baseline`. Baseline has neutral access and enough trip-equivalent capacity for configured demand. Compare the dashboard's transportation capacity, utilization, three access rates, and accessibility index. Then run `regional-sim trace baseline`; it is a systems-thinking visualization, not a literal trip trace.
 
 ## Corridor-closure walkthrough
 
-Run `regional-sim corridor-closure` and `regional-sim compare baseline corridor-closure`. The temporary closure lowers capacity, efficiency, and disruption factor. Inspect lower commuter participation, visitor spending, freight-accessible procurement, business revenue, and accessibility. Population remains unchanged.
+Run `regional-sim run corridor-closure` and `regional-sim compare baseline corridor-closure`. The temporary closure lowers capacity, efficiency, and disruption factor. Inspect lower commuter participation, visitor spending, freight-accessible procurement, business revenue, and accessibility. Population remains unchanged.
 
 `tourism-congestion` emphasizes visitor access during congestion. `road-improvement` raises capacity and access across uses. All three scenarios contain fixed inputs and no random draw.
 
 ## Debugging laboratory — the constraint applied twice
 
-**Fault:** after `TransportationSystem.evaluate()` already multiplies accessibility by `disruption_factor`, accidentally multiply `transportation.commuter_accessibility` by the disruption again in `run_scenario`. Accessibility will be too low.
-
-1. Set a semantic breakpoint at `TransportationSystem.evaluate` and inspect `common`, `access`, `accessible`, and `capacity_factor`.
-2. Continue to `run_scenario` immediately after `transportation = scenario.transportation.evaluate()`.
-3. Confirm the returned access rate is passed downstream unchanged; search for every use of `disruption_factor`.
-4. Remove the duplicate multiplier and run `pytest tests/test_transportation.py`.
-5. Verify `effective_demand <= capacity` and compare the closure report twice for identical output.
-
-This semantic breakpoint follows the model boundary rather than a fragile line number. Double-applying a constraint understates workers, visitors, freight, business demand, household circulation, and regional activity even though only one disruption occurred.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -89,3 +81,20 @@ There are no individual roads or vehicles, GIS, GPS routing, public-transit sche
 ## Chapter summary
 
 Transportation is modeled as access to economic connections. Capacity, efficiency, and disruptions determine effective commuter, visitor, and freight access; these propagate to institutions, businesses, households, and activity. The small aggregate model makes the constraint inspectable and reproducible while deliberately refusing traffic-simulation precision.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 11 — Inspect Accessibility Stage**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

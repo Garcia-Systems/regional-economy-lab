@@ -1,4 +1,4 @@
-# Households, Income, and Spending
+# Chapter 3 — Households, Income, and Spending
 
 ## 1. A Williamsburg-based story
 
@@ -76,15 +76,15 @@ flowchart TD
 
 ## 14. Baseline walkthrough
 
-Run `regional-sim baseline`, then `regional-sim households baseline`. The dashboard summarizes all cohorts; the detail table reveals which cohort produces each total. Four reconciliations should say `PASS`.
+Run `regional-sim run baseline`, then `regional-sim report household baseline`. The dashboard summarizes all cohorts; the detail table reveals which cohort produces each total. Four reconciliations should say `PASS`.
 
 ## 15. Income-growth scenario
 
-`regional-sim income-growth` raises fictional gross incomes by 8% while holding housing and essential costs fixed. Compare after-tax income, disposable cash, saving, discretionary demand, business revenue, tax collections, and leakage. This is a controlled assumption, not a forecast.
+`regional-sim run income-growth` raises fictional gross incomes by 8% while holding housing and essential costs fixed. Compare after-tax income, disposable cash, saving, discretionary demand, business revenue, tax collections, and leakage. This is a controlled assumption, not a forecast.
 
 ## 16. Cost-of-living-pressure scenario
 
-`regional-sim cost-of-living-pressure` raises fictional income by 1% but required costs by 18%. It demonstrates squeezed optional allocations, changed burden counts, and visible unmet expenses without inventing credit.
+`regional-sim run cost-of-living-pressure` raises fictional income by 1% but required costs by 18%. It demonstrates squeezed optional allocations, changed burden counts, and visible unmet expenses without inventing credit.
 
 ## 17. Scenario comparison
 
@@ -115,3 +115,28 @@ Income is not identical to spending. Deductions and required costs constrain cas
 ## Canonical source handoff
 
 The accounting carried into tourism keeps demand-source labels on every cent. Household purchases are not used later to infer visitor activity, and constrained or interrupted demand is not an external outflow.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 03 — Debug Household Allocation**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.
+
+## Assumptions and limitations
+
+All values are deterministic fictional educational assumptions. The model implements selected subsystem allocation and transfer reconciliations, not a complete regional sources-and-uses account or a forecast.
+
+## Summary
+
+Use the canonical command, inspect its named quantities, and interpret them within the stated accounting boundary.

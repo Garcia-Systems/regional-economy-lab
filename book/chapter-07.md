@@ -51,22 +51,15 @@ flowchart TD
 
 ## Baseline walkthrough
 
-Run `regional-sim government-report baseline`. Confirm total revenue, then confirm department budgets sum to the operating budget. Compare capacity with demand and inspect remaining reserves after operating and capital appropriations. The sales/lodging component comes from this month's simulated transactions; all other revenue inputs are fictional assumptions.
+Run `regional-sim report government baseline`. Confirm total revenue, then confirm department budgets sum to the operating budget. Compare capacity with demand and inspect remaining reserves after operating and capital appropriations. The sales/lodging component comes from this month's simulated transactions; all other revenue inputs are fictional assumptions.
 
 ## Public-safety-focus walkthrough
 
-Run `regional-sim public-safety-focus`, then `regional-sim compare baseline public-safety-focus`. Total operating and capital budgets remain unchanged. Public-safety capacity rises because its share rises; capacity in departments whose shares fall declines. The comparison is descriptive, not a recommendation.
+Run `regional-sim run public-safety-focus`, then `regional-sim compare baseline public-safety-focus`. Total operating and capital budgets remain unchanged. Public-safety capacity rises because its share rises; capacity in departments whose shares fall declines. The comparison is descriptive, not a recommendation.
 
 ## Debugging laboratory: the missing reconciliation
 
-**Fault:** edit a copy of the baseline so department allocation shares sum to more than 1 (for example, change public safety from `0.30` to `0.31`). This makes department budgets exceed the available operating budget.
-
-1. Run the copied scenario and inspect the allocation validation error.
-2. Locate `government.departments.*.allocation_share` and add the shares.
-3. Restore a total of exactly `1.00`, without changing the fixed operating budget.
-4. Run `regional-sim government-report YOUR-SCENARIO`.
-5. Verify `Balanced operating allocation: PASS`, and independently sum the displayed department budgets.
-6. Explain why stable order and deterministic cent reconciliation make repeated comparisons auditable: identical inputs must assign the same final cents and expose, rather than hide, an over-allocation.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -87,3 +80,20 @@ The chapter omits elections, parties, legislation, debt, bonds, procurement syst
 ## Chapter summary
 
 Local revenue constrains a balanced operating and capital plan. Validated allocations translate a fixed operating budget into aggregate department capacity. Alternative scenarios reveal opportunity costs while deterministic reconciliation makes every cent auditable. Government is both an economic participant and a provider of enabling services, but this simplified laboratory cannot determine which allocation a community should choose.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 07 — Debug Government Allocation**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

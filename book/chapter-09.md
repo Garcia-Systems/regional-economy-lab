@@ -62,7 +62,7 @@ It is not a price, forecast, market-clearing result, or official affordability s
 
 ## Baseline walkthrough
 
-Run `regional-sim housing-report baseline`. Confirm total units reconcile to occupied plus vacant units. Read occupancy beside vacancy, then inspect workforce utilization, unmet demand, pressure, and household cost burden. The measures answer different questions: capacity may be tight even where aggregate income is high.
+Run `regional-sim report housing baseline`. Confirm total units reconcile to occupied plus vacant units. Read occupancy beside vacancy, then inspect workforce utilization, unmet demand, pressure, and household cost burden. The measures answer different questions: capacity may be tight even where aggregate income is high.
 
 ## Housing-shortage walkthrough
 
@@ -72,17 +72,7 @@ The other experiments separate mechanisms: `housing-boom` adds aggregate constru
 
 ## Debugging laboratory: impossible occupancy
 
-**Injected defect:** change a category with `units: 250, occupied_units: 210` to `units: 200, occupied_units: 210`.
-
-1. Run the housing report and stop at the semantic breakpoint **“housing configuration parsed / before demand allocation.”**
-2. Inspect the category's total and occupied values.
-3. Identify the reconciliation error: 210 occupied units cannot fit in 200 units.
-4. Correct the allocation (raise valid capacity or reduce occupied units; do not clamp and hide the input error).
-5. Continue to **“housing capacity reconciled / before dashboard rendering.”**
-6. Verify every category has `occupied <= units`, regional occupied units do not exceed total units, occupied plus vacant equals total, and rates remain between zero and one.
-7. Explain the consequence: impossible occupancy understates vacancy, hides unmet demand, distorts pressure, and makes downstream regional interpretation misleading.
-
-These are semantic breakpoints—meaningful moments in the calculation—so the exercise works in a debugger or with temporary assertions without depending on source line numbers.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -92,6 +82,10 @@ These are semantic breakpoints—meaningful moments in the calculation—so the 
 4. Why should construction not immediately change income or eliminate cost burden?
 5. What does the pressure index omit that a real housing study would require?
 
+## Integration boundary
+
+Housing supplies capacity and pressure indicators. It does not simulate migration, eviction, mortgages, dynamic price formation, or full workforce displacement.
+
 ## Assumptions and limitations
 
 All units, demand, costs, and rates are fictional, deterministic assumptions. One aggregate demand unit is treated as requiring one aggregate housing unit. Preferred-housing mismatch is represented by unmet demand only when total demand exceeds supply; category substitution is not modeled. Construction is immediate scenario capacity, not a permitting or building pipeline. There are no prices, market clearing, behavior, forecasting, optimization, individual homes, migration, finance, or policy recommendations. Future chapters may add richer housing behavior, but this chapter intentionally does not.
@@ -99,3 +93,20 @@ All units, demand, costs, and rates are fictional, deterministic assumptions. On
 ## Chapter summary
 
 Housing connects population and employment to finite regional capacity. Deterministic allocation prevents impossible occupancy; vacancy and unmet demand reveal slack or shortage; workforce utilization describes one critical category; and a documented index summarizes pressure. Construction expands capacity, but affordability remains linked to configured costs and household budgets rather than being instantly solved.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 09 — Debug Housing Capacity**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

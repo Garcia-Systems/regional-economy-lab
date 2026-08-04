@@ -22,14 +22,14 @@ flowchart LR
 
 ## The reusable decision report
 
-Every report names the scenario and common reporting month, assumptions, affected dashboard indicators, possible benefits, tradeoffs and opportunity cost, limitations, and unanswered questions. It reads indicator values from Chapter 15's dashboard definitions rather than recalculating them. The deterministic “scenario score” merely counts changed referenced indicators; it is neither a quality score nor a rank.
+Every report names the scenario and common reporting month, assumptions, affected dashboard indicators, possible benefits, tradeoffs and opportunity cost, limitations, and unanswered questions. It reads indicator values from Chapter 15's dashboard definitions rather than recalculating them. The report counts changed referenced indicators only as transparent descriptive evidence; it does not produce a composite score, quality judgment, or rank.
 
 ```bash
-regional-sim evaluate-business expansion
-regional-sim evaluate-public broadband
-regional-sim compare-decisions expansion broadband
-regional-sim explain-decisions
-regional-sim decision-trace broadband
+regional-sim decision business expansion
+regional-sim decision public broadband
+regional-sim decision compare expansion broadband
+regional-sim decision explain broadband
+regional-sim decision trace broadband
 ```
 
 ## Business decisions
@@ -38,7 +38,7 @@ The catalog covers another location, capacity expansion, delayed expansion, trai
 
 ### Walkthrough: expansion
 
-1. Run `regional-sim evaluate-business expansion`.
+1. Run `regional-sim decision business expansion`.
 2. Confirm that the scenario is `downtown-expansion` and the comparator is `baseline` in month 1.
 3. Read assumptions before changes. A changed hiring indicator is an output of this configured scenario, not a forecast.
 4. Inspect benefits alongside capacity and housing tradeoffs.
@@ -50,7 +50,7 @@ The public catalog covers transportation, parks, workforce programs, broadband, 
 
 ### Walkthrough: broadband
 
-Run `regional-sim evaluate-public broadband`. The broadband-upgrade scenario uses the dashboard's infrastructure reliability and other existing monthly indicators. An unchanged indicator is useful evidence about model scope, not proof of no real-world effect. Tourism marketing similarly uses a demand scenario but explicitly does not claim that marketing caused demand.
+Run `regional-sim decision public broadband`. The broadband-upgrade scenario uses the dashboard's infrastructure reliability and other existing monthly indicators. An unchanged indicator is useful evidence about model scope, not proof of no real-world effect. Tourism marketing similarly uses a demand scenario but explicitly does not claim that marketing caused demand.
 
 ## Opportunity cost
 
@@ -74,16 +74,7 @@ Different organizations can value access, affordability, liquidity, service capa
 
 ## Debugging laboratory: crossed reporting periods
 
-**Accidental defect:** report generation compares the baseline dashboard's month 1 with an alternative snapshot labeled month 2.
-
-1. Add a semantic breakpoint in `decisions.create_report` on the condition checking `baseline.current.month != alternative.current.month`.
-2. Inspect `baseline.current.scenario_name`, `alternative.current.scenario_name`, and both `month` values—not a fragile source line number.
-3. Reproduce the defect by changing only the alternative snapshot month in a test (the chapter test uses `dataclasses.replace`).
-4. Verify that generation raises `decision comparison requires matching reporting periods` instead of printing a misleading delta.
-5. Correct the snapshot inputs, rerun both reports twice, and verify byte-identical output.
-6. Explain the meaning: a difference between periods can reflect time as well as the alternative, so it cannot be attributed consistently to the scenario comparison.
-
-A useful semantic breakpoint remains stable as code moves: stop when the **report-period invariant is evaluated**, then inspect the named domain values. Do not “fix” this by removing the guard.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -104,3 +95,20 @@ Decision support makes alternatives, assumptions, consequences, opportunity cost
 <!-- reporting-vocabulary -->
 Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
 [`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 16 — Inspect Decision Evidence**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

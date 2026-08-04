@@ -54,23 +54,15 @@ This is a teaching indicator—not GAAP net income. Stronger demand may hit capa
 
 ## Baseline walkthrough
 
-Run `regional-sim business-report baseline`. Read each row left to right: demand is served only to capacity, utilization reveals pressure, unmet demand records forgone activity, and excess capacity reveals headroom. Then inspect payroll, purchases, tax, and surplus beneath the row. The dashboard aggregates openings and closures but does not invent individual firms.
+Run `regional-sim report business baseline`. Read each row left to right: demand is served only to capacity, utilization reveals pressure, unmet demand records forgone activity, and excess capacity reveals headroom. Then inspect payroll, purchases, tax, and surplus beneath the row. The dashboard aggregates openings and closures but does not invent individual firms.
 
 ## Downtown-expansion walkthrough
 
-Run `regional-sim downtown-expansion`, then `regional-sim compare baseline downtown-expansion`. Expansion increases every sector's capacity by 25% and records two aggregate openings per sector. Demand assumptions remain fixed, isolating the capacity effect. `restaurant-boom` shifts visitor demand toward restaurants and expands restaurant capacity. `retail-decline` shifts household demand away from retail, contracts its capacity, and records four aggregate closures.
+Run `regional-sim run downtown-expansion`, then `regional-sim compare baseline downtown-expansion`. Expansion increases every sector's capacity by 25% and records two aggregate openings per sector. Demand assumptions remain fixed, isolating the capacity effect. `restaurant-boom` shifts visitor demand toward restaurants and expands restaurant capacity. `retail-decline` shifts household demand away from retail, contracts its capacity, and records four aggregate closures.
 
 ## Debugging laboratory: the twice-counted restaurant dollar
 
-**Fault:** a developer adds visitor restaurant allocation to `revenue_by_sector` twice. Run the baseline and notice inflated restaurant demand and possibly revenue.
-
-1. Inspect `business_demand_by_source`; sum households, visitors, institutions, and government once for restaurants.
-2. Compare that sum with restaurant `demand`. A mismatch identifies the duplicate.
-3. Remove the second addition and rerun the reconciliation and business report.
-4. Verify source demand equals the sum of sector demand and every sector's realized revenue reconciles with its uses.
-5. Explain the inflation: one visitor purchase became two revenue claims even though no second payment entered the region.
-
-The customer-demand reconciliation checks allocated demand, while the business reconciliation checks only capacity-constrained realized revenue. Both are necessary.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -91,3 +83,20 @@ There are no individual businesses, inventories, supply chains, banking or lendi
 ## Chapter summary
 
 Regional demand becomes business revenue only when capacity can serve it. Revenue supports payroll, local purchases, taxes, external purchases, and retained operating surplus. Multiple sectors depend on common household, visitor, institutional, and government conditions, so transparent allocation and reconciliation prevent double counting.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 08 — Debug Business Capacity**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

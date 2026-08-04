@@ -22,7 +22,7 @@ flowchart TD
   E -- yes --> F[Year-end summary]
 ```
 
-Monthly flow values—income, tourism spending, and government revenue—are summed. Stock or ratio indicators—employment, housing occupancy, transportation and utility utilization, and resilience—are averaged. Integer cents and `Decimal` rates preserve the earlier chapters' rules.
+This is a **deterministic twelve-month seasonal simulation**, not one continuously stateful year. Each month is independently derived from the baseline (or custom-file) configuration plus its configured tourism factor, academic season, and month index. The annual summary sums registered flow indicators and averages the implemented employment, utilization, and educational resilience indicators. Monthly snapshots retain each month's values; the implementation does not select month-end stocks for the current summary. No reserve, deposit, savings, inventory, or other balance carries from one monthly run into the next. Integer cents and `Decimal` rates preserve the earlier chapters' rules.
 
 ## Integrated systems
 
@@ -47,22 +47,20 @@ The dashboard snapshots preserve household, tourism, university, healthcare, gov
 Run:
 
 ```console
-regional-sim annual baseline
-regional-sim annual-report baseline
-regional-sim annual strong-tourism-year
-regional-sim annual weak-tourism-year
-regional-sim compare-years baseline strong-tourism-year
-regional-sim annual-explain
-regional-sim annual-trace baseline
+regional-sim annual run normal-year
+regional-sim annual report normal-year
+regional-sim annual run strong-tourism-year
+regional-sim annual run weak-tourism-year
+regional-sim annual compare normal-year strong-tourism-year
+regional-sim annual explain normal-year
+regional-sim annual trace normal-year
 ```
 
 Read the timeline as **Month → major events → key changes → dashboard**. Compare January's winter tourism with July's summer peak, then inspect the year-end totals. An annual average is useful, but it can conceal a capacity peak or seasonal trough.
 
 ## Debugging laboratory — the month that happened twice
 
-**Fault:** copy the `results.append(run_scenario(scenario))` line in the annual loop. **Semantic breakpoint:** pause on `run_scenario(scenario)` in `run_annual_scenario`; inspect `index`, `scenario.region.current_simulation_month`, `len(results)`, and the next result's `month`. Continue twelve times and verify the invariant `tuple(month.month for month in results) == tuple(range(1, 13))`.
-
-The duplicate creates thirteen results or a repeated month and overstates every summed annual flow. Remove the duplicate, rerun `pytest tests/test_annual.py`, and reconcile the annual household-income total with the sum of its twelve monthly values. Repeated processing is not harmless reporting duplication: it records economic activity twice.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -73,8 +71,25 @@ The duplicate creates thirteen results or a repeated month and overstates every 
 
 ## Assumptions and limitations
 
-Months execute sequentially and exactly once. Seasonal mappings and annual tourism factors are explicit constants. The model has no random events, forecasting, optimization, machine learning, price response, inventories, migration, customizable regions, user-defined economies, or multi-year state transitions. Monthly subsystem implementations retain their own documented simplifications.
+Months are invoked in calendar order and exactly once, but their economic stocks are not carried forward. Seasonal mappings and annual tourism factors are explicit constants. The model has no random events, forecasting, optimization, machine learning, price response, inventories, migration, multi-year state transitions. Monthly subsystem implementations retain their own documented simplifications.
 
 ## Chapter summary
 
 A regional economy is a time-ordered system. Twelve reproducible monthly runs reveal variation that a single annual average hides. Snapshots explain when changes occurred; annual summaries reconcile what accumulated; comparisons describe consequences of explicit assumptions without predicting the future.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 19 — Inspect Annual Aggregation**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

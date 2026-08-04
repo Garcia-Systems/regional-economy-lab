@@ -47,9 +47,9 @@ Fall, Spring, and Summer have explicit multipliers in YAML. Nothing is random. T
 
 ## Baseline walkthrough
 
-Run `regional-sim university-report baseline`. Read enrollment and employment as counts; all dollar values are monthly integer-cent flows. “Local business impacts” is student spending plus local procurement. “Contribution” additionally reports payroll, but is a descriptive activity measure—not GDP, an impact multiplier, or a sum of unique dollars.
+Run `regional-sim report university baseline`. Read enrollment and employment as counts; all dollar values are monthly integer-cent flows. “Local business impacts” is student spending plus local procurement. “Contribution” additionally reports payroll, but is a descriptive activity measure—not GDP, an impact multiplier, or a sum of unique dollars.
 
-Then run `regional-sim university-trace baseline`. The arrows are conceptual educational traces rather than literal dollar tracking.
+Then run `regional-sim trace baseline`. The arrows are conceptual educational traces rather than literal dollar tracking.
 
 ## Enrollment-growth walkthrough
 
@@ -57,15 +57,7 @@ Run `regional-sim compare baseline enrollment-growth`. Only fictional university
 
 ## Debugging laboratory: student spending counted twice
 
-**Fault:** imagine event processing adds student spending once when `StudentSpendingCompleted` is scheduled and again while business sector revenue is assembled.
-
-1. Place a semantic breakpoint where `student_spending` is calculated in `run_scenario`.
-2. Break where `revenue_by_sector` is constructed, then where `Business.record_and_allocate` receives revenue.
-3. Watch the same integer-cent amount. Event scheduling should describe a flow; it must not mutate balances.
-4. Inspect `CUSTOMER SPENDING RECONCILIATION`: its left side contains student spending once, and its right side contains recorded business revenue once.
-5. Remove the duplicate mutation and verify every reconciliation passes.
-
-Double-counting exaggerates revenue, wages, purchases, and taxes. A result can look prosperous while representing money that never entered the region; reconciliation is therefore a modeling safeguard, not cosmetic output.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -74,6 +66,10 @@ Double-counting exaggerates revenue, wages, purchases, and taxes. A result can l
 3. Why does the model avoid immediately respending university payroll?
 4. Why is summer enrollment not a forecast?
 5. Which results are repeated circulation rather than unique value added?
+
+## Integration boundary
+
+Student spending and local university procurement enter canonical business demand. Payroll and external funding are reported institutional flows; payroll is not fed into household income and spent again in the modeled month.
 
 ## Assumptions and limitations
 
@@ -86,3 +82,20 @@ A university is simultaneously an employer, purchaser, external-income attractor
 ## Procurement classification
 
 Completed local university and healthcare procurement is internal business demand; completed external procurement is a classified boundary outflow; the total budget is descriptive. Government permits and fees are revenue rather than a purchasing proxy. These classifications prevent institutional activity from being reconstructed or counted twice.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 05 — Inspect University Demand**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

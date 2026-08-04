@@ -40,30 +40,17 @@ flowchart LR
 
 ## Baseline walkthrough
 
-Run `regional-sim utilities-report baseline`. Compare capacity with available capacity: reserve and reliability are applied exactly once. Baseline demand fits within every service, so unmet utility demand and constrained activity are zero. Utilization below 100% represents headroom, not inefficiency by itself.
+Run `regional-sim report utilities baseline`. Compare capacity with available capacity: reserve and reliability are applied exactly once. Baseline demand fits within every service, so unmet utility demand and constrained activity are zero. Utilization below 100% represents headroom, not inefficiency by itself.
 
 ## Power-outage walkthrough
 
-Run `regional-sim power-outage`, then `regional-sim compare baseline power-outage`. The scenario lowers electric reliability deterministically without changing demand. Electric available capacity binds, unmet demand appears, and the common activity factor reduces effective customer demand across businesses and institutions. The result illustrates simultaneous dependence; it does not claim a sector-specific outage chronology.
+Run `regional-sim run power-outage`, then `regional-sim compare baseline power-outage`. The scenario lowers electric reliability deterministically without changing demand. Electric available capacity binds, unmet demand appears, and the common activity factor reduces effective customer demand across businesses and institutions. The result illustrates simultaneous dependence; it does not claim a sector-specific outage chronology.
 
 The `broadband-upgrade` scenario adds broadband capacity and reliability. The `maintenance-window` scenario increases the reserved share and temporarily lowers water reliability. Repeated runs are byte-stable.
 
 ## Debugging laboratory — the double reduction
 
-Suppose a developer changes available capacity to apply the outage twice:
-
-```python
-available = int(capacity * reliability * reliability * (1 - reserve))  # bug
-```
-
-1. Run `regional-sim utilities-report power-outage` and note unexpectedly high electric utilization.
-2. Set a **semantic breakpoint** where `UtilitySystem.evaluate()` computes `available`—break on the domain transition “configured capacity becomes available capacity,” rather than an arbitrary line number.
-3. Inspect `capacity`, `maintenance_reserve`, and `reliabilities[name]`. Follow the value into `UtilityServiceResult.utilization`.
-4. Identify the duplicate reliability reduction and remove one multiplication.
-5. Verify `available = floor(capacity × (1 − reserve) × reliability)` and rerun the report and tests.
-6. Explain why overstated utilization and unmet demand could cause planners to prioritize the wrong investment or misunderstand resilience.
-
-Useful secondary breakpoints are the creation of the utility result and the application of `activity_factor` to economic demand. Do not “fix” the symptom by capping utilization at 100%; utilization above 100% communicates demand beyond available capacity.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Interpretation questions
 
@@ -84,3 +71,20 @@ There is no electrical grid, water hydraulics, telecommunications protocol, cybe
 ## Chapter summary
 
 Utilities enable regional activity. Capacity, reserve, and reliability determine availability; demand beyond availability creates unmet demand and constrains activity. Deterministic outage, upgrade, and maintenance scenarios make these relationships reproducible while keeping the model firmly at an aggregate educational level.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 12 — Inspect Utility Stage**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.

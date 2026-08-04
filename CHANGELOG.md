@@ -123,3 +123,10 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 <!-- reporting-vocabulary -->
 Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
 [`docs/indicators.md`](docs/indicators.md) and the canonical `regional_economy.indicators` registry.
+
+## Development — educational-layer audit
+
+- Aligned Chapters 0–20 with the canonical command hierarchy, scenario catalog, indicator and accounting vocabulary, transaction stages, and current subsystem boundaries.
+- Corrected deterministic annual aggregation/carry-forward semantics and resilience-composite language.
+- Completed the 21-chapter VS Code launch inventory, added a safe shared debugging fixture and guide, and removed dependence on production defects.
+- Added maintained chapter, launch, link, command, scenario, and debugging contract checks; removed stale identifiers and event-order descriptions.

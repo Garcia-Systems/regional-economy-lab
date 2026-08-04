@@ -25,7 +25,7 @@ flowchart LR
 
 ## Baseline walkthrough
 
-Run `regional-sim baseline`. `MonthStarted` precedes external household income and visitors.
+Run `regional-sim run baseline`. `MonthStarted` precedes external household income and visitors.
 Household allocation then completes; combined household and visitor customer payments become
 sector demand; capacity- and supply-served demand becomes recorded business revenue; wages and taxes
 follow. `MonthCompleted` reports implemented allocation and transfer checks.
@@ -35,10 +35,7 @@ balance, and wages are not added to revenue to manufacture a larger activity num
 
 ## Debugging laboratory
 
-Select **Run Baseline Scenario** and break in `run_scenario` at `business.record_and_allocate(...)`. Inspect `household_by_sector`, the
-visitor's `spending_by_category`, and `revenue_by_sector`. Verify for each sector that household plus
-visitor spending becomes exactly the recorded customer revenue. Step into the business method and
-watch that flow split into taxes and operating uses.
+Use the safe, opt-in fixture specified in **Debugging laboratory contract** below. The fault is learner-owned and deterministic; do not edit production simulation logic.
 
 ## Scenario experiment
 
@@ -80,3 +77,24 @@ The canonical relationship diagram is [`docs/diagrams/entity-relationships.mmd`]
 ## Auditing a transaction path
 
 The monthly model preserves customer-source identity through a canonical transaction pipeline. A reduction belongs to the single transition where it occurs, preventing the same unrealized demand from being described twice.
+
+## Debugging laboratory contract
+
+- **Goal:** distinguish a deliberately inconsistent transaction-stage identity from its corrected form without editing the engine.
+- **Launch configuration:** **Chapter 01 — Inspect Regional Flow**.
+- **Scenario:** the bundled scenario named by this chapter's executable walkthrough; the shared helper itself uses fixed learner-owned values.
+- **Breakpoint:** place a semantic breakpoint inside `inspect_stage_identity()` immediately before `StageIdentityObservation` is returned.
+- **Objects to inspect:** `configured_demand`, `recorded_business_revenue`, `constrained_amount`, and `identity_holds`.
+- **Expected fault:** the opt-in faulty observation records revenue plus constrained demand that does not equal configured demand.
+- **Reconciliation or indicator effect:** `identity_holds` is false; normal simulation results are untouched.
+- **Fix:** rerun with `faulty=False`; do not edit production allocation logic.
+- **Economic meaning:** constrained or interrupted demand is neither spending nor an external outflow, so it cannot be added to recorded revenue inconsistently.
+- **Verification:** run `python -m regional_economy.debug_labs` and `pytest tests/test_debug_labs.py`.
+
+## Scenario experiment checklist
+
+Change no more than two documented assumptions in a copied scenario. Ask: **what changed, why did it change, what did not change, and what boundary limitation remains?** Separate modeled results from recommendations and identify who benefits, who bears a constraint, and whether each quantity is a flow, stock, or unmet amount.
+
+## Assumptions and limitations
+
+All values are deterministic fictional educational assumptions. The model implements selected subsystem allocation and transfer reconciliations, not a complete regional sources-and-uses account or a forecast.
