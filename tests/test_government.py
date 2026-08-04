@@ -12,7 +12,7 @@ from regional_economy.scenarios import load_scenario
 def test_revenue_budget_and_department_capacity() -> None:
     result = run_scenario(load_scenario("baseline"))
     metrics = result.metrics
-    assert metrics.government_revenue == 164_559_958
+    assert metrics.government_revenue == 158_004_280
     assert sum(department.operating_budget for department in metrics.government_departments) == 120_000_000
     assert metrics.government_budget_reconciliation.reconciled
     safety = metrics.government_departments[0]
@@ -38,7 +38,7 @@ def test_government_scenarios_hold_budget_fixed_and_change_capacity() -> None:
 def test_report_is_deterministic_and_formatted() -> None:
     result = run_scenario(load_scenario("baseline"))
     assert government_report(result) == government_report(result)
-    assert "Total revenue: $1,645,599.58" in government_report(result)
+    assert "Total revenue: $1,580,042.80" in government_report(result)
     assert "Balanced operating allocation: PASS" in government_report(result)
 
 

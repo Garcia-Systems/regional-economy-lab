@@ -30,7 +30,7 @@ def test_output_is_deterministic_and_formatted() -> None:
     assert first == second
     report = annual_report(first)
     assert "YEAR-END SUMMARY" in report
-    assert "$50,955,000.00" in report
+    assert "$39,820,425.51" in report
     timeline = annual_timeline(first)
     assert all(month in timeline for month in MONTHS)
     assert timeline.index("January") < timeline.index("December") < timeline.index("Annual Summary")

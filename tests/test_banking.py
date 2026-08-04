@@ -21,7 +21,8 @@ def test_payment_outage_interrupts_but_does_not_duplicate_activity():
     assert outage.metrics.completed_transactions < baseline.metrics.completed_transactions
     assert outage.metrics.interrupted_transactions > 0
     assert outage.metrics.completed_transactions + outage.metrics.interrupted_transactions == baseline.metrics.completed_transactions
-    assert outage.metrics.business_revenue == outage.metrics.completed_transactions
+    assert outage.metrics.sector_transactions.allocated.total_cents == outage.metrics.completed_transactions
+    assert outage.metrics.business_revenue <= outage.metrics.completed_transactions
 
 
 def test_banking_scenarios_reports_comparison_and_cli_are_deterministic(capsys):

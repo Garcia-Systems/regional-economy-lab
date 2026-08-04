@@ -14,7 +14,7 @@ def test_baseline_flows_and_reconciliation() -> None:
     assert metrics.business_revenue <= total_demand
     expected_sales = multiply(metrics.business_revenue, scenario.region.local_government.sales_tax_rate)
     expected_lodging = multiply(
-        scenario.visitors.spending_by_category[next(iter(scenario.visitors.spending_by_category))],
+        metrics.visitor_transactions.recorded_revenue.lodging_cents,
         scenario.region.local_government.lodging_tax_rate,
     )
     assert metrics.taxes_collected == expected_sales + expected_lodging
@@ -22,7 +22,8 @@ def test_baseline_flows_and_reconciliation() -> None:
         metrics.household_deductions
         + metrics.household_nonlocal_spending
         + metrics.external_business_purchases
-        + scenario.university.external_procurement
+        + metrics.external_outflows.university_external_procurement_cents
+        + metrics.external_outflows.healthcare_external_procurement_cents
     )
     assert metrics.reconciled
     assert all(check.difference == 0 for check in metrics.reconciliations)

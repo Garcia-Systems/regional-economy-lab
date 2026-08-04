@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from regional_economy.entities.business import Sector
+from regional_economy.entities.visitor import TourismSector
 from regional_economy.money import allocate, multiply
 
 SOURCE_ORDER = ("household", "visitor", "university", "healthcare", "government")
@@ -120,3 +121,59 @@ class SourceRevenueSummary:
     @property
     def total_cents(self) -> int:
         return self.recorded.total_cents
+
+
+@dataclass(frozen=True)
+class TourismAmounts:
+    """Visitor-attributed cents in the stable configured tourism-sector order."""
+
+    lodging_cents: int
+    restaurants_cents: int
+    attractions_cents: int
+    visitor_retail_cents: int
+
+    @property
+    def total_cents(self) -> int:
+        return sum(self.amounts)
+
+    @property
+    def amounts(self) -> tuple[int, ...]:
+        return tuple(getattr(self, f"{sector.value}_cents") for sector in TourismSector)
+
+    def amount(self, sector: TourismSector) -> int:
+        return getattr(self, f"{sector.value}_cents")
+
+    @classmethod
+    def from_dict(cls, values: dict[TourismSector, int]) -> "TourismAmounts":
+        return cls(*(values[sector] for sector in TourismSector))
+
+
+@dataclass(frozen=True)
+class VisitorTransactionSummary:
+    """Canonical visitor attribution; no later sector-total inference is needed."""
+
+    configured: TourismAmounts
+    payment_completed: TourismAmounts
+    recorded_revenue: TourismAmounts
+
+    @property
+    def constrained_cents(self) -> int:
+        return self.configured.total_cents - self.payment_completed.total_cents
+
+    @property
+    def unrecorded_cents(self) -> int:
+        return self.payment_completed.total_cents - self.recorded_revenue.total_cents
+
+
+@dataclass(frozen=True)
+class ClassifiedExternalOutflows:
+    household_external_purchases_cents: int
+    household_deductions_cents: int
+    business_external_procurement_cents: int
+    university_external_procurement_cents: int
+    healthcare_external_procurement_cents: int
+    government_external_procurement_cents: int = 0
+
+    @property
+    def total_cents(self) -> int:
+        return sum(getattr(self, name) for name in self.__dataclass_fields__)

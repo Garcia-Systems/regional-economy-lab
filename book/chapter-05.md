@@ -82,3 +82,7 @@ All university operations and values are fictional educational assumptions. Stud
 ## Summary
 
 A university is simultaneously an employer, purchaser, external-income attractor, and source of seasonal demand. Transparent configuration, deterministic events, integer cents, Decimal rates, and reconciliation make those pathways inspectable without claiming a real institution or an economic-impact multiplier.
+
+## Procurement classification
+
+Completed local university and healthcare procurement is internal business demand; completed external procurement is a classified boundary outflow; the total budget is descriptive. Government permits and fees are revenue rather than a purchasing proxy. These classifications prevent institutional activity from being reconstructed or counted twice.

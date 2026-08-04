@@ -211,3 +211,9 @@ employment, household income, or tax collections.
 - **Interrupted payment demand:** Shock-adjusted demand that did not complete because of payment availability; neither spending nor leakage.
 - **Recorded business revenue:** Tax-inclusive customer-derived revenue remaining after all transaction constraints.
 - **Unmet demand:** Demand that sector capacity could not serve; not a completed transaction or external outflow.
+
+- **Canonical visitor attribution:** visitor cents retained by tourism category and demand source from configuration through payment and recorded revenue.
+- **Classified external outflow:** a completed, named flow crossing out of the boundary; never unmet, interrupted, or constrained demand.
+- **Institutional procurement:** a descriptive budget classified into local procurement (internal business demand) and external procurement (external outflow). Permits and fees are not procurement.
+- **Lodging-tax base:** recorded visitor-derived lodging revenue; lodging tax is added to government collections.
+- **Sales-tax base:** total recorded business revenue; sales tax is extracted during business allocation.

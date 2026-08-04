@@ -11,7 +11,13 @@ from regional_economy.entities.supply_chain import SupplyChainResult
 from regional_economy.entities.transportation import TransportationResult
 from regional_economy.entities.utility import UtilityResult
 from regional_economy.entities.workforce import WorkforceResult
-from regional_economy.transactions import SectorTransactionSummary, SourceRevenueSummary, TransactionPipeline
+from regional_economy.transactions import (
+    ClassifiedExternalOutflows,
+    SectorTransactionSummary,
+    SourceRevenueSummary,
+    TransactionPipeline,
+    VisitorTransactionSummary,
+)
 
 
 @dataclass(frozen=True)
@@ -102,7 +108,7 @@ MONETARY_METRICS: dict[str, MonetaryMetricMetadata] = {
     "healthcare_payroll": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
     "healthcare_procurement": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
     "healthcare_local_procurement": _money(MonetaryClassification.INTERNAL_TRANSFER),
-    "healthcare_external_procurement": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
+    "healthcare_external_procurement": _money(MonetaryClassification.EXTERNAL_OUTFLOW),
     "healthcare_business_activity": _money(MonetaryClassification.DESCRIPTIVE, canonical=False),
     "government_revenue": _money(MonetaryClassification.DESCRIPTIVE),
     "government_operating_budget": _money(MonetaryClassification.INTERNAL_TRANSFER),
@@ -226,6 +232,8 @@ class RegionalMetrics:
     transaction_pipeline: TransactionPipeline
     sector_transactions: SectorTransactionSummary
     source_revenue: SourceRevenueSummary
+    visitor_transactions: VisitorTransactionSummary
+    external_outflows: ClassifiedExternalOutflows
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
@@ -288,6 +296,18 @@ class RegionalMetrics:
         return self.source_revenue.recorded.visitor_cents
 
     @property
+    def recorded_university_business_revenue_cents(self) -> int:
+        return self.source_revenue.recorded.university_cents
+
+    @property
+    def recorded_healthcare_business_revenue_cents(self) -> int:
+        return self.source_revenue.recorded.healthcare_cents
+
+    @property
+    def recorded_government_business_revenue_cents(self) -> int:
+        return self.source_revenue.recorded.government_cents
+
+    @property
     def household_external_outflows(self) -> int:
         return self.household_nonlocal_spending
 
@@ -297,13 +317,16 @@ class RegionalMetrics:
 
     @property
     def institutional_external_procurement(self) -> int:
-        """Canonical institutional outflow currently limited to university procurement."""
-        return self.economic_leakage - self.household_deductions - self.household_nonlocal_spending - self.external_business_purchases
+        return (
+            self.external_outflows.university_external_procurement_cents
+            + self.external_outflows.healthcare_external_procurement_cents
+            + self.external_outflows.government_external_procurement_cents
+        )
 
     @property
     def total_classified_external_outflows(self) -> int:
         """Precisely defined compatibility meaning of ``economic_leakage``."""
-        return self.economic_leakage
+        return self.external_outflows.total_cents
 
     @property
     def regional_sources_and_uses_status(self) -> str:

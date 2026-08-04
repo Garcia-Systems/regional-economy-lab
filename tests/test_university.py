@@ -12,7 +12,10 @@ def test_baseline_university_funding_payroll_procurement_and_spending() -> None:
     assert result.metrics.university_procurement == 240_000_000
     assert result.metrics.university_local_procurement == 108_000_000
     assert result.metrics.student_spending == 592_000_000
-    assert result.metrics.university_business_impact == 700_000_000
+    assert result.metrics.university_business_impact == result.metrics.recorded_university_business_revenue_cents
+    assert result.metrics.university_contribution == (
+        result.metrics.university_payroll + result.metrics.recorded_university_business_revenue_cents
+    )
     assert result.metrics.reconciled
 
 
