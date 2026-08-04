@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from regional_economy.entities.healthcare import AgeCohort
 from regional_economy.entities.household import HouseholdAllocation
 
 
@@ -72,6 +73,16 @@ class RegionalMetrics:
     student_spending: int
     university_business_impact: int
     university_contribution: int
+    demographic_cohorts: tuple[AgeCohort, ...]
+    retirement_age_share: Decimal
+    healthcare_demand: dict[str, Decimal]
+    healthcare_spending: int
+    healthcare_employment: int
+    healthcare_payroll: int
+    healthcare_procurement: int
+    healthcare_local_procurement: int
+    healthcare_external_procurement: int
+    healthcare_business_activity: int
     household_reconciliation: Reconciliation
     required_expense_reconciliation: Reconciliation
     customer_reconciliation: Reconciliation

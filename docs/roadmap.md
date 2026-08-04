@@ -14,3 +14,6 @@ Chapter 4 implements fixed-capacity tourism, four visitor sectors, deterministic
 
 ## Chapter 5 — Higher Education (complete)
 Fictional aggregate university, enrollment seasons, payroll, procurement, student spending, and external research/support inflows are implemented. Real public aggregate higher-education datasets remain a future transformed-data opportunity.
+
+## Chapter 6 — Healthcare and an Aging Population (complete)
+Aggregate fictional healthcare institutions, mutually exclusive demographic cohorts, four demand measures, employment, payroll, procurement, reports, traces, and three deterministic demographic scenarios are implemented. Public aggregate demographic data is a future provenance-controlled opportunity. Patient records, claims, billing, scheduling, epidemiology, workforce shortages, transport, dynamic housing, healthcare finance, forecasting, and optimization remain out of scope.

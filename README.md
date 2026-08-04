@@ -122,3 +122,17 @@ regional-sim compare baseline enrollment-growth
 ```
 
 University values are educational assumptions, not operations of a real institution or forecasts. See [Chapter 5](book/chapter-05.md).
+
+## Chapter 6 — healthcare and an aging population
+A fictional aggregate healthcare network now connects mutually exclusive age cohorts to outpatient, inpatient, pharmacy, and preventive demand plus healthcare employment, payroll, and local/external procurement. It includes no patients, clinical simulation, claims, forecasts, or optimization. Try:
+
+```console
+regional-sim aging-population
+regional-sim healthy-growth
+regional-sim retiree-inmigration
+regional-sim healthcare-report baseline
+regional-sim healthcare-trace aging-population
+regional-sim compare baseline aging-population
+```
+
+All providers and values are educational assumptions. Public aggregate demographic datasets are a future provenance-controlled opportunity. See [Chapter 6](book/chapter-06.md).

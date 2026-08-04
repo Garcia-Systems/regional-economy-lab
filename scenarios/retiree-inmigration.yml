@@ -1,10 +1,10 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: summer-session
-label: Summer Session
+name: retiree-inmigration
+label: Retiree In-Migration
 region:
   name: Historic Triangle # public-data geographic-name placeholder
-  population: 1000 # fictional
-  employed_residents: 620 # fictional
+  population: 1120 # fictional
+  employed_residents: 635 # fictional
 
 government:
   sales_tax_rate: "0.05" # assumed
@@ -170,7 +170,7 @@ university:
   research_funding: "1800000.00"
   local_purchasing_share: "0.45"
   external_funding_share: "0.70"
-  season: Summer
+  season: Fall
   students:
     resident: 6000
     commuter: 2000
@@ -183,7 +183,7 @@ university:
   seasonal_patterns:
     Fall: {enrollment: "1.00", spending: "1.00"}
     Spring: {enrollment: "0.95", spending: "0.95"}
-    Summer: {enrollment: "0.60", spending: "0.90"}
+    Summer: {enrollment: "0.35", spending: "0.80"}
 
 healthcare:
   # Fictional aggregate network and monthly educational assumptions; no patients are modeled.
@@ -193,9 +193,9 @@ healthcare:
     clinics: 4
     urgent_care_centers: 2
     pharmacies: 6
-  employment: 145
-  monthly_payroll: "820000.00"
-  monthly_procurement: "310000.00"
+  employment: 172
+  monthly_payroll: "985000.00"
+  monthly_procurement: "380000.00"
   local_purchasing_share: "0.40"
   cohorts:
     - id: children
@@ -222,7 +222,7 @@ healthcare:
       retirement_age: false
     - id: retirees
       label: Retirees
-      population: 180
+      population: 300
       outpatient_visits: "0.34"
       inpatient_services: "0.025"
       pharmacy_demand: "0.90"

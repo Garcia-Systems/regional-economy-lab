@@ -11,6 +11,8 @@ from regional_economy.events import (
     DiscretionarySpendingCompleted,
     EssentialSpendingCompleted,
     Event,
+    HealthcareDemandCalculated,
+    HealthcarePayrollPaid,
     HouseholdDeductionsApplied,
     HouseholdGrossIncomeReceived,
     HouseholdSavingsAllocated,
@@ -79,6 +81,13 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(UniversityFundingReceived(8, f"University received {format_money(university.external_funding)} externally"))
     scheduler.schedule(StudentSpendingCompleted(8, f"{university.enrollment:,} students spent {format_money(student_spending)} locally"))
     scheduler.schedule(UniversityProcurementCompleted(8, f"University purchased {format_money(local_procurement)} locally"))
+    healthcare = scenario.healthcare
+    scheduler.schedule(
+        HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents")
+    )
+    scheduler.schedule(
+        HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households")
+    )
     household_by_sector = _allocate_total(local_household, scenario.household_sector_shares)
     student_categories = university.student_spending_by_category()
     student_by_sector = {
@@ -204,6 +213,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         student_spending,
         student_spending + local_procurement,
         university.payroll + student_spending + local_procurement,
+        healthcare.cohorts,
+        healthcare.retirement_share,
+        healthcare.demand(),
+        healthcare.healthcare_spending,
+        healthcare.employment,
+        healthcare.monthly_payroll,
+        healthcare.monthly_procurement,
+        healthcare.local_procurement,
+        healthcare.external_procurement,
+        healthcare.business_activity,
         cash,
         required,
         customer,

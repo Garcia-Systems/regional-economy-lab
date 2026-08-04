@@ -9,8 +9,10 @@ from typing import Any
 import yaml
 
 from regional_economy.entities import (
+    AgeCohort,
     Business,
     Government,
+    HealthcareSystem,
     Household,
     Region,
     Sector,
@@ -37,6 +39,7 @@ ROOT_FIELDS = {
     "visitors",
     "tourism",
     "university",
+    "healthcare",
 }
 
 
@@ -48,6 +51,7 @@ class Scenario:
     visitors: Visitor
     household_sector_shares: dict[Sector, Decimal]
     university: University
+    healthcare: HealthcareSystem
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -319,6 +323,56 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     )
     if university.payroll + university.procurement_budget > university.operating_budget:
         raise ValueError("University payroll plus procurement cannot exceed its operating budget.")
+    healthcare_data = _require(raw, "healthcare", "scenario")
+    cohort_items = _require(healthcare_data, "cohorts", "healthcare")
+    if not isinstance(cohort_items, list) or not cohort_items:
+        raise ValueError("Missing healthcare cohorts. Fix: add at least one aggregate age cohort.")
+    cohorts = tuple(
+        AgeCohort(
+            cohort_id=str(_require(item, "id", "healthcare cohort")),
+            label=str(item.get("label", item["id"])),
+            population=_nonnegative(int(_require(item, "population", "healthcare cohort")), "cohort population"),
+            outpatient_visits_per_person=Decimal(str(_require(item, "outpatient_visits", "healthcare cohort"))),
+            inpatient_services_per_person=Decimal(str(_require(item, "inpatient_services", "healthcare cohort"))),
+            pharmacy_units_per_person=Decimal(str(_require(item, "pharmacy_demand", "healthcare cohort"))),
+            preventive_visits_per_person=Decimal(str(_require(item, "preventive_care", "healthcare cohort"))),
+            average_monthly_spending=_nonnegative(
+                parse_money(_require(item, "average_monthly_spending", "healthcare cohort")), "healthcare spending"
+            ),
+            labor_force_participation=_rate(
+                _require(item, "labor_force_participation", "healthcare cohort"), "cohort labor-force participation"
+            ),
+            dependent=str(item.get("dependent", "false")).lower() == "true",
+            retirement_age=str(item.get("retirement_age", "false")).lower() == "true",
+        )
+        for item in cohort_items
+    )
+    if len({cohort.cohort_id for cohort in cohorts}) != len(cohorts):
+        raise ValueError("Duplicate healthcare cohort id. Fix: count each demographic cohort exactly once.")
+    if any(value < 0 for cohort in cohorts for value in (
+        cohort.outpatient_visits_per_person, cohort.inpatient_services_per_person,
+        cohort.pharmacy_units_per_person, cohort.preventive_visits_per_person,
+    )):
+        raise ValueError("Healthcare utilization rates must be nonnegative.")
+    if sum(cohort.population for cohort in cohorts) != population:
+        raise ValueError("Healthcare cohort populations must sum exactly to region.population; check for missing or duplicate cohorts.")
+    institutions = _require(healthcare_data, "institutions", "healthcare")
+    healthcare = HealthcareSystem(
+        name=str(_require(healthcare_data, "name", "healthcare")),
+        hospital_count=_nonnegative(int(_require(institutions, "hospitals", "healthcare.institutions")), "hospitals"),
+        clinic_count=_nonnegative(int(_require(institutions, "clinics", "healthcare.institutions")), "clinics"),
+        urgent_care_count=_nonnegative(int(_require(institutions, "urgent_care_centers", "healthcare.institutions")), "urgent care"),
+        pharmacy_count=_nonnegative(int(_require(institutions, "pharmacies", "healthcare.institutions")), "pharmacies"),
+        employment=_nonnegative(int(_require(healthcare_data, "employment", "healthcare")), "healthcare employment"),
+        monthly_payroll=_nonnegative(parse_money(_require(healthcare_data, "monthly_payroll", "healthcare")), "healthcare payroll"),
+        monthly_procurement=_nonnegative(
+            parse_money(_require(healthcare_data, "monthly_procurement", "healthcare")), "healthcare procurement"
+        ),
+        local_purchasing_share=_rate(
+            _require(healthcare_data, "local_purchasing_share", "healthcare"), "healthcare.local_purchasing_share"
+        ),
+        cohorts=cohorts,
+    )
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -334,4 +388,5 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         ),
         household_sector_shares=_sector_shares(_require(raw, "household_sector_shares", "scenario"), "household sector"),
         university=university,
+        healthcare=healthcare,
     )

@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: summer-session
-label: Summer Session
+name: aging-population
+label: Aging Population
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -170,7 +170,7 @@ university:
   research_funding: "1800000.00"
   local_purchasing_share: "0.45"
   external_funding_share: "0.70"
-  season: Summer
+  season: Fall
   students:
     resident: 6000
     commuter: 2000
@@ -183,7 +183,7 @@ university:
   seasonal_patterns:
     Fall: {enrollment: "1.00", spending: "1.00"}
     Spring: {enrollment: "0.95", spending: "0.95"}
-    Summer: {enrollment: "0.60", spending: "0.90"}
+    Summer: {enrollment: "0.35", spending: "0.80"}
 
 healthcare:
   # Fictional aggregate network and monthly educational assumptions; no patients are modeled.
@@ -193,14 +193,14 @@ healthcare:
     clinics: 4
     urgent_care_centers: 2
     pharmacies: 6
-  employment: 145
-  monthly_payroll: "820000.00"
-  monthly_procurement: "310000.00"
+  employment: 168
+  monthly_payroll: "960000.00"
+  monthly_procurement: "365000.00"
   local_purchasing_share: "0.40"
   cohorts:
     - id: children
       label: Children
-      population: 200
+      population: 170
       outpatient_visits: "0.18"
       inpatient_services: "0.010"
       pharmacy_demand: "0.25"
@@ -211,7 +211,7 @@ healthcare:
       retirement_age: false
     - id: working-age
       label: Working-Age Adults
-      population: 620
+      population: 550
       outpatient_visits: "0.16"
       inpatient_services: "0.008"
       pharmacy_demand: "0.35"
@@ -222,7 +222,7 @@ healthcare:
       retirement_age: false
     - id: retirees
       label: Retirees
-      population: 180
+      population: 280
       outpatient_visits: "0.34"
       inpatient_services: "0.025"
       pharmacy_demand: "0.90"

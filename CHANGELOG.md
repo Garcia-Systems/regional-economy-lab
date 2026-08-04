@@ -23,3 +23,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ## Unreleased — Chapter 5
 - Added a fictional university entity, aggregate students and employment, external/research funding, procurement, and seasonal enrollment.
 - Added enrollment-growth, research-expansion, and summer-session scenarios, dashboard/report/trace output, documentation, and reconciliation coverage.
+
+## Unreleased — Chapter 6
+- Added fictional aggregate healthcare institutions, age cohorts, deterministic utilization demand, spending, employment, payroll, local/external procurement, dashboard metrics, reports, trace, and validation against demographic double-counting.
+- Added aging-population, healthy-growth, and retiree-inmigration scenarios, Chapter 6 laboratory, documentation, and end-to-end tests.

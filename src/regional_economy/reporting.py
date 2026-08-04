@@ -80,6 +80,17 @@ def dashboard(result: SimulationResult) -> str:
             ),
         ),
         (
+            "Healthcare and Demographics",
+            (
+                ("Healthcare employment", f"{m.healthcare_employment:,}"),
+                ("Healthcare payroll", format_money(m.healthcare_payroll)),
+                ("Healthcare spending", format_money(m.healthcare_spending)),
+                ("Estimated service demand", f"{sum(m.healthcare_demand.values()):,.2f}"),
+                ("Population by cohort", ", ".join(f"{c.label}: {c.population:,}" for c in m.demographic_cohorts)),
+                ("Retirement-age population share", _percent(m.retirement_age_share)),
+            ),
+        ),
+        (
             "Businesses",
             (
                 ("Customer revenue received", format_money(m.business_revenue)),
@@ -182,6 +193,10 @@ def explanation(result):
         "and bring student spending to local businesses.",
         "External university funding enters from outside the region, unlike household income, which belongs to the household sector. "
         "Student purchases raise restaurant and retail revenue; local procurement keeps more of an operating dollar circulating locally.",
+        "Demographics affect regional economies because age cohorts have different service use, spending, labor-force participation, "
+        "and dependency characteristics.",
+        "Healthcare is both an essential service and an employer: institutions meet aggregate demand while payroll reaches households "
+        "and procurement reaches businesses. Aging raises configured utilization and spending, which can change employment priorities.",
     )
     return "\n".join(lines)
 
@@ -256,6 +271,39 @@ def university_trace(result):
     )
 
 
+def healthcare_report(result):
+    m = result.metrics
+    lines = [
+        f"HEALTHCARE REPORT — {result.scenario_label}",
+        "Fictional aggregate healthcare network; educational assumptions, not a clinical model or forecast.",
+        "Population by age cohort:",
+    ]
+    lines.extend(
+        f"  {cohort.label}: {cohort.population:,} (labor-force participation {_percent(cohort.labor_force_participation)})"
+        for cohort in m.demographic_cohorts
+    )
+    lines.extend((
+        "Healthcare demand:",
+        *(f"  {name.title()}: {value:,.2f}" for name, value in m.healthcare_demand.items()),
+        f"Healthcare spending: {format_money(m.healthcare_spending)}",
+        f"Employment: {m.healthcare_employment:,}",
+        f"Payroll to households: {format_money(m.healthcare_payroll)}",
+        f"Procurement: {format_money(m.healthcare_procurement)}",
+        f"Local procurement: {format_money(m.healthcare_local_procurement)}",
+        f"External procurement (leakage): {format_money(m.healthcare_external_procurement)}",
+        f"Healthcare-related business activity: {format_money(m.healthcare_business_activity)}",
+    ))
+    return "\n".join(lines)
+
+
+def healthcare_trace(result):
+    return "\n".join((
+        f"HEALTHCARE CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+        "Population Aging ↓ Healthcare Demand ↓ Healthcare Institutions ↓ Payroll ↓ Households ↓ Businesses ↓ Taxes ↓ Leakage",
+        "This is an educational systems trace, not a literal tracked dollar, patient pathway, or accounting identity.",
+    ))
+
+
 def comparison(first, second):
     rows = (
         ("Gross household income", "gross_household_income"),
@@ -276,6 +324,10 @@ def comparison(first, second):
         ("University procurement", "university_procurement"),
         ("External university funding", "external_university_funding"),
         ("University contribution", "university_contribution"),
+        ("Healthcare spending", "healthcare_spending"),
+        ("Healthcare payroll", "healthcare_payroll"),
+        ("Healthcare employment", "healthcare_employment"),
+        ("Healthcare local procurement", "healthcare_local_procurement"),
     )
     first_label = first.scenario_label[:20]
     second_label = second.scenario_label[:20]
@@ -283,5 +335,10 @@ def comparison(first, second):
     for label, attr in rows:
         a = getattr(first.metrics, attr)
         b = getattr(second.metrics, attr)
-        lines.append(f"{label:<29}{format_money(a):>20}{format_money(b):>20}{format_money(b - a, signed=True):>20}")
+        formatter = (
+            (lambda value, signed=False: f"{value:+,}" if signed else f"{value:,}")
+            if attr == "healthcare_employment"
+            else format_money
+        )
+        lines.append(f"{label:<29}{formatter(a):>20}{formatter(b):>20}{formatter(b - a, signed=True):>20}")
     return "\n".join(lines)
