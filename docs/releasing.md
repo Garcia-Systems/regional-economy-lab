@@ -18,3 +18,7 @@ Do not publish to PyPI unless a separate publishing policy is approved.
 ## CLI wheel smoke test
 
 Outside the checkout, verify `regional-sim --help`, `regional-sim scenario list`, `regional-sim run baseline`, `regional-sim annual list`, and `regional-sim template list`. The complete contract is in [the CLI guide](cli.md).
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`indicators.md`](indicators.md) and the canonical `regional_economy.indicators` registry.

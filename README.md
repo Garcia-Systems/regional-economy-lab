@@ -252,3 +252,7 @@ Chapter 18 adds fictional, deterministic diversity, redundancy, institutional, f
 ## Canonical transaction pipeline
 
 Monthly reports expose configured customer demand through accessibility, utilities, shocks, payments, sector capacity, and supply availability to recorded business revenue. Constraints are adjacent-stage differences, not independently reconstructed estimates.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`docs/indicators.md`](docs/indicators.md) and the canonical `regional_economy.indicators` registry.

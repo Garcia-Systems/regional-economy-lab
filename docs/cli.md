@@ -62,3 +62,7 @@ Expected validation failures are concise, go to stderr, and do not include trace
 ## Compatibility
 
 A bundled scenario ID by itself (for example, `regional-sim baseline`) remains a silent shortcut for `regional-sim run baseline`. Historical report spellings, annual/resilience/decision spellings, `dashboard SCENARIO`, `export-dashboard`, `indicator-trace`, `validate`, `list-templates`, and `create-template NAME [TEMPLATE]` remain centralized aliases. Explicit commands are authoritative and registered command names always take precedence over scenario shortcuts.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`indicators.md`](indicators.md) and the canonical `regional_economy.indicators` registry.

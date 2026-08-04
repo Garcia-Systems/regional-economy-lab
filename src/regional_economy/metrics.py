@@ -324,6 +324,11 @@ class RegionalMetrics:
         )
 
     @property
+    def institutional_local_procurement(self) -> int:
+        """Completed local university and healthcare procurement."""
+        return self.university_local_procurement + self.healthcare_local_procurement
+
+    @property
     def total_classified_external_outflows(self) -> int:
         """Precisely defined compatibility meaning of ``economic_leakage``."""
         return self.external_outflows.total_cents

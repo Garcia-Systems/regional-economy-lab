@@ -145,3 +145,7 @@ The canonical sales-tax base is all recorded business revenue and tax is extract
 ## CLI boundary
 
 The [CLI guide](cli.md) defines explicit orchestration commands. Handlers select existing simulations and reports; they do not derive economic values.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`indicators.md`](indicators.md) and the canonical `regional_economy.indicators` registry.

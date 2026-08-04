@@ -100,3 +100,7 @@ All alternatives use fictional YAML inputs, one deterministic simulation month, 
 ## Summary
 
 Decision support makes alternatives, assumptions, consequences, opportunity costs, and unknowns inspectable. Business and public reports reuse a consistent dashboard and deterministic simulation. Comparison informs human judgment without predicting, ranking, recommending, or replacing accountable decisions.
+
+<!-- reporting-vocabulary -->
+Reporting labels, units, comparison rules, annual aggregation, missing values, and export safety are centralized in
+[`Indicator reference`](../docs/indicators.md) and the canonical `regional_economy.indicators` registry.
