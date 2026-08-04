@@ -12,7 +12,7 @@ def test_scenario_cli_contains_required_sections(capsys: object) -> None:
     assert "REGIONAL ECONOMY — MONTH 1" in output
     assert "ORDERED EVENT TIMELINE" in output
     assert "RECONCILIATION" in output
-    assert output.count("RECONCILIATION — PASS") == 3
+    assert output.count("RECONCILIATION — PASS") == 4
     assert "fictional assumptions" in output
 
 
@@ -26,7 +26,15 @@ def test_comparison_is_deterministic(capsys: object) -> None:
 
 
 def test_every_supported_output_is_byte_stable(capsys: object) -> None:
-    for argv in (["baseline"], ["tourism-season"], ["explain", "baseline"], ["trace", "baseline"]):
+    for argv in (
+        ["baseline"],
+        ["tourism-season"],
+        ["income-growth"],
+        ["cost-of-living-pressure"],
+        ["households", "baseline"],
+        ["explain", "baseline"],
+        ["trace", "baseline"],
+    ):
         assert main(argv) == 0
         first = capsys.readouterr().out  # type: ignore[attr-defined]
         assert main(argv) == 0

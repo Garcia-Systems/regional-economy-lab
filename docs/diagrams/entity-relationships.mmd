@@ -1,5 +1,6 @@
 classDiagram
-  Region "1" *-- "many" Household
+  Region "1" *-- "six cohorts" Household
+  Household --> HouseholdAllocation : monthly budget
   Region "1" *-- "many" Business
   Region "1" *-- "1" Government
   Scenario "1" --> "1" Region

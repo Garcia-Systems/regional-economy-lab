@@ -1,64 +1,78 @@
-"""Stable, student-facing reports for simulation results."""
+"""Stable student-facing reports."""
 
 from collections.abc import Iterable
 
 from regional_economy.engine import SimulationResult
 from regional_economy.money import format_money
 
-LABEL_WIDTH = 35
+LABEL_WIDTH = 38
 VALUE_WIDTH = 20
 
 
 def _section(title: str, rows: Iterable[tuple[str, str]]) -> list[str]:
-    lines = [f"[{title}]"]
-    lines.extend(f"  {label + ':':<{LABEL_WIDTH}}{value:>{VALUE_WIDTH}}" for label, value in rows)
-    return lines
+    return [f"[{title}]", *(f"  {label + ':':<{LABEL_WIDTH}}{value:>{VALUE_WIDTH}}" for label, value in rows)]
+
+
+def _percent(value) -> str:
+    return f"{value * 100:.1f}%"
 
 
 def dashboard(result: SimulationResult) -> str:
-    """Render sources, movements, exits, and balances in a fixed order."""
     m = result.metrics
-    sections = [
+    sections = (
         (
             "Region",
-            [
+            (
                 ("Name", result.region_name),
-                ("Simulation month", f"{result.month:,}"),
+                ("Simulation month", str(result.month)),
                 ("Population", f"{m.population:,}"),
                 ("Employed residents", f"{m.employed_residents:,}"),
-            ],
+            ),
         ),
         (
             "Households",
-            [
-                ("External income (entered)", format_money(m.external_household_income)),
-                ("Local spending (moved)", format_money(m.local_household_spending)),
-                ("Housing (left boundary)", format_money(m.housing_costs)),
-                ("Nonlocal spending (left)", format_money(m.household_nonlocal_spending)),
-                ("Retained funds (remained)", format_money(m.retained_household_funds)),
-            ],
+            (
+                ("Gross income", format_money(m.gross_household_income)),
+                ("Deductions (external outflow)", format_money(m.household_deductions)),
+                ("After-tax income", format_money(m.after_tax_household_income)),
+                ("Housing paid", format_money(m.housing_costs)),
+                ("Essential spending", format_money(m.essential_spending)),
+                ("Discretionary spending", format_money(m.discretionary_spending)),
+                ("Local spending", format_money(m.local_household_spending)),
+                ("Nonlocal spending", format_money(m.household_nonlocal_spending)),
+                ("Savings", format_money(m.household_savings)),
+                ("Retained funds", format_money(m.retained_household_funds)),
+                ("Unmet essential expenses", format_money(m.unmet_essential_expenses)),
+                ("Average housing-cost burden", _percent(m.average_housing_cost_burden)),
+                ("Cost-burdened households", f"{m.cost_burdened_households:,} ({m.cost_burdened_households / m.household_count:.1%})"),
+                (
+                    "Severely burdened households",
+                    f"{m.severely_cost_burdened_households:,} ({m.severely_cost_burdened_households / m.household_count:.1%})",
+                ),
+            ),
         ),
-        ("Visitors", [("Spending entering region", format_money(m.visitor_spending))]),
+        ("Visitors", (("Spending entering region", format_money(m.visitor_spending)),)),
         (
             "Businesses",
-            [
+            (
                 ("Customer revenue received", format_money(m.business_revenue)),
+                ("Household-derived revenue", format_money(m.household_derived_business_revenue)),
                 ("Wages paid locally", format_money(m.wages_paid)),
                 ("Local purchases", format_money(m.local_business_purchases)),
-                ("External purchases (left)", format_money(m.external_business_purchases)),
+                ("External purchases", format_money(m.external_business_purchases)),
                 ("Retained operating funds", format_money(m.retained_business_funds)),
-            ],
+            ),
         ),
-        ("Government", [("Taxes collected (remained)", format_money(m.taxes_collected))]),
+        ("Government", (("Sales/lodging taxes collected", format_money(m.taxes_collected)),)),
         (
             "Economic Flows",
-            [
-                ("Total external inflows", format_money(m.external_household_income + m.visitor_spending)),
+            (
+                ("External household income", format_money(m.external_household_income)),
                 ("Local economic activity", format_money(m.simulated_local_economic_activity)),
                 ("Total leakage", format_money(m.economic_leakage)),
-            ],
+            ),
         ),
-    ]
+    )
     lines = [
         f"REGIONAL ECONOMY — MONTH {result.month} DASHBOARD",
         f"Scenario: {result.scenario_label} ({result.scenario_name})",
@@ -71,160 +85,103 @@ def dashboard(result: SimulationResult) -> str:
 
 def _event_title(event: object) -> str:
     name = type(event).__name__
-    words = []
-    for character in name:
-        if character.isupper() and words:
-            words.append(" ")
-        words.append(character)
-    return "".join(words)
+    out = []
+    for c in name:
+        if c.isupper() and out:
+            out.append(" ")
+        out.append(c)
+    return "".join(out)
 
 
-def timeline(result: SimulationResult) -> str:
-    """Render the deterministic event sequence as a readable vertical flow."""
+def timeline(result):
     lines = ["ORDERED EVENT TIMELINE"]
-    for index, event in enumerate(result.timeline):
-        if index:
+    for i, event in enumerate(result.timeline):
+        if i:
             lines.extend(("       ↓", ""))
         lines.extend((f"{event.time:02d}  {_event_title(event)}", f"    {event.detail}"))
     return "\n".join(lines)
 
 
-def reconciliation_report(result: SimulationResult) -> str:
+def reconciliation_report(result):
     m = result.metrics
-    blocks = ["FORMAL RECONCILIATION REPORT"]
-    details = (
-        (
-            m.household_reconciliation,
+    lines = ["FORMAL RECONCILIATION REPORT"]
+    for check in m.reconciliations:
+        lines.extend(
             (
-                ("Available household funds", m.external_household_income),
-                ("Housing costs", m.housing_costs),
-                ("Local household spending", m.local_household_spending),
-                ("Household leakage", m.household_nonlocal_spending),
-                ("Retained household funds", m.retained_household_funds),
-            ),
-        ),
-        (
-            m.customer_reconciliation,
-            (
-                ("Local household spending + visitor spending", m.local_household_spending + m.visitor_spending),
-                ("Recorded business customer revenue", m.business_revenue),
-            ),
-        ),
-        (
-            m.business_reconciliation,
-            (
-                ("Business revenue", m.business_revenue),
-                ("Wages paid", m.wages_paid),
-                ("Local business purchases", m.local_business_purchases),
-                ("Business external purchases", m.external_business_purchases),
-                ("Taxes remitted", m.taxes_collected),
-                ("Retained business funds", m.retained_business_funds),
-            ),
-        ),
-    )
-    for check, rows in details:
-        blocks.extend(("", f"{check.label} RECONCILIATION — {'PASS' if check.reconciled else 'FAIL'}"))
-        blocks.extend(f"  {label}: {format_money(value)}" for label, value in rows)
-        blocks.append(f"  Difference: {format_money(check.difference)}")
-    blocks.extend(("", "Customer revenue is repeated circulation, not an additional external source."))
-    return "\n".join(blocks)
-
-
-def full_report(result: SimulationResult) -> str:
-    return "\n\n".join((dashboard(result), timeline(result), reconciliation_report(result)))
-
-
-def explanation(result: SimulationResult) -> str:
-    """Explain the event chain in economic rather than implementation language."""
-    m = result.metrics
-    entries = (
-        (
-            "Month Started",
-            "The laboratory opens one accounting period so every later movement belongs to the same month.",
-            "The regional clock changes; no money moves.",
-        ),
-        (
-            "External Income Received",
-            "Resident households need an explicit source of funds before allocating them.",
-            f"Households receive {format_money(m.external_household_income)} from outside the modeled boundary.",
-        ),
-        (
-            "Visitors Arrived",
-            "Visitor purchases bring additional demand from outside the region.",
-            f"Visitors introduce {format_money(m.visitor_spending)}.",
-        ),
-        (
-            "Households Spent Money",
-            "Households divide post-housing funds among local purchases, nonlocal purchases, and retention.",
-            f"Modeled businesses receive {format_money(m.local_household_spending)} from households.",
-        ),
-        (
-            "Businesses Recorded Revenue",
-            "Customer payments become business revenue; revenue is a flow, not profit.",
-            f"Businesses record {format_money(m.business_revenue)} from households and visitors.",
-        ),
-        (
-            "Businesses Paid Wages",
-            "Businesses use part of after-tax revenue to compensate labor.",
-            f"Employees receive {format_money(m.wages_paid)}; v0.1.0 does not spend those wages again.",
-        ),
-        (
-            "Taxes Collected",
-            "Simplified sales and lodging taxes move part of customer payments to local government.",
-            f"Government retains {format_money(m.taxes_collected)}.",
-        ),
-        (
-            "Month Completed",
-            "All external sources are compared with mutually exclusive ending uses.",
-            f"All three independent checks are {'PASS' if m.reconciled else 'FAIL'}.",
-        ),
-    )
-    lines = [f"EXPLAIN MODE — {result.scenario_label}", "A student guide to why the month unfolds in this order."]
-    for number, (title, why, change) in enumerate(entries, 1):
-        lines.extend(("", f"{number}. {title}", f"   Why: {why}", f"   Change: {change}"))
+                "",
+                f"{check.label} RECONCILIATION — {'PASS' if check.reconciled else 'FAIL'}",
+                f"  Left: {format_money(check.left)}",
+                f"  Right: {format_money(check.right)}",
+                f"  Difference: {format_money(check.difference)}",
+            )
+        )
+    lines.extend(("", "Unmet expenses are reported obligations, not cash uses. Customer revenue is repeated circulation."))
     return "\n".join(lines)
 
 
-def trace(result: SimulationResult) -> str:
-    """Render a conceptual one-dollar journey; it is deliberately not an identity."""
+def full_report(result):
+    return "\n\n".join((dashboard(result), timeline(result), reconciliation_report(result)))
+
+
+def household_report(result):
+    lines = [
+        f"HOUSEHOLD BUDGETS — {result.scenario_name.upper()}",
+        f"{'Household Type':<27}{'Count':>7}{'Gross':>15}{'Housing':>13}{'Essentials':>13}{'Savings':>13}{'Local':>13}{'Shortfall':>13}",
+    ]
+    for a in result.metrics.household_allocations:
+        lines.append(
+            f"{a.label[:26]:<27}{a.count:>7,}{format_money(a.gross_income):>15}{format_money(a.housing):>13}{format_money(a.essential_spending):>13}{format_money(a.savings):>13}{format_money(a.local_spending):>13}{format_money(a.unmet_essential_expenses):>13}"
+        )
+    lines.extend(("", "Amounts are cohort monthly totals. Shortfall means configured housing or essential costs that could not be paid."))
+    return "\n".join(lines)
+
+
+def explanation(result):
+    lines = (
+        f"EXPLAIN MODE — {result.scenario_label}",
+        "Gross income is reduced first by simplified payroll/income deductions; these leave the household sector and are not local taxes.",
+        "Housing and essential costs are paid before savings or discretionary spending. Disposable income after required expenses is "
+        + format_money(result.metrics.disposable_income_after_required_expenses)
+        + ".",
+        "Savings remains held rather than spent; nonlocal purchases become leakage. "
+        "Cohorts can differ because costs and preferences differ.",
+        "Unmet essential expenses measure financial stress without inventing debt. Indicators are not an official affordability analysis.",
+    )
+    return "\n".join(lines)
+
+
+def trace(result):
     return "\n".join(
         (
-            f"ONE-DOLLAR EDUCATIONAL TRACE — {result.scenario_label}",
-            "External income ($1.00 enters)",
-            "  ↓",
-            "Household (allocates it after housing)",
-            "  ↓",
-            "Local business (receives a possible local purchase)",
-            "  ↓",
-            "Employee wages (one possible business use)",
-            "  ↓",
-            "Household spending (a later round, not simulated in v0.1.0)",
-            "  ↓",
-            "Government taxes (may retain a share)",
-            "  ↓",
-            "Leakage (may leave through nonlocal spending or external inputs)",
+            f"HOUSEHOLD-BUDGET EDUCATIONAL TRACE — {result.scenario_label}",
+            "Gross income → deductions → required costs → savings/local discretionary spending",
+            "→ business revenue → taxes, wages, purchases, and leakage",
             "",
-            "ASSUMPTIONS",
-            "• This is not an accounting identity or a claim that one dollar follows every arrow.",
-            "• This path illustrates connections; the same literal dollar does not take every branch.",
-            "• Shares describe aggregates, not probabilities for a particular dollar.",
-            "• Wages are not recirculated by the one-month engine, so the second household step is conceptual.",
-            "• Taxes and leakage occur at different points and are not deducted repeatedly from $1.00.",
+            "This conceptual aggregate trace is not an accounting identity or tracking of a literal dollar.",
+            "Wages are not spent again in this one-month model.",
         )
     )
 
 
-def comparison(baseline: SimulationResult, alternative: SimulationResult) -> str:
+def comparison(first, second):
     rows = (
+        ("Gross household income", "gross_household_income"),
+        ("After-tax income", "after_tax_household_income"),
+        ("Disposable after required", "disposable_income_after_required_expenses"),
+        ("Discretionary spending", "discretionary_spending"),
+        ("Household savings", "household_savings"),
+        ("Unmet essential expenses", "unmet_essential_expenses"),
+        ("Household business revenue", "household_derived_business_revenue"),
         ("Visitor spending", "visitor_spending"),
         ("Business revenue", "business_revenue"),
-        ("Wages paid", "wages_paid"),
         ("Taxes collected", "taxes_collected"),
         ("Economic leakage", "economic_leakage"),
-        ("Local economic activity", "simulated_local_economic_activity"),
     )
-    lines = ["SCENARIO COMPARISON", f"{'Metric':<29}{baseline.scenario_label:>20}{alternative.scenario_label:>20}{'Change':>20}"]
-    for label, attribute in rows:
-        first, second = getattr(baseline.metrics, attribute), getattr(alternative.metrics, attribute)
-        lines.append(f"{label:<29}{format_money(first):>20}{format_money(second):>20}{format_money(second - first, signed=True):>20}")
+    first_label = first.scenario_label[:20]
+    second_label = second.scenario_label[:20]
+    lines = ["SCENARIO COMPARISON", f"{'Metric':<29}{first_label:>20}{second_label:>20}{'Change':>20}"]
+    for label, attr in rows:
+        a = getattr(first.metrics, attr)
+        b = getattr(second.metrics, attr)
+        lines.append(f"{label:<29}{format_money(a):>20}{format_money(b):>20}{format_money(b - a, signed=True):>20}")
     return "\n".join(lines)

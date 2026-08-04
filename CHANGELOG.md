@@ -8,3 +8,10 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Deterministic one-month regional simulation with fictional baseline and tourism-season scenarios.
 - Scenario comparison, dashboard, event timeline, explain and trace learning modes, and formal reconciliations.
 - Integer-cent accounting, explicit taxes, validation, tests, Chapters 0–2, Dev Container, Docker, CI, and release verification documentation.
+
+## [0.2.0] - Unreleased
+### Added
+- Chapter 3 household cohorts, deductions, required-cost priority, savings, local/nonlocal spending, retained funds, unmet-expense stress, and affordability indicators.
+- Income-growth and cost-of-living-pressure scenarios, household detail output, household comparison metrics, four-way reconciliation, tests, and VS Code debugging configurations.
+### Changed
+- Bundled scenarios use the v0.2 cohort schema; the loader retains a documented v0.1 aggregate compatibility path.

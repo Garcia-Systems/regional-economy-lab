@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: income-growth
+label: Income Growth
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -23,7 +23,7 @@ household_types:
     classification: fictional
     count: 180
     workers_per_household: "1.0"
-    gross_monthly_income: "3200.00"
+    gross_monthly_income: "3456.00"
     income_deduction_rate: "0.12"
     monthly_housing_cost: "1450.00"
     essential_nonhousing_cost: "1150.00"
@@ -37,7 +37,7 @@ household_types:
     classification: fictional
     count: 180
     workers_per_household: "1.3"
-    gross_monthly_income: "5200.00"
+    gross_monthly_income: "5616.00"
     income_deduction_rate: "0.17"
     monthly_housing_cost: "1750.00"
     essential_nonhousing_cost: "1500.00"
@@ -51,7 +51,7 @@ household_types:
     classification: fictional
     count: 260
     workers_per_household: "1.4"
-    gross_monthly_income: "6800.00"
+    gross_monthly_income: "7344.00"
     income_deduction_rate: "0.19"
     monthly_housing_cost: "1950.00"
     essential_nonhousing_cost: "1750.00"
@@ -65,7 +65,7 @@ household_types:
     classification: fictional
     count: 140
     workers_per_household: "1.7"
-    gross_monthly_income: "11200.00"
+    gross_monthly_income: "12096.00"
     income_deduction_rate: "0.24"
     monthly_housing_cost: "2600.00"
     essential_nonhousing_cost: "2300.00"
@@ -79,7 +79,7 @@ household_types:
     classification: fictional
     count: 140
     workers_per_household: "0.0"
-    gross_monthly_income: "4100.00"
+    gross_monthly_income: "4428.00"
     income_deduction_rate: "0.10"
     monthly_housing_cost: "1250.00"
     essential_nonhousing_cost: "1600.00"
@@ -93,7 +93,7 @@ household_types:
     classification: fictional
     count: 100
     workers_per_household: "1.5"
-    gross_monthly_income: "8200.00"
+    gross_monthly_income: "8856.00"
     income_deduction_rate: "0.21"
     monthly_housing_cost: "2100.00"
     essential_nonhousing_cost: "1900.00"

@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from decimal import Decimal
+
+from regional_economy.entities.household import HouseholdAllocation
 
 
 @dataclass(frozen=True)
@@ -21,26 +24,46 @@ class RegionalMetrics:
     population: int
     employed_residents: int
     external_household_income: int
+    gross_household_income: int
+    household_deductions: int
+    after_tax_household_income: int
     visitor_spending: int
     local_household_spending: int
     business_revenue: int
+    household_derived_business_revenue: int
     wages_paid: int
     local_business_purchases: int
     external_business_purchases: int
     taxes_collected: int
     economic_leakage: int
     retained_household_funds: int
+    household_savings: int
     retained_business_funds: int
     simulated_local_economic_activity: int
     housing_costs: int
+    essential_spending: int
+    discretionary_spending: int
     household_nonlocal_spending: int
+    unmet_essential_expenses: int
+    disposable_income_after_required_expenses: int
+    average_housing_cost_burden: Decimal
+    cost_burdened_households: int
+    severely_cost_burdened_households: int
+    household_count: int
+    household_allocations: tuple[HouseholdAllocation, ...]
     household_reconciliation: Reconciliation
+    required_expense_reconciliation: Reconciliation
     customer_reconciliation: Reconciliation
     business_reconciliation: Reconciliation
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
-        return (self.household_reconciliation, self.customer_reconciliation, self.business_reconciliation)
+        return (
+            self.household_reconciliation,
+            self.required_expense_reconciliation,
+            self.customer_reconciliation,
+            self.business_reconciliation,
+        )
 
     @property
     def reconciled(self) -> bool:

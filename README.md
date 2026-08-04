@@ -4,7 +4,7 @@ A deterministic, inspectable textbook for learning how money enters a region, mo
 participants, leaves through leakage, and remains as retained funds. The fictional Historic
 Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
 
-> **Educational disclaimer:** v0.1.0 values are fictional assumptions—not official statistics, an
+> **Educational disclaimer:** v0.2.0 development values are fictional assumptions—not official statistics, an
 > impact study, advice, policy analysis, or a forecast.
 
 ## Philosophy and educational value
@@ -48,18 +48,23 @@ shares expose assumptions rather than burying them in code.
 |---|---|
 | `baseline` | Reference one-month flow and reconciliation |
 | `tourism-season` | Controlled comparison with larger fictional visitor demand |
+| `income-growth` | Income growth with required costs held constant |
+| `cost-of-living-pressure` | Required costs rising faster than income |
 
 | Chapter | Laboratory |
 |---|---|
 | [0 — Use the laboratory](book/chapter-00.md) | Setup, reports, explain/trace, debugging |
 | [1 — Regional system](book/chapter-01.md) | Entities and customer revenue |
 | [2 — Entry and exit](book/chapter-02.md) | Inflows, retention, and leakage |
+| [3 — Households, income, and spending](book/chapter-03.md) | Cohort budgets and affordability indicators |
 
 Diagrams: [money flow](docs/diagrams/money-flow.mmd), [entity relationships](docs/diagrams/entity-relationships.mmd), and [event ordering](docs/diagrams/event-ordering.mmd). GitHub and Mermaid-compatible editors render these files.
 
 ## Debugging workflow
 
-Select a named configuration in VS Code's **Run and Debug** view. Pause at `run_scenario`, predict a
+Select a named configuration in VS Code's **Run and Debug** view. Chapter 3 includes Run Income-Growth Scenario,
+Run Cost-of-Living-Pressure Scenario, Compare Household Scenarios, Inspect Household Budgets, and Debug Chapter 3
+Household Allocation. Pause at `run_scenario` or `Household.allocate`, predict a
 value, step through allocations, and inspect the household, customer-spending, and business-revenue reconciliations. The launch names
 state what to inspect; each chapter provides a breakpoint, expected variables, an intentional
 configuration mistake to try, the correct behavior, and its economic meaning. For terminal checks:
@@ -78,9 +83,23 @@ scenario rather than editing the reference files.
 Method details live in [methodology](docs/methodology.md), assumptions in
 [assumptions](docs/assumptions.md), terminology in the [glossary](docs/glossary.md), and provenance
 rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
-not promised functionality. Version 0.1.0 intentionally stops after Chapter 2 and does not model
-additional economic systems.
+not promised functionality. Version 0.2.0 development intentionally stops after Chapter 3 and does not model later systems.
 
 ## Release and community
 
 Bundled scenarios are package resources, so installed commands work outside the checkout; root `scenarios/` copies are maintained for readable authoring and checked against packaged data. See [release instructions](docs/releasing.md), [changelog](CHANGELOG.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), and [code of conduct](CODE_OF_CONDUCT.md). Run the complete release gate with `python scripts/verify_release.py`.
+
+## Chapter 3 — households, income, and spending (v0.2.0 development)
+
+Chapter 3 adds six fictional household cohorts and deterministic monthly budgets. Try:
+
+```console
+regional-sim income-growth
+regional-sim cost-of-living-pressure
+regional-sim households baseline
+regional-sim compare baseline income-growth
+regional-sim explain baseline
+regional-sim trace baseline
+```
+
+Household deductions are external outflows, not local-government revenue. Affordability indicators are educational assumptions, not an official Williamsburg assessment. See [Chapter 3](book/chapter-03.md).

@@ -1,54 +1,131 @@
-# v0.1.0 FICTIONAL seasonal experiment; no value is an actual Williamsburg statistic.
-name: tourism-season # fictional label
-label: Tourism Season # fictional label
+# v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
+name: tourism-season
+label: Tourism Season
 region:
   name: Historic Triangle # public-data geographic-name placeholder
-  population: 1000 # fictional; held equal for comparison
-  employed_residents: 620 # fictional; held equal for comparison
+  population: 1000 # fictional
+  employed_residents: 620 # fictional
+
 government:
-  sales_tax_rate: "0.05" # assumed simplified rate
-  lodging_tax_rate: "0.08" # assumed simplified rate
+  sales_tax_rate: "0.05" # assumed
+  lodging_tax_rate: "0.08" # assumed
   starting_reserve: "100000.00" # fictional
-household_allocation: # assumed shares after housing; must sum to one
-  local_spending: "0.65"
-  nonlocal_spending: "0.20"
-  retained: "0.15"
-household_sector_shares: # transformed toward seasonal retail and food activity
-  tourism_hospitality: "0.10"
-  retail: "0.52"
-  food_service: "0.38"
-households: # fictional representative household groups
-  - id: resident-households-a
-    monthly_income: "1840000.00" # fictional seasonal wage increase
-    housing_cost: "360000.00" # fictional
-  - id: resident-households-b
-    monthly_income: "1640000.00" # fictional seasonal wage increase
-    housing_cost: "320000.00" # fictional
-businesses: # fictional sector representatives with increased capacity
+affordability_thresholds:
+  cost_burden: "0.30" # assumed educational threshold
+  severe_cost_burden: "0.50" # assumed educational threshold
+household_sector_shares:
+  tourism_hospitality: "0.10" # assumed
+  retail: "0.55" # assumed
+  food_service: "0.35" # assumed
+household_types:
+  - id: lower-income-renter
+    label: Lower-Income Renter
+    classification: fictional
+    count: 180
+    workers_per_household: "1.0"
+    gross_monthly_income: "3264.00"
+    income_deduction_rate: "0.12"
+    monthly_housing_cost: "1450.00"
+    essential_nonhousing_cost: "1150.00"
+    essential_local_spending_share: "0.72"
+    target_savings_rate: "0.02"
+    discretionary_spending_rate: "0.85"
+    discretionary_local_spending_share: "0.55"
+    external_income_share: "0.90"
+  - id: middle-income-renter
+    label: Middle-Income Renter
+    classification: fictional
+    count: 180
+    workers_per_household: "1.3"
+    gross_monthly_income: "5304.00"
+    income_deduction_rate: "0.17"
+    monthly_housing_cost: "1750.00"
+    essential_nonhousing_cost: "1500.00"
+    essential_local_spending_share: "0.70"
+    target_savings_rate: "0.08"
+    discretionary_spending_rate: "0.82"
+    discretionary_local_spending_share: "0.60"
+    external_income_share: "0.85"
+  - id: middle-income-homeowner
+    label: Middle-Income Homeowner
+    classification: fictional
+    count: 260
+    workers_per_household: "1.4"
+    gross_monthly_income: "6936.00"
+    income_deduction_rate: "0.19"
+    monthly_housing_cost: "1950.00"
+    essential_nonhousing_cost: "1750.00"
+    essential_local_spending_share: "0.68"
+    target_savings_rate: "0.10"
+    discretionary_spending_rate: "0.80"
+    discretionary_local_spending_share: "0.62"
+    external_income_share: "0.80"
+  - id: higher-income-homeowner
+    label: Higher-Income Homeowner
+    classification: fictional
+    count: 140
+    workers_per_household: "1.7"
+    gross_monthly_income: "11424.00"
+    income_deduction_rate: "0.24"
+    monthly_housing_cost: "2600.00"
+    essential_nonhousing_cost: "2300.00"
+    essential_local_spending_share: "0.65"
+    target_savings_rate: "0.18"
+    discretionary_spending_rate: "0.72"
+    discretionary_local_spending_share: "0.65"
+    external_income_share: "0.75"
+  - id: retired-household
+    label: Retired Household
+    classification: fictional
+    count: 140
+    workers_per_household: "0.0"
+    gross_monthly_income: "4182.00"
+    income_deduction_rate: "0.10"
+    monthly_housing_cost: "1250.00"
+    essential_nonhousing_cost: "1600.00"
+    essential_local_spending_share: "0.74"
+    target_savings_rate: "0.12"
+    discretionary_spending_rate: "0.75"
+    discretionary_local_spending_share: "0.58"
+    external_income_share: "0.55"
+  - id: remote-worker-household
+    label: Remote-Worker Household
+    classification: fictional
+    count: 100
+    workers_per_household: "1.5"
+    gross_monthly_income: "8364.00"
+    income_deduction_rate: "0.21"
+    monthly_housing_cost: "2100.00"
+    essential_nonhousing_cost: "1900.00"
+    essential_local_spending_share: "0.66"
+    target_savings_rate: "0.14"
+    discretionary_spending_rate: "0.76"
+    discretionary_local_spending_share: "0.64"
+    external_income_share: "0.95"
+businesses:
   - id: tourism-sector
     sector: tourism_hospitality
-    employees: 270 # fictional seasonal staffing
-    monthly_capacity: "2000000.00" # fictional
-    operating_allocation: &seasonal # assumed after-tax shares
-      wages: "0.57"
+    employees: 250
+    monthly_capacity: "3000000.00"
+    operating_allocation: &operating
+      wages: "0.55"
       local_purchases: "0.15"
-      external_purchases: "0.18"
+      external_purchases: "0.20"
       retained: "0.10"
   - id: retail-sector
     sector: retail
-    employees: 205 # fictional seasonal staffing
-    monthly_capacity: "1900000.00" # fictional
-    operating_allocation: *seasonal # assumed
+    employees: 190
+    monthly_capacity: "4000000.00"
+    operating_allocation: *operating
   - id: food-sector
     sector: food_service
-    employees: 195 # fictional seasonal staffing
-    monthly_capacity: "1800000.00" # fictional
-    operating_allocation: *seasonal # assumed
+    employees: 180
+    monthly_capacity: "3500000.00"
+    operating_allocation: *operating
 visitors:
-  count: 18000 # fictional seasonal increase
-  average_stay: "2.4" # assumed nights
-  spending_by_category: # fictional aggregate monthly dollars
-    tourism_hospitality: "460000.00"
-    retail: "140000.00"
-    food_service: "190000.00"
-
+  count: 18000 # fictional
+  average_stay: "2.4" # assumed
+  spending_by_category:
+    tourism_hospitality: "460000.00" # fictional
+    retail: "140000.00" # fictional
+    food_service: "190000.00" # fictional
