@@ -34,6 +34,7 @@ from regional_economy.metrics import Reconciliation, RegionalMetrics
 from regional_economy.money import allocate, format_money, multiply
 from regional_economy.scenarios import Scenario
 from regional_economy.shocks import Shock
+from regional_economy.stages import StageState, complete_stage, ensure_pipeline_complete
 from regional_economy.transactions import (
     SOURCE_ORDER,
     ClassifiedExternalOutflows,
@@ -59,6 +60,7 @@ class SimulationResult:
     timeline: tuple[Event, ...]
     shock: Shock | None = None
     resilience: object | None = None
+    stage_trace: tuple[str, ...] = ()
 
 
 def _allocate_total(total: int, shares: dict[Sector, Decimal]) -> dict[Sector, int]:
@@ -80,11 +82,16 @@ def _tourism_amounts(total: int, shares: dict[TourismSector, Decimal]) -> Touris
 
 
 def run_scenario(scenario: Scenario) -> SimulationResult:
+    stages = StageState()
+    # Scenario loading performs schema validation; reaching the engine establishes
+    # that the validated Scenario contract is present.
+    stages = complete_stage(stages, "scenario_validation")
     region = deepcopy(scenario.region)
     region.current_simulation_month += 1
     month = region.current_simulation_month
     scheduler = DeterministicScheduler()
     scheduler.schedule(MonthStarted(0, f"Month {month} started"))
+    stages = complete_stage(stages, "regional_initialization")
     shock = scenario.shock
     factor = shock.factor if shock else lambda _name: Decimal(1)
     for household in region.households:
@@ -109,6 +116,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(HouseholdSavingsAllocated(5, f"Households saved {format_money(savings)}"))
     scheduler.schedule(DiscretionarySpendingCompleted(6, f"Discretionary spending was {format_money(discretionary)}"))
     scheduler.schedule(HouseholdShortfallRecorded(7, f"Unmet essential expenses were {format_money(unmet)}"))
+    stages = complete_stage(stages, "demand_generation")
     transportation = scenario.transportation.evaluate()
     utilities = scenario.utilities.evaluate()
     utility_factor = utilities.activity_factor * factor("utility_capacity")
@@ -131,6 +139,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     government = region.local_government
     scheduler.schedule(HealthcareDemandCalculated(8, f"Aggregate demand calculated for {healthcare.population:,} residents"))
     scheduler.schedule(HealthcarePayrollPaid(8, f"Healthcare institutions paid {format_money(healthcare.monthly_payroll)} to households"))
+    stages = complete_stage(stages, "accessibility_constraints")
     configured = DemandStage(
         "Configured demand",
         DemandBySource(
@@ -189,6 +198,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
             f"Payments completed {format_money(completed_transactions)}; interrupted demand was {format_money(interrupted_transactions)}",
         )
     )
+    stages = complete_stage(stages, "payment_processing")
     demand_by_source = {
         source: _allocate_total(amount, scenario.business_demand_shares[source_key])
         for source, source_key, amount in (
@@ -204,10 +214,12 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     for tourism_sector in TourismSector:
         demand_by_source["visitors"][TOURISM_TO_BUSINESS_SECTOR[tourism_sector]] += completed_tourism.amount(tourism_sector)
     revenue_by_sector = {sector: sum(amounts[sector] for amounts in demand_by_source.values()) for sector in Sector}
+    stages = complete_stage(stages, "sector_allocation")
     supply_chain = scenario.supply_chain.evaluate()
     capacity_by_sector = {
         business.sector: min(revenue_by_sector[business.sector], business.monthly_capacity) for business in region.businesses
     }
+    stages = complete_stage(stages, "capacity_constraints")
     for business in region.businesses:
         procurement_share = business.local_purchase_share + business.external_purchase_share
         business.local_purchase_share = procurement_share * supply_chain.local_purchasing_share
@@ -215,6 +227,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         business.record_and_allocate(
             revenue_by_sector[business.sector], government.sales_tax_rate, supply_chain.capacity_factor * factor("supplier_reliability")
         )
+    stages = complete_stage(stages, "supply_constraints")
     business_revenue = sum(b.local_revenue for b in region.businesses)
     # Enforce one regional sales-tax base. Per-sector extraction can otherwise
     # differ from tax on total recorded revenue by a cent because of truncation.
@@ -296,6 +309,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     scheduler.schedule(BusinessRevenueRecorded(9, f"Businesses recorded canonical revenue of {format_money(business_revenue)}"))
     wages = sum(b.wages_paid for b in region.businesses)
     scheduler.schedule(WagesPaid(10, f"Businesses paid {format_money(wages)} in wages"))
+    stages = complete_stage(stages, "business_operating_allocation")
     taxes = sum(b.taxes for b in region.businesses) + lodging_tax
     region.local_government.collect(taxes)
     scheduler.schedule(TaxesCollected(11, f"Government collected {format_money(taxes)} from recorded-revenue and lodging tax bases"))
@@ -308,6 +322,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         GovernmentBudgetAllocated(12, f"Government allocated {format_money(government.operating_budget)} among five departments")
     )
     scheduler.schedule(PublicServicesProvided(13, "Aggregate public-service capacity was made available"))
+    stages = complete_stage(stages, "government_collection")
     local_purchases = sum(b.local_purchases for b in region.businesses)
     external_purchases = sum(b.external_purchases for b in region.businesses)
     business_retained = sum(b.retained_operating_funds for b in region.businesses)
@@ -327,6 +342,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
             f"{'PASS' if all(r.reconciled for r in (cash, required, customer, business, government_budget)) else 'FAIL'}",
         )
     )
+    stages = complete_stage(stages, "metrics_reconciliation")
     count = sum(a.count for a in allocations)
     weighted_burden = sum((a.housing_burden * a.count for a in allocations), Decimal(0)) / Decimal(count) if count else Decimal(0)
     accessible_workforce = replace(
@@ -463,4 +479,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         visitor_transactions,
         external_outflows,
     )
-    return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock, scenario.resilience)
+    stages = complete_stage(stages, "reporting_preparation")
+    ensure_pipeline_complete(stages)
+    return SimulationResult(
+        scenario.name,
+        scenario.label,
+        region.name,
+        month,
+        metrics,
+        scheduler.run(),
+        shock,
+        scenario.resilience,
+        stages.completed,
+    )
