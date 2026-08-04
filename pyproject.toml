@@ -4,14 +4,19 @@ build-backend = "hatchling.build"
 
 [project]
 name = "regional-economy-lab"
-version = "0.3.0.dev0"
-description = "An executable laboratory for learning regional economic flows"
+version = "0.4.0"
+description = "Deterministic executable textbook for learning regional economic flows and scenario accounting"
 readme = "README.md"
 requires-python = ">=3.13"
 license = {file = "LICENSE"}
-keywords = ["education", "economics", "simulation"]
-classifiers = ["Development Status :: 3 - Alpha", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3.13"]
+keywords = ["education", "economics", "simulation", "regional-economy", "executable-textbook"]
+classifiers = ["Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3.13"]
 dependencies = ["PyYAML>=6.0.2,<7"]
+
+[project.urls]
+Homepage = "https://github.com/garcia-systems/regional-economy-lab"
+Repository = "https://github.com/garcia-systems/regional-economy-lab"
+Changelog = "https://github.com/garcia-systems/regional-economy-lab/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = ["build>=1.2,<2", "pytest>=8.3,<9", "pytest-cov>=6,<7", "ruff>=0.9,<1"]

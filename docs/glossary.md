@@ -39,7 +39,7 @@
 - **Household external outflow:** household nonlocal spending; deductions outside the local-government flow are separate.
 - **Business external purchases:** business input payments leaving the boundary.
 - **Economic leakage:** legacy field described above; not a complete measure of regional exits.
-- **Wages paid:** an after-tax business-revenue use; wages do not recirculate in v0.1.0.
+- **Wages paid:** an after-tax business-revenue use; wages do not recirculate in v0.4.0.
 - **Taxes collected:** tax-inclusive sales and lodging amounts remitted by businesses and retained by modeled government.
 - **Retained household funds:** household funds not spent during the month.
 - **Retained business funds:** after-tax business revenue not allocated to wages or purchases.

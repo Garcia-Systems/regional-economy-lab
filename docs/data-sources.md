@@ -1,6 +1,6 @@
 # Data Sources
 
-Version 0.1.0 uses **only fictional and assumed educational values**. Geographic names are
+Version 0.4.0 uses **only fictional and assumed educational values**. Geographic names are
 public-data placeholders; they do not make the numeric values Williamsburg statistics.
 
 ## Template for a future public dataset
