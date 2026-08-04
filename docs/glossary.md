@@ -132,3 +132,21 @@
 - **External procurement:** Regional, national, or international input spending treated as regional leakage.
 - **Lead-time indicator:** Normal, moderate-delay, or severe-delay assumption that limits effective capacity without modeling inventory.
 - **Constrained business activity:** Potential sales at configured capacity less sales under supply-constrained capacity.
+
+## Chapter 15 terms
+
+**Dashboard:** A deterministic reporting view that summarizes completed simulation indicators and
+does not feed values back into the engine.
+
+**Indicator metadata:** The definition, units, description, calculation method, reporting frequency,
+assumptions, limitations, and timing classification attached to an indicator.
+
+**Leading indicator:** An educational measure associated with activity that may occur before another
+measure; here it carries no claim of predictive accuracy.
+
+**Lagging indicator:** An educational measure reported after modeled economic activity, such as
+employment, household income, or tax collections.
+
+**Monthly snapshot:** An immutable collection of defined indicator values for one scenario month.
+
+**Trend:** The arithmetic change between reported periods, not a forecast.

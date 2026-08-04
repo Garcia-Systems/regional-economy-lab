@@ -24,6 +24,11 @@ regional-sim tourism-season
 regional-sim compare baseline tourism-season
 regional-sim explain baseline
 regional-sim trace baseline
+regional-sim dashboard baseline
+regional-sim dashboard compare baseline tourism-season
+regional-sim export-dashboard baseline --format markdown
+regional-sim export-dashboard baseline --format csv
+regional-sim indicator-trace baseline
 regional-sim --help
 ```
 
@@ -57,6 +62,11 @@ shares expose assumptions rather than burying them in code.
 | [1 — Regional system](book/chapter-01.md) | Entities and customer revenue |
 | [2 — Entry and exit](book/chapter-02.md) | Inflows, retention, and leakage |
 | [3 — Households, income, and spending](book/chapter-03.md) | Cohort budgets and affordability indicators |
+| [15 — Regional data, indicators, and dashboards](book/chapter-15.md) | Metadata-first monthly indicators, comparisons, and deterministic exports |
+
+Chapter 15 dashboards are reporting views over completed simulation results. Indicator definitions,
+units, methods, assumptions, limitations, frequency, and leading/lagging classifications are explicit;
+trends and scenario differences are educational comparisons, never forecasts or policy advice.
 
 Diagrams: [money flow](docs/diagrams/money-flow.mmd), [entity relationships](docs/diagrams/entity-relationships.mmd), and [event ordering](docs/diagrams/event-ordering.mmd). GitHub and Mermaid-compatible editors render these files.
 

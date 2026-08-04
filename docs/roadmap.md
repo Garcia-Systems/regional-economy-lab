@@ -49,3 +49,12 @@ Fictional aggregate banks, deposits, deposit-based lending capacity, available c
 ## Chapter 14 — complete: supply chains and regional commerce
 
 Implemented aggregate suppliers, local/external procurement, deterministic availability and lead times, capacity constraints, three scenarios, reporting, trace/explain content, and a classification debugging lab. Operational inventory management remains explicitly assigned to the Inventory Synchronization Laboratory. Pricing optimization, annual simulations, resilience, and later chapters remain out of scope.
+
+## Chapter 15 — complete: regional data, indicators, and dashboards
+
+Implemented metadata-first indicators across thirteen regional sections, immutable monthly snapshots,
+previous-month trends, caller-supplied year-to-date summaries, leading/lagging educational labels,
+scenario comparisons, data-quality notes, and deterministic console, Markdown, and CSV reports.
+Dashboards consume completed results and never drive the engine. Forecasting, inference, machine
+learning, databases, live APIs, BI servers, web dashboards, annual simulation, optimization, and
+resilience remain out of scope.

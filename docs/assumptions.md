@@ -67,3 +67,13 @@ Bank balances are fictional monthly aggregates in integer cents. Household plus 
 ## Chapter 14 supply-chain assumptions
 
 Supplier shares cover exactly local, regional, national, and international categories and sum to 100%. Only local procurement remains in the modeled region; the other three categories are external leakage. Procurement reliability is the share-weighted availability. Normal, moderate-delay, and severe-delay capacity ceilings are 100%, 90%, and 70%; effective business capacity uses the lower of reliability and that ceiling. These deterministic one-month assumptions do not represent inventory or logistics operations.
+
+## Chapter 15 reporting assumptions
+
+Dashboard reporting periods are completed deterministic simulation months. Metadata declares each
+indicator's definition, units, calculation, monthly frequency, assumptions, limitations, and timing
+classification separately from its calculation. CSV stores monetary values as integer USD cents;
+human-readable reports format those cents as dollars. Rates remain `Decimal` through calculation.
+Previous means the prior supplied snapshot, and year-to-date contains supplied snapshots through the
+current month; missing periods are never inferred. Leading and lagging labels are educational timing
+examples, not evidence of predictive accuracy. All inputs are fictional and no live data is used.
