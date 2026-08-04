@@ -111,3 +111,7 @@ Chapter 18 reads seven bounded `Decimal` characteristics from scenario YAML. It 
 The annual layer does not replace or bypass the deterministic scheduler. It configures a calendar month, invokes `run_scenario`, stores the completed event timeline and dashboard snapshot, then advances to the next month. Stable ordering therefore holds within every month and calendar ordering holds across the year. Annual flow totals are direct integer-cent sums. Ratios and stock-like measures use `Decimal` arithmetic means. Scenario comparisons subtract completed annual summaries and do not extrapolate, optimize, or estimate probabilities.
 
 The capstone connects concepts from other Garcia Systems laboratories at subsystem boundaries without copying specialized operational models. This repository remains the aggregate regional-flow teaching model.
+
+## Chapter 20 configuration methodology
+
+The capstone adds no economic equations. A file path or bundled name enters one loader, which validates schema and cross-field compatibility and constructs the same immutable assumptions/domain entities. The scheduler retains deterministic phase and sequence ordering. Generic dashboards, monthly reports, annual orchestration, resilience views, and comparisons consume results without feeding values back. Reproducibility requires retaining the YAML, repository version, command, and output. Validation is fail-fast and corrective: messages name a semantic location and a suggested fix; runtime integer-cent reconciliation remains the final accounting check.

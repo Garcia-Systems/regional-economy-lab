@@ -101,15 +101,17 @@ def _summary(months: tuple[SimulationResult, ...]) -> AnnualSummary:
 
 def run_annual_scenario(name: str) -> AnnualResult:
     """Run exactly January through December using the existing monthly engine."""
-    profile = "normal-year" if name == "baseline" else name
-    if profile not in TOURISM_YEAR_FACTOR:
+    custom = name.endswith((".yml", ".yaml"))
+    profile = load_scenario(name).name if custom else ("normal-year" if name == "baseline" else name)
+    if not custom and profile not in TOURISM_YEAR_FACTOR:
         raise ValueError(f"annual scenario not found: {name}")
-    base = load_scenario("baseline")
+    base = load_scenario(name) if custom else load_scenario("baseline")
+    tourism_factor = Decimal("1.00") if custom else TOURISM_YEAR_FACTOR[profile]
     results: list[SimulationResult] = []
     for index, _month_name in enumerate(MONTHS, 1):
         academic = UNIVERSITY_SEASON[index - 1]
         enrollment, spending = UNIVERSITY_FACTORS[academic]
-        annual_visitors = int(Decimal(base.visitors.visitor_count) * TOURISM_YEAR_FACTOR[profile])
+        annual_visitors = int(Decimal(base.visitors.visitor_count) * tourism_factor)
         scenario: Scenario = replace(
             base,
             name=profile,

@@ -98,3 +98,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added a deterministic twelve-month orchestrator that reuses the monthly event engine, configurable tourism and academic seasonal profiles, immutable dashboard snapshots, annual summaries, timelines, explain/trace output, and year comparisons.
 - Added normal, strong-tourism, and weak-tourism annual profiles; CLI end-to-end coverage; Chapter 19 narrative and duplicate-month debugging laboratory; and annual methodology, assumptions, glossary, and roadmap documentation.
 - Explicitly excludes forecasting, random events, optimization, machine learning, multi-year simulation, customizable regions, and user-defined economies.
+
+## Unreleased — Chapter 20
+
+- Added file-driven user regions, four fictional educational templates, region profiles, strengthened indicator/path validation, template creation, and capstone CLI workflows.
+- Reused monthly, annual, dashboard, comparison, decision, and resilience reporting without introducing a new economic subsystem.
+- Added Chapter 20 narrative, validation/debugging laboratory, reproducibility documentation, and end-to-end deterministic template tests.

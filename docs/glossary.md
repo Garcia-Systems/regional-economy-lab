@@ -183,3 +183,9 @@ employment, household income, or tax collections.
 **Seasonal variation:** A configured, repeatable difference among calendar periods; it is not a random event or forecast.
 
 **Monthly snapshot:** An immutable dashboard view made after one month's event queue completes.
+
+**Region profile** — A concise description derived from a valid scenario: identity, population, household cohorts, business sectors, and institutions.
+
+**Region template** — A complete, fictional educational YAML scenario intended to be copied and edited without changing simulation code.
+
+**Configuration trace** — The capstone sequence from region definition through validation, simulation, indicators, reports, and comparison.
