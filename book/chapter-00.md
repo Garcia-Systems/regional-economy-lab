@@ -1,5 +1,7 @@
 # Chapter 0 — How to Use the Laboratory
 
+![Illustration of using the regional economy laboratory](../images/chapters/00-how-to-use-the-laboratory.png)
+
 ## Purpose and disclaimer
 
 This executable textbook lets you read an economic claim, run it, inspect its objects, and change

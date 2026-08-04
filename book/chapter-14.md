@@ -1,5 +1,7 @@
 # Chapter 14 — Supply Chains and Regional Commerce
 
+![Illustration of supply chains and regional commerce](../images/chapters/14-supply-chains-and-regional-commerce.png)
+
 ## Learning objectives
 
 After this chapter, you can distinguish local from external procurement, interpret aggregate supplier availability and deterministic lead times, explain why constrained inputs reduce sales despite strong demand, reconcile procurement classifications, and describe the boundary between a regional economic model and an operational inventory system.

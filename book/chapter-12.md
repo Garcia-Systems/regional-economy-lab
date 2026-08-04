@@ -1,5 +1,7 @@
 # Chapter 12 — Utilities and Digital Infrastructure
 
+![Illustration of utilities and digital infrastructure](../images/chapters/12-utilities-and-digital-infrastructure.png)
+
 ## Learning objectives
 
 After this chapter, you can describe utilities as foundational economic infrastructure; calculate aggregate capacity, available capacity, utilization, reliability, and unmet demand; interpret deterministic disruptions and upgrades; and debug a duplicated capacity adjustment.

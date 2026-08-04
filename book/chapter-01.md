@@ -1,5 +1,7 @@
 # Chapter 1 — What Is a Regional Economy?
 
+![Illustration of regional money flows](../images/chapters/01-what-is-a-regional-economy.png)
+
 Around Williamsburg and the Historic Triangle, a visitor may pay for a room, a household may buy
 dinner, a shop may pay an employee, and government may collect tax. A **regional economy** is the
 connected system formed by those decisions within a chosen boundary—not merely a list of firms.

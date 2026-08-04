@@ -1,5 +1,7 @@
 # Chapter 19 — A Year in the Regional Economy
 
+![Illustration of annual cycles in the regional economy](../images/chapters/19-a-year-in-the-regional-economy.png)
+
 ## Learning objectives
 
 After this chapter, you can run a twelve-month deterministic scenario, distinguish stocks and flows in an annual summary, explain seasonal interactions, compare two years, and diagnose a duplicated month.

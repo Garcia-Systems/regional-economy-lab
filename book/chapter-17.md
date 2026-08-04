@@ -1,5 +1,7 @@
 # Chapter 17 — Economic Shocks and Cascading Effects
 
+![Illustration of economic shocks and cascading effects](../images/chapters/17-economic-shocks-and-cascading-effects.png)
+
 ## Learning objectives
 
 After this chapter, you can configure a deterministic shock, follow a cascade across connected systems, compare normal and disrupted months, distinguish impact from recovery, reconcile the results, and explain why the model is educational rather than predictive.

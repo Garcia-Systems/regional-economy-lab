@@ -1,5 +1,7 @@
 # Chapter 16 — Business and Public Decision Making
 
+![Illustration of business and public decision making](../images/chapters/16-business-and-public-decision-making.png)
+
 ## Learning objectives
 
 After this chapter, you can distinguish decision support from prediction; construct business and public scenario reports from dashboard indicators; identify assumptions, benefits, tradeoffs, limitations, unanswered questions, and opportunity costs; compare alternatives without ranking them; and diagnose inconsistent reporting periods.

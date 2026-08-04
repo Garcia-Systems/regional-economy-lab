@@ -1,5 +1,7 @@
 # Chapter 4 — Tourism and hospitality
 
+![Illustration of tourism and hospitality](../images/chapters/04-tourism-and-hospitality.png)
+
 > Williamsburg is the narrative setting. Every quantity in this laboratory is fictional or an explicit educational assumption; none is an official tourism statistic.
 
 ## Learning objectives

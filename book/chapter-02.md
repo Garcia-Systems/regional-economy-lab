@@ -1,5 +1,7 @@
 # Chapter 2 — Where Money Enters and Leaves
 
+![Illustration of money entering and leaving a region](../images/chapters/02-where-money-enters-and-leaves.png)
+
 External household income and visitor spending are two canonical entry indicators; other configured
 funding values can remain descriptive. What happens
 next depends on **local retention**: households choose local rather than nonlocal purchases, and

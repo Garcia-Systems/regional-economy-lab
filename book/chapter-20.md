@@ -1,5 +1,7 @@
 # Chapter 20 — Design Your Own Regional Economy
 
+![Illustration of designing a regional economy scenario](../images/chapters/20-design-your-own-regional-economy.png)
+
 > Every region and value in this laboratory is fictional and educational. Results are deterministic comparisons, not forecasts or recommendations.
 
 ## Learning objectives

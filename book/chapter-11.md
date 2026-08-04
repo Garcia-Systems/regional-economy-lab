@@ -1,5 +1,7 @@
 # Chapter 11 — Transportation and Accessibility
 
+![Illustration of transportation access and regional mobility](../images/chapters/11-transportation-and-accessibility.png)
+
 ## Learning objectives
 
 After this laboratory you can explain accessibility as an economic capacity constraint; distinguish commuter, visitor, and freight access; inspect deterministic capacity rationing; trace a disruption across sectors; and interpret accessibility without mistaking the model for traffic engineering.

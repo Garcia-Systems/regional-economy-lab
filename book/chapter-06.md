@@ -1,5 +1,7 @@
 # Chapter 6 — Healthcare and an Aging Population
 
+![Illustration of healthcare services and an aging population](../images/chapters/06-healthcare-and-an-aging-population.png)
+
 > Every provider, place, and value in this chapter is fictional and educational. This aggregate systems model is not clinical guidance, an official forecast, or a patient model.
 
 ## Learning objectives
