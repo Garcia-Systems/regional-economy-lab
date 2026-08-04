@@ -62,6 +62,7 @@ ROOT_FIELDS = {
     "supply_chain",
     "shock",
     "resilience",
+    "indicators",
 }
 
 
@@ -153,9 +154,15 @@ def _rate(value: object, location: str) -> Decimal:
 
 
 def load_scenario(name: str, directory: Path | None = None) -> Scenario:
-    if not name or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for character in name):
-        raise ValueError(f"invalid scenario name: {name!r}")
-    path = directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml")
+    """Load a bundled name or a user-authored ``.yml`` file."""
+    supplied_path = Path(name)
+    is_file_reference = directory is None and supplied_path.suffix in {".yml", ".yaml"}
+    scenario_name = supplied_path.stem if is_file_reference else name
+    if not scenario_name or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for character in scenario_name):
+        raise ValueError(f"invalid scenario name: {scenario_name!r}. Fix: use lowercase letters, numbers, hyphens, or underscores.")
+    path = supplied_path if is_file_reference else (
+        directory / f"{name}.yml" if directory else files("regional_economy").joinpath("scenario_data", f"{name}.yml")
+    )
     if not path.is_file():
         raise ValueError(f"scenario not found: {name}")
     try:
@@ -168,9 +175,20 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
     unsupported = set(raw) - ROOT_FIELDS
     if unsupported:
         raise ValueError(f"Unsupported scenario field(s): {', '.join(sorted(unsupported))}. Fix: remove unsupported fields.")
-    configured_name = str(raw.get("name", name))
-    if configured_name != name:
-        raise ValueError(f"Scenario name mismatch: requested {name!r}, file declares {configured_name!r}.")
+    configured_name = str(raw.get("name", scenario_name))
+    if configured_name != scenario_name:
+        raise ValueError(f"Scenario name mismatch: requested {scenario_name!r}, file declares {configured_name!r}. Fix: make them match.")
+
+    requested_indicators = raw.get("indicators", [])
+    if requested_indicators:
+        from regional_economy.dashboards import INDICATOR_METADATA
+
+        supported = {item.key for item in INDICATOR_METADATA}
+        unknown = set(requested_indicators) - supported
+        if unknown:
+            raise ValueError(
+                f"Unsupported indicator(s): {', '.join(sorted(unknown))}. Fix: choose from: {', '.join(sorted(supported))}."
+            )
 
     region_data = _require(raw, "region", "scenario")
     population = _nonnegative(int(_require(region_data, "population", "region")), "population")

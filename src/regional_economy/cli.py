@@ -38,6 +38,14 @@ from regional_economy.decisions import (
     format_report as format_decision_report,
 )
 from regional_economy.engine import run_scenario
+from regional_economy.laboratory import (
+    TEMPLATES,
+    create_template,
+    laboratory_explanation,
+    laboratory_report,
+    laboratory_trace,
+    validate_scenario,
+)
 from regional_economy.reporting import (
     banking_report,
     banking_trace,
@@ -106,7 +114,33 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command in {"annual", "annual-report", "annual-trace"}:
+        if args.command == "list-templates":
+            if args.scenarios:
+                parser.error("list-templates does not accept arguments")
+            print("FICTIONAL EDUCATIONAL REGION TEMPLATES\n" + "\n".join(TEMPLATES))
+        elif args.command == "create-template":
+            if len(args.scenarios) not in {1, 2}:
+                parser.error("create-template requires NAME and optional TEMPLATE")
+            path = create_template(args.scenarios[0], args.scenarios[1] if len(args.scenarios) == 2 else "diversified-region")
+            print(f"Created {path}. Next: regional-sim validate {path}")
+        elif args.command == "validate":
+            if len(args.scenarios) != 1:
+                parser.error("validate requires exactly one scenario name or YAML path")
+            profile = validate_scenario(args.scenarios[0])
+            print(f"VALID — {profile.label} ({profile.population:,} residents); configuration is ready to run.")
+        elif args.command == "run":
+            if len(args.scenarios) != 1:
+                parser.error("run requires exactly one scenario name or YAML path")
+            print(laboratory_report(args.scenarios[0]))
+        elif args.command == "laboratory-explain":
+            if args.scenarios:
+                parser.error("laboratory-explain does not accept arguments")
+            print(laboratory_explanation())
+        elif args.command == "laboratory-trace":
+            if args.scenarios:
+                parser.error("laboratory-trace does not accept arguments")
+            print(laboratory_trace())
+        elif args.command in {"annual", "annual-report", "annual-trace"}:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one annual scenario name")
             annual = run_annual_scenario(args.scenarios[0])

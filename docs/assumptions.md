@@ -92,3 +92,7 @@ Resilience characteristics are fictional scenario-authored `Decimal` rates. Rese
 # Chapter 19 annual assumptions
 
 An annual run contains exactly twelve independently completed monthly runs in January-to-December order. Tourism reuses the configured January, April, July, and October seasonal levels; university activity reuses Spring, Summer, and Fall factors. The three annual profiles multiply base visitor demand by 1.00, 1.20, or 0.80. Money flows are summed; state, utilization, employment, and resilience indicators are averaged. These deterministic assumptions are educational comparisons, not forecasts.
+
+## Chapter 20 — user-defined regions
+
+User-authored YAML uses the same explicit fictional assumptions as bundled scenarios. Filenames and `name` fields match; money is converted to integer cents, rates use `Decimal`, allocations total exactly one, and all configured capacities and counts are nonnegative. Templates are educational starting points, not calibrated archetypes. Manufacturing is represented with existing business and supplier aggregates rather than a new production model. Identical configuration, package version, and command produce identical ordered output.

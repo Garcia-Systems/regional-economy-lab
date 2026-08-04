@@ -71,3 +71,7 @@ Implemented reusable deterministic shock factors, explicit cross-system propagat
 ## Chapter 18 — complete: regional resilience and adaptation
 
 Implemented deterministic educational diversity, redundancy, adaptive, institutional, supplier, financial, and readiness indicators; fictional comparative profiles; reports and trace/explain modes; and a duplicate-indicator debugging laboratory. These are not official ratings or predictions. Emergency operations, probabilities, insurance, optimization, annual simulation, and machine learning remain out of scope.
+
+## Chapter 20 — complete: design your own regional economy
+
+File-driven custom regions, four fictional templates, friendly schema/semantic validation, derived region profiles, shared dashboard/report generation, deterministic comparisons, authoring CLI workflow, Explain/Trace modes, and a configuration debugging laboratory complete v1 scope. Post-v1 candidates are richer provenance manifests, schema-version migration tools, and additional fictional teaching templates. Forecasting, optimization, probability, machine learning, GIS, live datasets, web applications, and interactive editors remain excluded.

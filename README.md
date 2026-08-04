@@ -32,6 +32,11 @@ regional-sim indicator-trace baseline
 regional-sim annual baseline
 regional-sim annual-report baseline
 regional-sim compare-years baseline strong-tourism-year
+regional-sim list-templates
+regional-sim create-template my-region
+regional-sim validate my-region.yml
+regional-sim run my-region.yml
+regional-sim compare my-region.yml baseline
 regional-sim --help
 ```
 
@@ -67,6 +72,7 @@ shares expose assumptions rather than burying them in code.
 | [3 — Households, income, and spending](book/chapter-03.md) | Cohort budgets and affordability indicators |
 | [15 — Regional data, indicators, and dashboards](book/chapter-15.md) | Metadata-first monthly indicators, comparisons, and deterministic exports |
 | [19 — A year in the regional economy](book/chapter-19.md) | Twelve monthly snapshots, annual summaries, timelines, and year comparisons |
+| [20 — Design your own regional economy](book/chapter-20.md) | File-driven templates, validation, profiles, reports, and controlled comparisons |
 
 Chapter 15 dashboards are reporting views over completed simulation results. Indicator definitions,
 units, methods, assumptions, limitations, frequency, and leading/lagging classifications are explicit;
@@ -101,7 +107,27 @@ scenario rather than editing the reference files.
 Method details live in [methodology](docs/methodology.md), assumptions in
 [assumptions](docs/assumptions.md), terminology in the [glossary](docs/glossary.md), and provenance
 rules in [data sources](docs/data-sources.md). [The roadmap](docs/roadmap.md) describes boundaries,
-not promised functionality. Version 0.2.0 development intentionally stops after Chapter 3 and does not model later systems.
+not promised functionality. Chapter 20 completes the configurable-region capstone while retaining the deterministic educational boundaries.
+
+## Design a fictional region
+
+Use `regional-sim list-templates`, then `regional-sim create-template my-region [TEMPLATE]`. Edit the
+complete YAML file, keeping its filename and `name` aligned; run `regional-sim validate my-region.yml`
+before `regional-sim run my-region.yml`. A custom file automatically uses the same engine, dashboard,
+annual orchestration, resilience views, and comparison reports as bundled scenarios. Templates are
+organized as readable `scenarios/` authoring copies and installed package resources. Preserve the YAML,
+repository version, exact command, and output to reproduce a result. See [Chapter 20](book/chapter-20.md).
+
+## Garcia Systems executable textbook collection
+
+The Regional Economy Laboratory complements three technically independent educational repositories.
+The **Inventory Synchronization Laboratory** explores inventory and operational consistency; the
+**Digital Banking Systems Laboratory** explores banking transactions and controls; and the
+**Marketplace Pricing and Solutions Engineering Lab** explores marketplace pricing and solution design.
+Each laboratory studies its domain deeply. This repository integrates analogous household, business,
+banking, supplier, infrastructure, and institutional concerns into a broader regional-systems perspective.
+The projects are conceptually complementary, but share no runtime dependency and can be learned, tested,
+and released independently.
 
 ## Release and community
 
