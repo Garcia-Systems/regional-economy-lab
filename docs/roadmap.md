@@ -1,5 +1,7 @@
 # Roadmap
 
+The composite monthly [scenario schema](scenario-schema.md) is now the maintained input boundary; a future CLI registry can consume its canonical catalog.
+
 Chapters 0–19 provide a deterministic educational system from foundational monthly flows through an integrated annual capstone. Chapter 19 executes twelve configured months, snapshots each one, and reconciles annual summaries and comparisons. Forecasting, optimization, probabilistic modeling, multi-year simulation, customizable regions, and user-defined economies remain outside the roadmap.
 
 ## Chapter 19 — complete: a year in the regional economy

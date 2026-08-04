@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Consolidated safe YAML decoding, typed composite configuration, recursive unknown-field rejection, scenario errors, installed-resource discovery, and a canonical bundled-scenario catalog.
+
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased — Accounting boundary correction

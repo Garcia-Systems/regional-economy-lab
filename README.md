@@ -1,5 +1,7 @@
 # Executable Regional Economy Laboratory
 
+Scenario discovery, scalar formats, compatibility, and validation are specified in the authoritative [scenario schema guide](docs/scenario-schema.md).
+
 The deterministic monthly engine has twelve explicit, checked stages. See the
 [simulation architecture](docs/architecture.md) for their inputs, outputs, ownership,
 and reconciliation invariants.

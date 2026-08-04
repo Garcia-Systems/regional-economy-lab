@@ -1,5 +1,7 @@
 # v0.1.0 Assumptions
 
+Rules for fictional metadata and explicit numeric scalars are in the [scenario schema](scenario-schema.md).
+
 ## Accounting-boundary assumptions
 
 The authoritative boundary and metric inventory are in
