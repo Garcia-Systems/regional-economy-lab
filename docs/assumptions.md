@@ -85,3 +85,7 @@ Decision reports compare baseline and alternative outputs for the same monthly r
 ## Chapter 17 shock assumptions
 
 Shock effects are deterministic Decimal remaining-availability multipliers applied once during a fictional one-month simulation. Recovery is an authored stage (`immediate impact`, `partial recovery`, or `restored operations`) with explicit factors, not an inferred repair curve. Effects combine multiplicatively with existing system behavior. Household labor income responds to workforce availability, while realized business revenue determines payroll and current taxes. Scenarios are educational, not forecasts, probability estimates, historical recreations, or emergency-planning tools.
+
+## Chapter 18 resilience assumptions
+
+Resilience characteristics are fictional scenario-authored `Decimal` rates. Reserve funding uses integer cents and retraining capacity uses whole people. The equal-weight composite includes each of seven indicators exactly once; its deterministic recovery-period illustration is pedagogical, not predictive. Scenario assumptions drive outcomes, and no measure is an official resilience rating.

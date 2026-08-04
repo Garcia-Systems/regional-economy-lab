@@ -212,6 +212,31 @@ INDICATOR_METADATA: tuple[IndicatorMetadata, ...] = (
         "Procurement-share-weighted supplier availability.",
         "Weighted category availability.",
     ),
+    _meta("resilience_diversity", "Resilience", "Economic diversity", "ratio", "Configured diversity measure.", "Scenario characteristic."),
+    _meta(
+        "resilience_redundancy",
+        "Resilience",
+        "Infrastructure redundancy",
+        "ratio",
+        "Configured alternate infrastructure capacity.",
+        "Scenario characteristic.",
+    ),
+    _meta(
+        "adaptive_capacity",
+        "Resilience",
+        "Workforce adaptability",
+        "ratio",
+        "Configured retraining and adaptability measure.",
+        "Scenario characteristic.",
+    ),
+    _meta(
+        "recovery_readiness",
+        "Resilience",
+        "Recovery readiness",
+        "ratio",
+        "Configured coordination and readiness measure.",
+        "Scenario characteristic.",
+    ),
 )
 
 _GETTERS: dict[str, MetricGetter] = {
@@ -228,6 +253,10 @@ _GETTERS: dict[str, MetricGetter] = {
     "utility_reliability": lambda r: r.metrics.utilities.reliability,
     "available_credit": lambda r: r.metrics.banking.available_credit,
     "supplier_reliability": lambda r: r.metrics.supply_chain.procurement_reliability,
+    "resilience_diversity": lambda r: r.resilience.economic_diversity,
+    "resilience_redundancy": lambda r: r.resilience.infrastructure_redundancy,
+    "adaptive_capacity": lambda r: r.resilience.workforce_adaptability,
+    "recovery_readiness": lambda r: r.resilience.recovery_readiness,
 }
 
 
