@@ -64,3 +64,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 - Added aggregate fictional banking institutions, deposits, lending capacity, available credit, payment availability, and interrupted-transaction indicators.
 - Added payment-outage, credit-tightening, and expanded-business-lending scenarios, banking report/trace modes, dashboard/comparison integration, documentation, and tests.
+
+## Unreleased — Chapter 14
+
+- Added aggregate supply-chain categories, availability, procurement reliability, and deterministic lead-time capacity effects.
+- Added `supplier-delay`, `local-sourcing`, and `external-disruption` scenarios plus supply report and trace modes.
+- Added Chapter 14 documentation and clarified the no-runtime-dependency boundary with the Inventory Synchronization Laboratory.

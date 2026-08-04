@@ -45,3 +45,7 @@ Aggregate electric power, water, wastewater, and broadband capacity; determinist
 ## Chapter 13 — complete
 
 Fictional aggregate banks, deposits, deposit-based lending capacity, available credit, payment availability, interrupted activity, reports, traces, and three deterministic scenarios are implemented. Payment-network mechanics and individual accounts remain exclusively outside scope; supply chains, shocks, forecasting, and later chapters are not implemented.
+
+## Chapter 14 — complete: supply chains and regional commerce
+
+Implemented aggregate suppliers, local/external procurement, deterministic availability and lead times, capacity constraints, three scenarios, reporting, trace/explain content, and a classification debugging lab. Operational inventory management remains explicitly assigned to the Inventory Synchronization Laboratory. Pricing optimization, annual simulations, resilience, and later chapters remain out of scope.

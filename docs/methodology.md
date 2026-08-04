@@ -75,3 +75,7 @@ For each aggregate service, available capacity is the integer floor of installed
 ## Chapter 13 method
 
 After transportation and utilities determine accessible intended demand, payment availability is multiplied into each demand source using the integer-cent allocator. Completed source totals are allocated once to business sectors; their sum reconciles to customer revenue. Interrupted activity is intended less completed value. Deposit-based lending capacity and available credit are simultaneous indicators and do not inject spending. Stable source/sector iteration and Decimal rates preserve deterministic output. Implementation-level payment behavior is intentionally delegated conceptually—not as a dependency—to the Digital Banking Systems Laboratory.
+
+## Supply-chain method
+
+Chapter 14 evaluates four configured supplier shares in stable enum order. It multiplies each Decimal share by category availability, sums the products, and takes the minimum of this reliability and a documented lead-time factor. Business capacity is multiplied by that factor before integer-cent revenue allocation. The existing combined procurement share is reclassified between local and external using the supplier mix; the allocation helper preserves cent-level reconciliation. No inventory state or cross-laboratory runtime integration is introduced. The Inventory Synchronization Laboratory models operational inventory systems; this laboratory models their conceptual regional economic consequences.

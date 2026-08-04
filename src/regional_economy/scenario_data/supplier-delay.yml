@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: supplier-delay
+label: Supplier Delay
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -344,5 +344,5 @@ banking:
 # Chapter 14 aggregate procurement assumptions; shares classify purchases, not inventory.
 supply_chain:
   supplier_mix: {local: "0.25", regional: "0.25", national: "0.35", international: "0.15"}
-  availability: {local: "1.00", regional: "1.00", national: "1.00", international: "1.00"}
-  lead_time: normal
+  availability: {local: "0.98", regional: "0.96", national: "0.94", international: "0.92"}
+  lead_time: moderate_delay

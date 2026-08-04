@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: local-sourcing
+label: Local Sourcing
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -343,6 +343,6 @@ banking:
 
 # Chapter 14 aggregate procurement assumptions; shares classify purchases, not inventory.
 supply_chain:
-  supplier_mix: {local: "0.25", regional: "0.25", national: "0.35", international: "0.15"}
+  supplier_mix: {local: "0.55", regional: "0.25", national: "0.15", international: "0.05"}
   availability: {local: "1.00", regional: "1.00", national: "1.00", international: "1.00"}
   lead_time: normal

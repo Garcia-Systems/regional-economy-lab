@@ -123,3 +123,12 @@
 - **Lending capacity:** Total deposits multiplied by the configured educational capacity rate.
 - **Payment availability:** Deterministic share of otherwise accessible transactions that can complete.
 - **Payment reliability:** Descriptive aggregate operating-quality indicator; it does not drive random events.
+
+## Supply chains and regional commerce
+
+- **Supplier availability:** Decimal share of an aggregate supplier category assumed available this month.
+- **Procurement reliability:** Supplier-share-weighted availability across all four categories.
+- **Local procurement:** Business input spending assigned to suppliers inside the modeled region.
+- **External procurement:** Regional, national, or international input spending treated as regional leakage.
+- **Lead-time indicator:** Normal, moderate-delay, or severe-delay assumption that limits effective capacity without modeling inventory.
+- **Constrained business activity:** Potential sales at configured capacity less sales under supply-constrained capacity.

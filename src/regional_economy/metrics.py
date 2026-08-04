@@ -6,6 +6,7 @@ from regional_economy.entities.business import BusinessSectorResult, Sector
 from regional_economy.entities.government import PublicServiceDepartment
 from regional_economy.entities.healthcare import AgeCohort
 from regional_economy.entities.household import HouseholdAllocation
+from regional_economy.entities.supply_chain import SupplyChainResult
 from regional_economy.entities.transportation import TransportationResult
 from regional_economy.entities.utility import UtilityResult
 from regional_economy.entities.workforce import WorkforceResult
@@ -122,6 +123,8 @@ class RegionalMetrics:
     banking: BankingResult
     completed_transactions: int
     interrupted_transactions: int
+    supply_chain: SupplyChainResult
+    supply_constrained_business_activity: int
 
     @property
     def reconciliations(self) -> tuple[Reconciliation, ...]:
