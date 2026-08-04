@@ -1,7 +1,7 @@
 """Regional domain entities."""
 
 from .business import Business, Sector
-from .government import Government
+from .government import DepartmentName, Government, PublicServiceDepartment
 from .healthcare import AgeCohort, HealthcareSystem
 from .household import Household, HouseholdAllocation
 from .region import Region
@@ -11,10 +11,12 @@ from .visitor import TourismBusiness, TourismSector, Visitor
 __all__ = [
     "AgeCohort",
     "Business",
+    "DepartmentName",
     "Government",
     "HealthcareSystem",
     "Household",
     "HouseholdAllocation",
+    "PublicServiceDepartment",
     "Region",
     "Sector",
     "StudentCohort",

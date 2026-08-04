@@ -61,3 +61,11 @@
 **Healthcare-related business activity:** Modeled healthcare spending plus local healthcare procurement; not provider revenue or an impact estimate.
 **Retirement-age share:** Population in cohorts marked retirement age divided by total cohort population.
 **Dependency characteristic:** An educational cohort flag indicating greater aggregate reliance on working-age economic support; not an individual classification.
+
+**Capital budget (high level)** — A configured aggregate reserved for long-lived public investment; this model does not represent projects or financing.
+
+**Department capacity** — An educational index equal to operating budget divided by an assumed cost per capacity unit; not employees, outcomes, or service quality.
+
+**Government operating budget** — Fixed monthly funds allocated across five aggregate public-service departments and reconciled exactly in cents.
+
+**Public-service utilization** — Configured demand divided by modeled capacity; it may exceed 100% and is not a performance score.

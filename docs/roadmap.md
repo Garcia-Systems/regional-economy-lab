@@ -17,3 +17,7 @@ Fictional aggregate university, enrollment seasons, payroll, procurement, studen
 
 ## Chapter 6 — Healthcare and an Aging Population (complete)
 Aggregate fictional healthcare institutions, mutually exclusive demographic cohorts, four demand measures, employment, payroll, procurement, reports, traces, and three deterministic demographic scenarios are implemented. Public aggregate demographic data is a future provenance-controlled opportunity. Patient records, claims, billing, scheduling, epidemiology, workforce shortages, transport, dynamic housing, healthcare finance, forecasting, and optimization remain out of scope.
+
+## Chapter 7 — complete
+
+Implemented simplified local revenue, balanced operating and high-level capital budgets, five aggregate public-service departments, deterministic allocation scenarios, capacity/utilization indicators, government report and trace modes, and a reconciliation debugging laboratory. The model makes no policy recommendation. Later systems such as housing, transportation, utilities, banking, and supply chains remain out of scope.

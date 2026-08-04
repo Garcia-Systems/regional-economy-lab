@@ -88,5 +88,15 @@ class TaxesCollected(Event):
 
 
 @dataclass(frozen=True)
+class GovernmentBudgetAllocated(Event):
+    pass
+
+
+@dataclass(frozen=True)
+class PublicServicesProvided(Event):
+    pass
+
+
+@dataclass(frozen=True)
 class MonthCompleted(Event):
     pass

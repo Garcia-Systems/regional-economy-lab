@@ -136,3 +136,7 @@ regional-sim compare baseline aging-population
 ```
 
 All providers and values are educational assumptions. Public aggregate demographic datasets are a future provenance-controlled opportunity. See [Chapter 6](book/chapter-06.md).
+
+## Chapter 7: Government and public services
+
+Chapter 7 adds a simplified fictional local-government budget, aggregate departments, capacity indicators, and policy-neutral fixed-budget comparisons. Try `regional-sim public-safety-focus`, `regional-sim parks-investment`, `regional-sim balanced-services`, `regional-sim government-report baseline`, and `regional-sim compare baseline public-safety-focus`. Department budgets are educational abstractions; no policy recommendation is implied. See [Chapter 7](book/chapter-07.md).

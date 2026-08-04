@@ -11,6 +11,7 @@ import yaml
 from regional_economy.entities import (
     AgeCohort,
     Business,
+    DepartmentName,
     Government,
     HealthcareSystem,
     Household,
@@ -133,11 +134,48 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         raise ValueError("Invalid employment at region.employed_residents. Fix: it cannot exceed region.population.")
 
     government_data = _require(raw, "government", "scenario")
+    department_data = _require(government_data, "departments", "government")
+    expected_departments = {department.value for department in DepartmentName}
+    if set(department_data) != expected_departments:
+        raise ValueError(f"Government departments must include exactly: {', '.join(sorted(expected_departments))}.")
+    allocation_shares = _shares(
+        {name: _require(values, "allocation_share", f"government.departments.{name}") for name, values in department_data.items()},
+        "government department",
+    )
+    operating_budget = _nonnegative(
+        parse_money(_require(government_data, "operating_budget", "government")), "government operating budget"
+    )
+    capital_budget = _nonnegative(parse_money(_require(government_data, "capital_budget", "government")), "government capital budget")
     government = Government(
         sales_tax_rate=_rate(_require(government_data, "sales_tax_rate", "government"), "government.sales_tax_rate"),
         lodging_tax_rate=_rate(_require(government_data, "lodging_tax_rate", "government"), "government.lodging_tax_rate"),
+        property_tax_revenue=_nonnegative(
+            parse_money(_require(government_data, "property_tax_revenue", "government")), "property tax revenue"
+        ),
+        permits_and_fees=_nonnegative(parse_money(_require(government_data, "permits_and_fees", "government")), "permits and fees"),
+        intergovernmental_transfers=_nonnegative(
+            parse_money(_require(government_data, "intergovernmental_transfers", "government")), "government transfers"
+        ),
+        operating_budget=operating_budget,
+        capital_budget=capital_budget,
+        allocation_shares={DepartmentName(name): share for name, share in allocation_shares.items()},
+        capacity_costs={
+            DepartmentName(name): _nonnegative(
+                parse_money(_require(values, "cost_per_capacity_unit", f"government.departments.{name}")),
+                f"{name} capacity cost",
+            )
+            for name, values in department_data.items()
+        },
+        service_demand={
+            DepartmentName(name): Decimal(str(_require(values, "demand", f"government.departments.{name}")))
+            for name, values in department_data.items()
+        },
         reserve_balance=_nonnegative(parse_money(government_data.get("starting_reserve", 0)), "starting reserve"),
     )
+    if any(cost == 0 for cost in government.capacity_costs.values()):
+        raise ValueError("Government cost per capacity unit must be positive.")
+    if any(demand < 0 for demand in government.service_demand.values()):
+        raise ValueError("Government service demand must be nonnegative.")
 
     household_items = raw.get("household_types", raw.get("households"))
     if not isinstance(household_items, list) or not household_items:

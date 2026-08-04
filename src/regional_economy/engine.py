@@ -11,6 +11,7 @@ from regional_economy.events import (
     DiscretionarySpendingCompleted,
     EssentialSpendingCompleted,
     Event,
+    GovernmentBudgetAllocated,
     HealthcareDemandCalculated,
     HealthcarePayrollPaid,
     HouseholdDeductionsApplied,
@@ -20,6 +21,7 @@ from regional_economy.events import (
     HousingCostsPaid,
     MonthCompleted,
     MonthStarted,
+    PublicServicesProvided,
     StudentSpendingCompleted,
     TaxesCollected,
     UniversityFundingReceived,
@@ -142,6 +144,16 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     taxes = sum(b.taxes for b in region.businesses) + tourism_tax
     region.local_government.collect(taxes)
     scheduler.schedule(TaxesCollected(11, f"Government collected {format_money(taxes)}"))
+    government = region.local_government
+    departments = government.departments
+    government_budget = Reconciliation(
+        "GOVERNMENT OPERATING BUDGET", government.operating_budget, sum(department.operating_budget for department in departments)
+    )
+    remaining_reserves = government.close_budget()
+    scheduler.schedule(
+        GovernmentBudgetAllocated(12, f"Government allocated {format_money(government.operating_budget)} among five departments")
+    )
+    scheduler.schedule(PublicServicesProvided(13, "Aggregate public-service capacity was made available"))
     local_purchases = sum(b.local_purchases for b in region.businesses) + tourism_local
     external_purchases = sum(b.external_purchases for b in region.businesses) + tourism_external
     business_retained = sum(b.retained_operating_funds for b in region.businesses) + tourism_retained
@@ -156,7 +168,9 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     )
     scheduler.schedule(
         MonthCompleted(
-            12, f"Month reconciliations: {'PASS' if all(r.reconciled for r in (cash, required, customer, business)) else 'FAIL'}"
+            14,
+            "Month reconciliations: "
+            f"{'PASS' if all(r.reconciled for r in (cash, required, customer, business, government_budget)) else 'FAIL'}",
         )
     )
     count = sum(a.count for a in allocations)
@@ -223,6 +237,13 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         healthcare.local_procurement,
         healthcare.external_procurement,
         healthcare.business_activity,
+        government.total_revenue,
+        government.operating_budget,
+        government.capital_budget,
+        remaining_reserves,
+        departments,
+        government.overall_utilization,
+        government_budget,
         cash,
         required,
         customer,

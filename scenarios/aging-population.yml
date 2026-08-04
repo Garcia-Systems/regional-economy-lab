@@ -10,6 +10,32 @@ government:
   sales_tax_rate: "0.05" # assumed
   lodging_tax_rate: "0.08" # assumed
   starting_reserve: "100000.00" # fictional
+  property_tax_revenue: "750000.00" # assumed monthly simplified levy
+  permits_and_fees: "100000.00" # assumed monthly aggregate
+  intergovernmental_transfers: "350000.00" # assumed monthly aggregate
+  operating_budget: "1200000.00" # fixed across Chapter 7 scenarios
+  capital_budget: "200000.00" # high-level monthly capital allocation
+  departments:
+    public_safety:
+      allocation_share: "0.30"
+      cost_per_capacity_unit: "3000.00"
+      demand: "125"
+    education_support:
+      allocation_share: "0.20"
+      cost_per_capacity_unit: "2400.00"
+      demand: "90"
+    parks_recreation:
+      allocation_share: "0.15"
+      cost_per_capacity_unit: "1800.00"
+      demand: "105"
+    public_works:
+      allocation_share: "0.25"
+      cost_per_capacity_unit: "2700.00"
+      demand: "115"
+    administration:
+      allocation_share: "0.10"
+      cost_per_capacity_unit: "1500.00"
+      demand: "75"
 affordability_thresholds:
   cost_burden: "0.30" # assumed educational threshold
   severe_cost_burden: "0.50" # assumed educational threshold
