@@ -1,9 +1,6 @@
 # Roadmap
 
-Only the one-month Chapters 0–2 foundation exists. Possible later, separately scoped milestones
-include housing; workforce; transportation; utilities; banking; supply chains; seasonal demand;
-shocks; resilience; and, after those concepts are validated, an integrated annual simulation.
-None is implemented or implied by v0.1.0. Healthcare and notebooks are also out of current scope.
+Chapters 0–18 now provide a deterministic one-month educational system from foundational flows through resilience and adaptation. An integrated annual simulation remains a separately scoped future possibility and is not implemented. Forecasting, optimization, and probabilistic modeling remain outside the roadmap.
 
 
 ## v0.2.0 — in development
@@ -66,3 +63,7 @@ Business and public scenario reports, qualitative opportunity costs, determinist
 ## Chapter 17 — complete: economic shocks and cascading effects
 
 Implemented reusable deterministic shock factors, explicit cross-system propagation, configured recovery stages, normal/disrupted comparisons, resilience reporting, cascade traces, four fictional scenarios, and a double-propagation debugging laboratory. The boundary excludes emergency operations, probability, forecasting, insurance, optimization, detailed disaster logistics, machine learning, and the integrated annual simulation.
+
+## Chapter 18 — complete: regional resilience and adaptation
+
+Implemented deterministic educational diversity, redundancy, adaptive, institutional, supplier, financial, and readiness indicators; fictional comparative profiles; reports and trace/explain modes; and a duplicate-indicator debugging laboratory. These are not official ratings or predictions. Emergency operations, probabilities, insurance, optimization, annual simulation, and machine learning remain out of scope.

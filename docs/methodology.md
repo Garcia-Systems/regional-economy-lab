@@ -102,3 +102,7 @@ Chapter 16 evaluates a named catalog entry by running the bundled baseline and i
 ## Deterministic shock methodology
 
 Chapter 17 loads validated remaining-availability rates with the scenario and applies each rate at a named engine boundary. Visitor demand, workforce, transport, utilities, payments, suppliers, and institutions retain their existing models; a shock modifies rather than replaces them. Stable event order, Decimal rates, integer-cent allocation, reconciliation, and byte-stable runs make propagation inspectable. Comparisons subtract baseline indicators from disrupted indicators. Recovery requires a separately authored set of factors. No random sampling, likelihood, forecast, optimization, or emergency-response behavior is present.
+
+## Resilience reporting method
+
+Chapter 18 reads seven bounded `Decimal` characteristics from scenario YAML. It reports each separately, averages workforce adaptability, institutional capacity, supplier diversity, and financial capacity for an adaptive-capacity summary, and averages seven unique indicators for an explicitly limited composite. An illustrative recovery comparison applies the composite to a fixed twelve-period teaching scale with deterministic half-up rounding. This is descriptive scenario arithmetic—not predictive scoring, probability, optimization, or an official rating. Monetary reserves remain integer cents. Conceptual links to other Garcia Systems laboratories are educational only.

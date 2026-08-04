@@ -44,6 +44,7 @@ class SimulationResult:
     metrics: RegionalMetrics
     timeline: tuple[Event, ...]
     shock: Shock | None = None
+    resilience: object | None = None
 
 
 def _allocate_total(total: int, shares: dict[Sector, Decimal]) -> dict[Sector, int]:
@@ -137,9 +138,7 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
     tourism_revenue = visitor_spending
     tourism_sales_tax = multiply(tourism_revenue, government.sales_tax_rate)
     lodging_tax = multiply(
-        multiply(
-            multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], visitor_access), utility_factor
-        ),
+        multiply(multiply(scenario.visitors.spending_by_category[TourismSector.LODGING], visitor_access), utility_factor),
         government.lodging_tax_rate,
     )
     tourism_tax = tourism_sales_tax + lodging_tax
@@ -314,4 +313,4 @@ def run_scenario(scenario: Scenario) -> SimulationResult:
         supply_chain,
         unconstrained_business_revenue - business_revenue,
     )
-    return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock)
+    return SimulationResult(scenario.name, scenario.label, region.name, month, metrics, scheduler.run(), shock, scenario.resilience)

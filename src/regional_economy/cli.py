@@ -62,6 +62,19 @@ from regional_economy.reporting import (
     workforce_report,
     workforce_trace,
 )
+from regional_economy.resilience import (
+    build_resilience_report,
+    format_resilience_report,
+)
+from regional_economy.resilience import (
+    comparison as resilience_comparison,
+)
+from regional_economy.resilience import (
+    explanation as resilience_explanation,
+)
+from regional_economy.resilience import (
+    trace as resilience_trace,
+)
 from regional_economy.scenarios import load_scenario
 
 
@@ -86,7 +99,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command in {"evaluate-business", "evaluate-public"}:
+        if args.command == "resilience-report":
+            if len(args.scenarios) != 1:
+                parser.error("resilience-report requires exactly one scenario name")
+            print(format_resilience_report(build_resilience_report(load_scenario(args.scenarios[0]))))
+        elif args.command == "compare-resilience":
+            if len(args.scenarios) != 2:
+                parser.error("compare-resilience requires exactly two scenario names")
+            print(resilience_comparison(load_scenario(args.scenarios[0]), load_scenario(args.scenarios[1])))
+        elif args.command == "resilience-explain":
+            if args.scenarios:
+                parser.error("resilience-explain does not accept a scenario")
+            print(resilience_explanation())
+        elif args.command == "resilience-trace":
+            if len(args.scenarios) != 1:
+                parser.error("resilience-trace requires exactly one scenario name")
+            scenario = load_scenario(args.scenarios[0])
+            print(resilience_trace(run_scenario(scenario), scenario))
+        elif args.command in {"evaluate-business", "evaluate-public"}:
             if len(args.scenarios) != 1:
                 parser.error(f"{args.command} requires exactly one decision name")
             kind = DecisionKind.BUSINESS if args.command == "evaluate-business" else DecisionKind.PUBLIC

@@ -88,3 +88,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Added reusable deterministic shocks, simplified recovery stages, explicit cascade trace/reporting, and normal-versus-disrupted indicators.
 - Added `severe-storm`, `tourism-collapse`, `payment-disruption`, and `supplier-disruption` educational scenarios plus CLI, tests, dashboard integration, documentation, and debugging laboratory.
 - Explicitly excludes forecasting, probability, emergency planning, disaster operations, insurance, optimization, machine learning, and annual simulation.
+
+## Unreleased — Chapter 18
+
+- Added deterministic regional resilience and adaptive-capacity indicators, four fictional scenarios, dashboard metadata, comparison/report/explain/trace CLI modes, tests, and the Chapter 18 debugging laboratory.
+- Documented that summaries are educational indicators—not official ratings or predictions—and that scenario assumptions drive outcomes.

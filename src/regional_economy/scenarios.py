@@ -61,7 +61,23 @@ ROOT_FIELDS = {
     "banking",
     "supply_chain",
     "shock",
+    "resilience",
 }
+
+
+@dataclass(frozen=True)
+class ResilienceCharacteristics:
+    """Transparent, scenario-authored educational resilience characteristics."""
+
+    economic_diversity: Decimal
+    infrastructure_redundancy: Decimal
+    workforce_adaptability: Decimal
+    institutional_capacity: Decimal
+    supplier_diversity: Decimal
+    financial_capacity: Decimal
+    recovery_readiness: Decimal
+    retraining_capacity: int
+    reserve_funding: int
 
 
 @dataclass(frozen=True)
@@ -80,6 +96,7 @@ class Scenario:
     utilities: UtilitySystem
     banking: BankingSystem
     supply_chain: SupplyChain
+    resilience: ResilienceCharacteristics
     shock: Shock | None = None
 
 
@@ -588,6 +605,24 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         ),
         lead_time,
     )
+    resilience_data = raw.get("resilience", {})
+    resilience_rates = {
+        key: _rate(resilience_data.get(key, "0.50"), f"resilience.{key}")
+        for key in (
+            "economic_diversity",
+            "infrastructure_redundancy",
+            "workforce_adaptability",
+            "institutional_capacity",
+            "supplier_diversity",
+            "financial_capacity",
+            "recovery_readiness",
+        )
+    }
+    resilience = ResilienceCharacteristics(
+        **resilience_rates,
+        retraining_capacity=_nonnegative(int(resilience_data.get("retraining_capacity", "0")), "resilience retraining capacity"),
+        reserve_funding=_nonnegative(parse_money(resilience_data.get("reserve_funding", "0.00")), "resilience reserve funding"),
+    )
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
@@ -613,5 +648,6 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         utilities=utilities,
         banking=banking,
         supply_chain=supply_chain,
+        resilience=resilience,
         shock=parse_shock(raw.get("shock")),
     )

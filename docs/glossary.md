@@ -166,3 +166,11 @@ employment, household income, or tax collections.
 **Recovery stage** — An educational scenario label: immediate impact, partial recovery, or restored operations; it is not a forecast timeline.
 
 **Resilience indicator** — A before/after descriptive measure used to inspect how a fictional regional system responds under fixed assumptions, not a risk probability.
+
+## Chapter 18 terms
+
+- **Regional resilience:** ability to absorb disruption, continue essential functions, adapt, and recover; not absence of shocks or an official rating.
+- **Adaptive capacity:** combined ability to retrain workers, change suppliers, use reserves, and coordinate institutions.
+- **Economic diversity:** educational measure of reduced dependence on a single economic activity.
+- **Infrastructure redundancy:** alternate capacity that can preserve functions when a primary path is constrained.
+- **Recovery readiness:** configured preparedness for coordinated recovery, not a forecast.
