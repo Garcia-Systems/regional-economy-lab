@@ -101,7 +101,20 @@ def dashboard(result: SimulationResult) -> str:
                 ("Retained operating funds", format_money(m.retained_business_funds)),
             ),
         ),
-        ("Government", (("Sales/lodging taxes collected", format_money(m.taxes_collected)),)),
+        (
+            "Government",
+            (
+                ("Total government revenue", format_money(m.government_revenue)),
+                ("Operating budget", format_money(m.government_operating_budget)),
+                ("Capital budget", format_money(m.government_capital_budget)),
+                ("Remaining reserves", format_money(m.government_reserve_balance)),
+                *(
+                    (f"{department.name.value.replace('_', ' ').title()} allocation", format_money(department.operating_budget))
+                    for department in m.government_departments
+                ),
+                ("Overall service utilization", _percent(m.public_service_utilization)),
+            ),
+        ),
         (
             "Economic Flows",
             (
@@ -153,6 +166,14 @@ def reconciliation_report(result):
                 f"  Difference: {format_money(check.difference)}",
             )
         )
+    check = m.government_budget_reconciliation
+    lines.extend(
+        (
+            "",
+            f"GOVERNMENT BALANCED BUDGET — {'PASS' if check.reconciled else 'FAIL'}",
+            f"  Difference: {format_money(check.difference)}",
+        )
+    )
     lines.extend(("", "Unmet expenses are reported obligations, not cash uses. Customer revenue is repeated circulation."))
     return "\n".join(lines)
 
@@ -197,6 +218,10 @@ def explanation(result):
         "and dependency characteristics.",
         "Healthcare is both an essential service and an employer: institutions meet aggregate demand while payroll reaches households "
         "and procurement reaches businesses. Aging raises configured utilization and spending, which can change employment priorities.",
+        "Simplified property, sales, and lodging taxes, fees, and aggregate transfers become government revenue. The operating budget "
+        "is fixed, so increasing one department's share reduces funds available to another.",
+        "Department allocations change modeled capacity because each service has an assumed cost per capacity unit. Public investment "
+        "therefore has opportunity costs; this educational abstraction does not recommend a policy choice.",
     )
     return "\n".join(lines)
 
@@ -304,6 +329,39 @@ def healthcare_trace(result):
     ))
 
 
+def government_report(result):
+    m = result.metrics
+    lines = [
+        f"GOVERNMENT REPORT — {result.scenario_label}",
+        "Simplified fictional monthly budget; department amounts are educational abstractions, not policy recommendations.",
+        f"Total revenue: {format_money(m.government_revenue)}",
+        f"Operating budget: {format_money(m.government_operating_budget)}",
+        f"Capital budget: {format_money(m.government_capital_budget)}",
+        "Department budgets and service-capacity utilization:",
+    ]
+    lines.extend(
+        f"  {department.name.value.replace('_', ' ').title()}: {format_money(department.operating_budget)}; "
+        f"capacity {department.capacity:,.2f}; demand {department.demand:,.2f}; utilization {_percent(department.utilization)}"
+        for department in m.government_departments
+    )
+    lines.extend((
+        f"Overall public-service utilization: {_percent(m.public_service_utilization)}",
+        f"Remaining reserves: {format_money(m.government_reserve_balance)}",
+        f"Balanced operating allocation: {'PASS' if m.government_budget_reconciliation.reconciled else 'FAIL'}",
+        "Key tradeoff: a larger share for one department means less modeled capacity elsewhere because total operating funds are fixed.",
+    ))
+    return "\n".join(lines)
+
+
+def government_trace(result):
+    return "\n".join((
+        f"GOVERNMENT CONCEPTUAL EDUCATIONAL TRACE — {result.scenario_label}",
+        "Taxes Collected ↓ Government Revenue ↓ Department Budget ↓ Public Services",
+        "↓ Support for Households and Businesses ↓ Regional Economic Activity",
+        "This is an educational systems trace, not a literal tracked dollar, detailed accounting model, or policy recommendation.",
+    ))
+
+
 def comparison(first, second):
     rows = (
         ("Gross household income", "gross_household_income"),
@@ -328,6 +386,9 @@ def comparison(first, second):
         ("Healthcare payroll", "healthcare_payroll"),
         ("Healthcare employment", "healthcare_employment"),
         ("Healthcare local procurement", "healthcare_local_procurement"),
+        ("Government revenue", "government_revenue"),
+        ("Government operating budget", "government_operating_budget"),
+        ("Government capital budget", "government_capital_budget"),
     )
     first_label = first.scenario_label[:20]
     second_label = second.scenario_label[:20]

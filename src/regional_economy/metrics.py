@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from regional_economy.entities.government import PublicServiceDepartment
 from regional_economy.entities.healthcare import AgeCohort
 from regional_economy.entities.household import HouseholdAllocation
 
@@ -83,6 +84,13 @@ class RegionalMetrics:
     healthcare_local_procurement: int
     healthcare_external_procurement: int
     healthcare_business_activity: int
+    government_revenue: int
+    government_operating_budget: int
+    government_capital_budget: int
+    government_reserve_balance: int
+    government_departments: tuple[PublicServiceDepartment, ...]
+    public_service_utilization: Decimal
+    government_budget_reconciliation: Reconciliation
     household_reconciliation: Reconciliation
     required_expense_reconciliation: Reconciliation
     customer_reconciliation: Reconciliation
@@ -99,4 +107,4 @@ class RegionalMetrics:
 
     @property
     def reconciled(self) -> bool:
-        return all(item.reconciled for item in self.reconciliations)
+        return all(item.reconciled for item in (*self.reconciliations, self.government_budget_reconciliation))

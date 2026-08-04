@@ -27,3 +27,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ## Unreleased — Chapter 6
 - Added fictional aggregate healthcare institutions, age cohorts, deterministic utilization demand, spending, employment, payroll, local/external procurement, dashboard metrics, reports, trace, and validation against demographic double-counting.
 - Added aging-population, healthy-growth, and retiree-inmigration scenarios, Chapter 6 laboratory, documentation, and end-to-end tests.
+
+## Unreleased — Chapter 7
+
+- Added fictional local-government revenue, balanced operating/capital budgets, aggregate department capacity and utilization.
+- Added `public-safety-focus`, `parks-investment`, and `balanced-services`, plus government report and trace CLI modes.
+- Added Chapter 7 teaching material and policy-neutral assumptions, tests, and deterministic budget reconciliation.

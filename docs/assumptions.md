@@ -35,3 +35,7 @@ The university and every operational value are fictional educational assumptions
 
 ## Chapter 6 healthcare and demographics
 Peninsula Community Health Network and every cohort, institution count, utilization rate, spending amount, job, payroll, and purchasing value are fictional educational assumptions. Demand is population times a Decimal cohort rate. Healthcare payroll reaches the aggregate household sector but is not re-spent in the same month. Local plus external procurement equals procurement. No patients, claims, billing, schedules, diseases, capacity forecasting, staffing shortages, optimization, or clinical conclusions are modeled.
+
+## Chapter 7 government assumptions
+
+Government uses fictional monthly property revenue, transaction-based local sales and lodging taxes, aggregate permits/fees, and aggregate intergovernmental transfers. A fixed operating budget is allocated in integer cents by Decimal shares totaling 100%; a separate high-level capital amount is not assigned to projects. Capacity equals budget divided by an assumed capacity-unit cost, and utilization equals demand divided by capacity. Remaining available funds become reserves. These educational department indices omit service quality, distribution, debt, and detailed governmental accounting and imply no policy recommendation.

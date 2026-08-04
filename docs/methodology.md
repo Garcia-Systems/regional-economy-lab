@@ -47,3 +47,7 @@ University external funding equals research funding plus the configured external
 
 ## Chapter 6 aggregate healthcare method
 Healthcare cohorts are mutually exclusive and must reconcile exactly to regional population. In stable YAML order, the engine sums `population × Decimal utilization rate` for outpatient visits, inpatient services, pharmacy units, and preventive visits. Monthly spending uses integer cents per person. Procurement uses the common half-up money multiplier; external procurement is the exact residual. Payroll is connected conceptually to households and appears in the event timeline, but is not recursively spent in the same month. Scenario job/payroll changes are inputs, not forecasts. Future public demographic datasets could be transformed only with explicit source, year, geography, license, and reproducible mapping metadata.
+
+## Government budgeting method
+
+The engine collects transaction taxes after business revenue, combines them with configured recurring sources, deterministically allocates the fixed operating budget in stable department order, computes aggregate capacity and utilization, and reconciles allocated cents to the operating appropriation. It then subtracts operating and high-level capital budgets from revenue plus starting reserves. Appropriations above available funds fail rather than create borrowing or a deficit. Scenario comparison is descriptive: it performs no forecasting, optimization, or policy ranking.
