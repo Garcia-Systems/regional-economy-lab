@@ -3,6 +3,13 @@
 import argparse
 from collections.abc import Sequence
 
+from regional_economy.annual import (
+    annual_explanation,
+    annual_report,
+    annual_timeline,
+    compare_years,
+    run_annual_scenario,
+)
 from regional_economy.dashboards import (
     build_dashboard,
     csv_export,
@@ -99,7 +106,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command == "resilience-report":
+        if args.command in {"annual", "annual-report", "annual-trace"}:
+            if len(args.scenarios) != 1:
+                parser.error(f"{args.command} requires exactly one annual scenario name")
+            annual = run_annual_scenario(args.scenarios[0])
+            print(annual_timeline(annual) if args.command in {"annual", "annual-trace"} else annual_report(annual))
+        elif args.command == "compare-years":
+            if len(args.scenarios) != 2:
+                parser.error("compare-years requires exactly two annual scenario names")
+            print(compare_years(run_annual_scenario(args.scenarios[0]), run_annual_scenario(args.scenarios[1])))
+        elif args.command == "annual-explain":
+            if args.scenarios:
+                parser.error("annual-explain does not accept a scenario")
+            print(annual_explanation())
+        elif args.command == "resilience-report":
             if len(args.scenarios) != 1:
                 parser.error("resilience-report requires exactly one scenario name")
             print(format_resilience_report(build_resilience_report(load_scenario(args.scenarios[0]))))

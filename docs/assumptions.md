@@ -89,3 +89,6 @@ Shock effects are deterministic Decimal remaining-availability multipliers appli
 ## Chapter 18 resilience assumptions
 
 Resilience characteristics are fictional scenario-authored `Decimal` rates. Reserve funding uses integer cents and retraining capacity uses whole people. The equal-weight composite includes each of seven indicators exactly once; its deterministic recovery-period illustration is pedagogical, not predictive. Scenario assumptions drive outcomes, and no measure is an official resilience rating.
+# Chapter 19 annual assumptions
+
+An annual run contains exactly twelve independently completed monthly runs in January-to-December order. Tourism reuses the configured January, April, July, and October seasonal levels; university activity reuses Spring, Summer, and Fall factors. The three annual profiles multiply base visitor demand by 1.00, 1.20, or 0.80. Money flows are summed; state, utilization, employment, and resilience indicators are averaged. These deterministic assumptions are educational comparisons, not forecasts.

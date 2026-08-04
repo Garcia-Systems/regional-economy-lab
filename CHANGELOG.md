@@ -93,3 +93,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 - Added deterministic regional resilience and adaptive-capacity indicators, four fictional scenarios, dashboard metadata, comparison/report/explain/trace CLI modes, tests, and the Chapter 18 debugging laboratory.
 - Documented that summaries are educational indicators—not official ratings or predictions—and that scenario assumptions drive outcomes.
+## Unreleased — Chapter 19
+
+- Added a deterministic twelve-month orchestrator that reuses the monthly event engine, configurable tourism and academic seasonal profiles, immutable dashboard snapshots, annual summaries, timelines, explain/trace output, and year comparisons.
+- Added normal, strong-tourism, and weak-tourism annual profiles; CLI end-to-end coverage; Chapter 19 narrative and duplicate-month debugging laboratory; and annual methodology, assumptions, glossary, and roadmap documentation.
+- Explicitly excludes forecasting, random events, optimization, machine learning, multi-year simulation, customizable regions, and user-defined economies.

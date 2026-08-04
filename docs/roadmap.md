@@ -1,6 +1,10 @@
 # Roadmap
 
-Chapters 0–18 now provide a deterministic one-month educational system from foundational flows through resilience and adaptation. An integrated annual simulation remains a separately scoped future possibility and is not implemented. Forecasting, optimization, and probabilistic modeling remain outside the roadmap.
+Chapters 0–19 provide a deterministic educational system from foundational monthly flows through an integrated annual capstone. Chapter 19 executes twelve configured months, snapshots each one, and reconciles annual summaries and comparisons. Forecasting, optimization, probabilistic modeling, multi-year simulation, customizable regions, and user-defined economies remain outside the roadmap.
+
+## Chapter 19 — complete: a year in the regional economy
+
+The annual orchestrator reuses the monthly event engine for January through December, applies explicit tourism and academic seasons, and produces monthly dashboards, a concise timeline, year-end flow totals, average utilization indicators, and baseline/alternative comparisons. It introduces no new subsystem model and makes no prediction.
 
 
 ## v0.2.0 — in development

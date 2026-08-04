@@ -106,3 +106,8 @@ Chapter 17 loads validated remaining-availability rates with the scenario and ap
 ## Resilience reporting method
 
 Chapter 18 reads seven bounded `Decimal` characteristics from scenario YAML. It reports each separately, averages workforce adaptability, institutional capacity, supplier diversity, and financial capacity for an adaptive-capacity summary, and averages seven unique indicators for an explicitly limited composite. An illustrative recovery comparison applies the composite to a fixed twelve-period teaching scale with deterministic half-up rounding. This is descriptive scenario arithmetic—not predictive scoring, probability, optimization, or an official rating. Monetary reserves remain integer cents. Conceptual links to other Garcia Systems laboratories are educational only.
+# Annual composition (Chapter 19)
+
+The annual layer does not replace or bypass the deterministic scheduler. It configures a calendar month, invokes `run_scenario`, stores the completed event timeline and dashboard snapshot, then advances to the next month. Stable ordering therefore holds within every month and calendar ordering holds across the year. Annual flow totals are direct integer-cent sums. Ratios and stock-like measures use `Decimal` arithmetic means. Scenario comparisons subtract completed annual summaries and do not extrapolate, optimize, or estimate probabilities.
+
+The capstone connects concepts from other Garcia Systems laboratories at subsystem boundaries without copying specialized operational models. This repository remains the aggregate regional-flow teaching model.
