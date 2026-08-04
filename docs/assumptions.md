@@ -77,3 +77,7 @@ human-readable reports format those cents as dollars. Rates remain `Decimal` thr
 Previous means the prior supplied snapshot, and year-to-date contains supplied snapshots through the
 current month; missing periods are never inferred. Leading and lagging labels are educational timing
 examples, not evidence of predictive accuracy. All inputs are fictional and no live data is used.
+
+## Chapter 16 decision support
+
+Decision reports compare baseline and alternative outputs for the same monthly reporting period. They reuse dashboard values and metadata. The changed-indicator count is descriptive, not a benefit score. Assumptions drive every output; opportunity costs without supported monetary values remain qualitative. Reports are educational scenario summaries, not predictions, causal estimates, rankings, recommendations, or policy analysis.

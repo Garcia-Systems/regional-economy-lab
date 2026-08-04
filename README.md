@@ -198,3 +198,7 @@ This is not a payment network: accounts, ACH, cards, authorization, routing, set
 Chapter 14 adds aggregate local, regional, national, and international suppliers, deterministic availability and lead-time assumptions, procurement classification, and supply-constrained business activity. Try `regional-sim supplier-delay`, `regional-sim local-sourcing`, `regional-sim external-disruption`, `regional-sim supply-report baseline`, `regional-sim supply-trace baseline`, and `regional-sim compare baseline supplier-delay`.
 
 This conceptual regional model intentionally omits inventory, warehouses, barcodes, replenishment, purchase orders, routing, and ERP. Those operational systems belong in the **Inventory Synchronization Laboratory**; the laboratories complement one another without runtime dependencies. See [Chapter 14](book/chapter-14.md).
+
+## Chapter 16 — business and public decision making
+
+Decision reports compare explicit one-month scenarios using existing dashboard indicators. Try `regional-sim evaluate-business expansion`, `regional-sim evaluate-public broadband`, `regional-sim compare-decisions expansion broadband`, `regional-sim explain-decisions`, and `regional-sim decision-trace broadband`. These educational tools summarize assumptions, benefits, tradeoffs, limitations, questions, and opportunity costs; they neither forecast nor recommend business actions or public policies. See [Chapter 16](book/chapter-16.md).

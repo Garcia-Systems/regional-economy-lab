@@ -94,3 +94,7 @@ values and explicit unit columns. Comparisons calculate alternative minus baseli
 declared unit. Data-quality text identifies fictional configured inputs, completeness, determinism,
 and absence of live sources. No dashboard value changes events or economic flows. No forecast,
 statistical inference, causal estimate, optimization, or recommendation is produced.
+
+## Decision-support reporting
+
+Chapter 16 evaluates a named catalog entry by running the bundled baseline and its alternative for the same month, building Chapter 15 dashboards, and selecting existing indicator values by metadata key. Report generation rejects mismatched reporting periods. It then presents configured narrative assumptions and opportunity costs without feeding results back into the engine. The scenario score counts nonzero indicator differences only. No weighting, optimization, probability, causality, recommendation, ranking, forecasting, or duplicate indicator calculation is introduced.

@@ -150,3 +150,9 @@ employment, household income, or tax collections.
 **Monthly snapshot:** An immutable collection of defined indicator values for one scenario month.
 
 **Trend:** The arithmetic change between reported periods, not a forecast.
+
+**Decision report** — Educational, policy-neutral summary of a scenario, assumptions, affected dashboard indicators, benefits, tradeoffs, limitations, and unanswered questions; not a recommendation.
+
+**Opportunity cost** — The alternative use of limited resources forgone when an action is selected; it need not have an invented monetary value.
+
+**Scenario score** — Chapter 16's deterministic count of referenced indicators that differ from baseline; a descriptive completeness aid, never a value score or rank.
