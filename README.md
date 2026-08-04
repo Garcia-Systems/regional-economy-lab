@@ -10,7 +10,7 @@ A deterministic, inspectable textbook for learning how selected flows enter a re
 represented participants, leave as classified external outflows, and remain as ending positions. The fictional Historic
 Triangle setting makes abstract accounting concrete without claiming to describe the real economy.
 
-> **Educational disclaimer:** v0.2.0 development values are fictional assumptions—not official statistics, an
+> **Educational disclaimer:** Values are fictional assumptions—not official statistics, an
 > impact study, advice, policy analysis, or a forecast.
 
 ## Philosophy and educational value
@@ -143,7 +143,7 @@ and released independently.
 
 Bundled scenarios are package resources, so installed commands work outside the checkout; root `scenarios/` copies are maintained for readable authoring and checked against packaged data. See [release instructions](docs/releasing.md), [changelog](CHANGELOG.md), [contributing guide](CONTRIBUTING.md), [security policy](SECURITY.md), and [code of conduct](CODE_OF_CONDUCT.md). Run the complete release gate with `python scripts/verify_release.py`.
 
-## Chapter 3 — households, income, and spending (v0.2.0 development)
+## Chapter 3 — households, income, and spending
 
 Chapter 3 adds six fictional household cohorts and deterministic monthly budgets. Try:
 
@@ -189,7 +189,7 @@ regional-sim trace aging-population
 regional-sim compare baseline aging-population
 ```
 
-All providers and values are educational assumptions. Public aggregate demographic datasets are a future provenance-controlled opportunity. See [Chapter 6](book/chapter-06.md).
+All providers and values are educational assumptions. Public aggregate demographic datasets are outside the current provenance-controlled fixture set. See [Chapter 6](book/chapter-06.md).
 
 ## Chapter 7: Government and public services
 

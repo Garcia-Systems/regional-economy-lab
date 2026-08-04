@@ -1,9 +1,10 @@
-"""Run the project-owned v0.2.0 development release gate."""
+"""Run the project-owned release verification gate."""
 
 from __future__ import annotations
 
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,7 +19,7 @@ REQUIRED = (
     "scenarios/tourism-season.yml",
     "scenarios/income-growth.yml",
     "scenarios/cost-of-living-pressure.yml",
-    "book/chapter-03.md",
+    "book/chapter-20.md",
 )
 COMMANDS = (
     ("ruff", "check", "."),
@@ -52,9 +53,12 @@ def main() -> int:
     for command in COMMANDS[3:]:
         if run(command) != outputs[COMMANDS.index(command)]:
             raise SystemExit(f"FAILED: nondeterministic output: {' '.join(command)}")
-    wheel = next((ROOT / "dist").glob("regional_economy_lab-0.2.0.dev0-*.whl"), None)
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    normalized_name = project["name"].replace("-", "_")
+    version = project["version"]
+    wheel = next((ROOT / "dist").glob(f"{normalized_name}-{version}-*.whl"), None)
     if wheel is None:
-        raise SystemExit("FAILED: expected v0.2.0.dev0 wheel was not built")
+        raise SystemExit(f"FAILED: expected {project['name']} {version} wheel was not built")
     print("\nRELEASE VERIFICATION PASS")
     return 0
 
