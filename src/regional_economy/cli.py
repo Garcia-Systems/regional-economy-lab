@@ -15,6 +15,20 @@ from regional_economy.dashboards import (
 from regional_economy.dashboards import (
     console_report as dashboard_report,
 )
+from regional_economy.decisions import (
+    DecisionKind,
+    decision_explanation,
+    decision_trace,
+)
+from regional_economy.decisions import (
+    comparison_report as decision_comparison,
+)
+from regional_economy.decisions import (
+    create_report as create_decision_report,
+)
+from regional_economy.decisions import (
+    format_report as format_decision_report,
+)
 from regional_economy.engine import run_scenario
 from regional_economy.reporting import (
     banking_report,
@@ -69,7 +83,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
-        if args.command == "dashboard":
+        if args.command in {"evaluate-business", "evaluate-public"}:
+            if len(args.scenarios) != 1:
+                parser.error(f"{args.command} requires exactly one decision name")
+            kind = DecisionKind.BUSINESS if args.command == "evaluate-business" else DecisionKind.PUBLIC
+            print(format_decision_report(create_decision_report(args.scenarios[0], kind)))
+        elif args.command == "compare-decisions":
+            if len(args.scenarios) != 2:
+                parser.error("compare-decisions requires exactly two decision names")
+            print(decision_comparison(args.scenarios[0], args.scenarios[1]))
+        elif args.command == "explain-decisions":
+            if args.scenarios:
+                parser.error("explain-decisions does not accept a scenario")
+            print(decision_explanation())
+        elif args.command == "decision-trace":
+            if len(args.scenarios) != 1:
+                parser.error("decision-trace requires exactly one decision name")
+            print(decision_trace(args.scenarios[0]))
+        elif args.command == "dashboard":
             if len(args.scenarios) == 1:
                 result = run_scenario(load_scenario(args.scenarios[0]))
                 print(dashboard_report(build_dashboard((result,))))

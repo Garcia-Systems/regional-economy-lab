@@ -58,3 +58,7 @@ scenario comparisons, data-quality notes, and deterministic console, Markdown, a
 Dashboards consume completed results and never drive the engine. Forecasting, inference, machine
 learning, databases, live APIs, BI servers, web dashboards, annual simulation, optimization, and
 resilience remain out of scope.
+
+## Chapter 16 — complete: decision support
+
+Business and public scenario reports, qualitative opportunity costs, deterministic descriptive scoring, comparisons, explain mode, and trace mode reuse monthly dashboards. The boundary excludes automated recommendations, policy ranking, political/voting models, optimization, forecasting, annual projections, AI, machine learning, shocks, and resilience analysis. A future milestone may improve scenario authoring and provenance while preserving these boundaries.

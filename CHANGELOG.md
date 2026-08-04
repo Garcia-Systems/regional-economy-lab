@@ -77,3 +77,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
   leading/lagging educational classifications.
 - Added deterministic dashboard, comparison, indicator trace, Markdown export, and CSV export CLI
   commands plus Chapter 15 narrative, debugging laboratory, and tests.
+
+## Unreleased — Chapter 16
+
+- Add deterministic business and public decision reports, opportunity-cost and comparison summaries, explain/trace commands, and dashboard-period validation.
+- Add Chapter 16 narrative and debugging laboratory; document the educational, non-predictive, non-recommendation boundary.
