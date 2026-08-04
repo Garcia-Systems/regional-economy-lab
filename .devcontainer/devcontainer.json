@@ -1,0 +1,13 @@
+{
+  "name": "Regional Economy Laboratory",
+  "build": {"dockerfile": "../Dockerfile", "context": ".."},
+  "workspaceFolder": "/workspace/regional-economy-lab",
+  "remoteUser": "lab",
+  "postCreateCommand": "pip install -e '.[dev]'",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.debugpy", "ms-toolsai.jupyter"]
+    }
+  }
+}
+

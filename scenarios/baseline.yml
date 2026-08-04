@@ -1,0 +1,54 @@
+# v0.1.0 FICTIONAL educational scenario; no value is an actual Williamsburg statistic.
+name: baseline # fictional label
+label: Baseline # fictional label
+region:
+  name: Historic Triangle # public-data geographic-name placeholder
+  population: 1000 # fictional
+  employed_residents: 620 # fictional
+government:
+  sales_tax_rate: "0.05" # assumed simplified rate
+  lodging_tax_rate: "0.08" # assumed simplified rate
+  starting_reserve: "100000.00" # fictional
+household_allocation: # assumed shares of funds after housing; must sum to one
+  local_spending: "0.65"
+  nonlocal_spending: "0.20"
+  retained: "0.15"
+household_sector_shares: # assumed local customer allocation; must sum to one
+  tourism_hospitality: "0.10"
+  retail: "0.55"
+  food_service: "0.35"
+households: # fictional representative household groups, denominated as aggregate dollars
+  - id: resident-households-a
+    monthly_income: "1800000.00" # fictional external/wage income entering this model boundary
+    housing_cost: "360000.00" # fictional
+  - id: resident-households-b
+    monthly_income: "1600000.00" # fictional external/wage income entering this model boundary
+    housing_cost: "320000.00" # fictional
+businesses: # fictional sector representatives
+  - id: tourism-sector
+    sector: tourism_hospitality
+    employees: 250 # fictional
+    monthly_capacity: "1500000.00" # fictional
+    operating_allocation: &operating # assumed after-tax shares; must sum to one
+      wages: "0.55"
+      local_purchases: "0.15"
+      external_purchases: "0.20"
+      retained: "0.10"
+  - id: retail-sector
+    sector: retail
+    employees: 190 # fictional
+    monthly_capacity: "1600000.00" # fictional
+    operating_allocation: *operating # assumed
+  - id: food-sector
+    sector: food_service
+    employees: 180 # fictional
+    monthly_capacity: "1400000.00" # fictional
+    operating_allocation: *operating # assumed
+visitors:
+  count: 10000 # fictional
+  average_stay: "2.0" # assumed nights
+  spending_by_category: # fictional aggregate monthly dollars
+    tourism_hospitality: "250000.00"
+    retail: "75000.00"
+    food_service: "100000.00"
+
