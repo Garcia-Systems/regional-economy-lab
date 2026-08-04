@@ -78,6 +78,11 @@ class BusinessRevenueRecorded(Event):
 
 
 @dataclass(frozen=True)
+class PaymentTransactionsCompleted(Event):
+    pass
+
+
+@dataclass(frozen=True)
 class WagesPaid(Event):
     pass
 

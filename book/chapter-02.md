@@ -72,3 +72,7 @@ See the canonical [`docs/diagrams/money-flow.mmd`](../docs/diagrams/money-flow.m
    housing and descriptive healthcare/tourism values remain disclosed omissions.
 6. **Economic importance:** omitted imports exaggerate local retention even when the books happen
    to reconcile through a separately classified use.
+
+## Canonical source records
+
+Visitor demand is one named source in the shared transaction records and sector allocation. Tourism category attribution and lodging-tax reconciliation remain separate work; these records establish the basis for that correction without counting visitor demand twice.

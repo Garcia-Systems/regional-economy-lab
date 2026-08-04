@@ -246,3 +246,7 @@ Chapter 17 applies reusable deterministic availability factors to the existing i
 ## Chapter 18 — regional resilience and adaptation
 
 Chapter 18 adds fictional, deterministic diversity, redundancy, institutional, financial, supplier, workforce, and recovery-readiness indicators. Try `regional-sim diversified-region`, `regional-sim tourism-dependent`, `regional-sim resilient-infrastructure`, `regional-sim limited-redundancy`, `regional-sim resilience-report baseline`, and `regional-sim compare baseline diversified-region`. These educational measures are not official resilience ratings; scenario assumptions drive outcomes. See [Chapter 18](book/chapter-18.md). Conceptual connections to the Digital Banking Systems, Inventory Synchronization, and Marketplace Pricing and Solutions Engineering laboratories do not imply shared operational models.
+
+## Canonical transaction pipeline
+
+Monthly reports expose configured customer demand through accessibility, utilities, shocks, payments, sector capacity, and supply availability to recorded business revenue. Constraints are adjacent-stage differences, not independently reconstructed estimates.
