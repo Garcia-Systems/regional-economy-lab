@@ -107,3 +107,18 @@ Household deductions are external outflows, not local-government revenue. Afford
 ## Chapter 4 — tourism and hospitality
 
 Chapter 4 adds deterministic seasonal visitor demand, fixed capacity for lodging, restaurants, attractions, and visitor retail, aggregate tourism employment, leakage, and simplified tourism taxes. Try `regional-sim peak-tourism`, `regional-sim slow-season`, `regional-sim festival-weekend`, `regional-sim compare baseline peak-tourism`, and `regional-sim tourism-report peak-tourism`. All values are fictional educational assumptions—not official Williamsburg tourism statistics. See [Chapter 4](book/chapter-04.md).
+
+## Chapter 5: fictional higher education
+
+The model now includes a fictional aggregate university, students, payroll, procurement, research/external funding, and deterministic Fall/Spring/Summer patterns. Try:
+
+```console
+regional-sim enrollment-growth
+regional-sim research-expansion
+regional-sim summer-session
+regional-sim university-report baseline
+regional-sim university-trace baseline
+regional-sim compare baseline enrollment-growth
+```
+
+University values are educational assumptions, not operations of a real institution or forecasts. See [Chapter 5](book/chapter-05.md).

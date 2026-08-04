@@ -14,8 +14,10 @@ from regional_economy.entities import (
     Household,
     Region,
     Sector,
+    StudentCohort,
     TourismBusiness,
     TourismSector,
+    University,
     Visitor,
 )
 from regional_economy.money import parse_money, parse_rate
@@ -34,6 +36,7 @@ ROOT_FIELDS = {
     "businesses",
     "visitors",
     "tourism",
+    "university",
 }
 
 
@@ -44,6 +47,7 @@ class Scenario:
     region: Region
     visitors: Visitor
     household_sector_shares: dict[Sector, Decimal]
+    university: University
 
 
 def _require(data: dict[str, Any], key: str, context: str) -> Any:
@@ -259,9 +263,13 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
             raise ValueError(f"Unknown tourism sector. Fix: use one of: {', '.join(TourismSector)}.") from error
         allocation = _shares(_require(item, "operating_allocation", "tourism business"), f"tourism business {sector}")
         tourism_businesses[sector] = TourismBusiness(
-            sector, _nonnegative(parse_money(_require(item, "monthly_capacity", "tourism business")), "tourism capacity"),
+            sector,
+            _nonnegative(parse_money(_require(item, "monthly_capacity", "tourism business")), "tourism capacity"),
             _nonnegative(int(_require(item, "employees", "tourism business")), "tourism employees"),
-            allocation["wages"], allocation["local_purchases"], allocation["external_purchases"], allocation["retained"],
+            allocation["wages"],
+            allocation["local_purchases"],
+            allocation["external_purchases"],
+            allocation["retained"],
         )
     if set(tourism_businesses) != set(TourismSector):
         raise ValueError(f"Missing tourism business. Fix: include exactly: {', '.join(TourismSector)}.")
@@ -274,14 +282,56 @@ def load_scenario(name: str, directory: Path | None = None) -> Scenario:
         businesses=businesses,
         local_government=government,
     )
+    university_data = _require(raw, "university", "scenario")
+    student_data = _require(university_data, "students", "university")
+    spending_shares = _shares(_require(student_data, "spending_shares", "university.students"), "student spending")
+    seasons = _require(university_data, "seasonal_patterns", "university")
+    season = str(_require(university_data, "season", "university"))
+    season_data = _require(seasons, season, "university.seasonal_patterns")
+    university = University(
+        name=str(_require(university_data, "name", "university")),
+        students=StudentCohort(
+            _nonnegative(int(_require(student_data, "resident", "university.students")), "resident students"),
+            _nonnegative(int(_require(student_data, "commuter", "university.students")), "commuter students"),
+            _nonnegative(parse_money(_require(student_data, "average_monthly_local_spending", "university.students")), "student spending"),
+            _nonnegative(parse_money(_require(student_data, "average_housing_spending", "university.students")), "housing input"),
+            spending_shares["retail"],
+            spending_shares["food"],
+            spending_shares["entertainment"],
+        ),
+        faculty_count=_nonnegative(int(_require(university_data, "faculty_count", "university")), "faculty"),
+        staff_count=_nonnegative(int(_require(university_data, "staff_count", "university")), "staff"),
+        payroll=_nonnegative(parse_money(_require(university_data, "payroll", "university")), "university payroll"),
+        operating_budget=_nonnegative(parse_money(_require(university_data, "operating_budget", "university")), "operating budget"),
+        procurement_budget=_nonnegative(parse_money(_require(university_data, "procurement_budget", "university")), "procurement budget"),
+        research_funding=_nonnegative(parse_money(_require(university_data, "research_funding", "university")), "research funding"),
+        local_purchasing_share=_rate(
+            _require(university_data, "local_purchasing_share", "university"), "university.local_purchasing_share"
+        ),
+        external_funding_share=_rate(
+            _require(university_data, "external_funding_share", "university"), "university.external_funding_share"
+        ),
+        season=season,
+        seasonal_enrollment_multiplier=_rate(
+            _require(season_data, "enrollment", f"university.seasonal_patterns.{season}"), "season enrollment"
+        ),
+        seasonal_spending_multiplier=_rate(_require(season_data, "spending", f"university.seasonal_patterns.{season}"), "season spending"),
+    )
+    if university.payroll + university.procurement_budget > university.operating_budget:
+        raise ValueError("University payroll plus procurement cannot exceed its operating budget.")
     return Scenario(
         name=configured_name,
         label=str(raw.get("label", name.replace("-", " ").title())),
         region=region,
         visitors=Visitor(
-            visitor_count, average_stay,
+            visitor_count,
+            average_stay,
             _nonnegative(parse_money(_require(visitor_data, "average_daily_spending", "tourism")), "daily spending"),
-            month_name, seasonal, tourism_shares, tourism_businesses,
+            month_name,
+            seasonal,
+            tourism_shares,
+            tourism_businesses,
         ),
         household_sector_shares=_sector_shares(_require(raw, "household_sector_shares", "scenario"), "household sector"),
+        university=university,
     )

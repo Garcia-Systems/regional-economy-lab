@@ -106,7 +106,7 @@ businesses:
   - id: tourism-sector
     sector: tourism_hospitality
     employees: 250
-    monthly_capacity: "3000000.00"
+    monthly_capacity: "10000000.00"
     operating_allocation: &operating
       wages: "0.55"
       local_purchases: "0.15"
@@ -115,12 +115,12 @@ businesses:
   - id: retail-sector
     sector: retail
     employees: 190
-    monthly_capacity: "4000000.00"
+    monthly_capacity: "10000000.00"
     operating_allocation: *operating
   - id: food-sector
     sector: food_service
     employees: 180
-    monthly_capacity: "3500000.00"
+    monthly_capacity: "10000000.00"
     operating_allocation: *operating
 tourism:
   # All values are fictional educational assumptions, not official statistics.
@@ -159,3 +159,28 @@ tourism:
       employees: 45
       monthly_capacity: "1500000.00"
       operating_allocation: *tourism_operating
+university:
+  # Fictional monthly educational assumptions; housing is an input only.
+  name: Tidewater Regional University
+  faculty_count: 420
+  staff_count: 580
+  payroll: "6200000.00"
+  operating_budget: "10000000.00"
+  procurement_budget: "2400000.00"
+  research_funding: "1800000.00"
+  local_purchasing_share: "0.45"
+  external_funding_share: "0.70"
+  season: Fall
+  students:
+    resident: 6000
+    commuter: 2000
+    average_monthly_local_spending: "740.00"
+    average_housing_spending: "900.00"
+    spending_shares:
+      retail: "0.30"
+      food: "0.50"
+      entertainment: "0.20"
+  seasonal_patterns:
+    Fall: {enrollment: "1.00", spending: "1.00"}
+    Spring: {enrollment: "0.95", spending: "0.95"}
+    Summer: {enrollment: "0.35", spending: "0.80"}

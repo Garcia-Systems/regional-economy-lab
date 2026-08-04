@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: summer-session
+label: Summer Session
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -170,7 +170,7 @@ university:
   research_funding: "1800000.00"
   local_purchasing_share: "0.45"
   external_funding_share: "0.70"
-  season: Fall
+  season: Summer
   students:
     resident: 6000
     commuter: 2000
@@ -183,4 +183,4 @@ university:
   seasonal_patterns:
     Fall: {enrollment: "1.00", spending: "1.00"}
     Spring: {enrollment: "0.95", spending: "0.95"}
-    Summer: {enrollment: "0.35", spending: "0.80"}
+    Summer: {enrollment: "0.60", spending: "0.90"}

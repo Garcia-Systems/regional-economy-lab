@@ -23,6 +23,21 @@ class VisitorsArrived(Event):
 
 
 @dataclass(frozen=True)
+class UniversityFundingReceived(Event):
+    pass
+
+
+@dataclass(frozen=True)
+class StudentSpendingCompleted(Event):
+    pass
+
+
+@dataclass(frozen=True)
+class UniversityProcurementCompleted(Event):
+    pass
+
+
+@dataclass(frozen=True)
 class HouseholdDeductionsApplied(Event):
     pass
 

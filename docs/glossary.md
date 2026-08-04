@@ -47,3 +47,11 @@
 - **Unmet visitor demand:** visitor-equivalent demand not served when lodging demand exceeds capacity.
 - **Tourism leakage:** tourism operating purchases made outside the modeled region.
 - **Direct effect:** tourism business revenue received from visitor purchases; later wage/local-purchase circulation is secondary.
+
+**External university funding** — Modeled outside tuition, philanthropy, and simplified research funding entering the fictional institution.
+
+**Local university procurement** — The configured portion of university purchasing received by regional businesses.
+
+**Student cohort** — Aggregate resident and commuter students, adjusted by a deterministic seasonal multiplier.
+
+**University contribution** — Descriptive sum of modeled payroll, student spending, and local procurement; not GDP or a causal impact estimate.

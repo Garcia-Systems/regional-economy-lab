@@ -1,6 +1,6 @@
 # v0.2.0 fictional educational assumptions; no value is an actual Williamsburg statistic.
-name: baseline
-label: Baseline
+name: enrollment-growth
+label: Enrollment Growth
 region:
   name: Historic Triangle # public-data geographic-name placeholder
   population: 1000 # fictional
@@ -172,8 +172,8 @@ university:
   external_funding_share: "0.70"
   season: Fall
   students:
-    resident: 6000
-    commuter: 2000
+    resident: 6900
+    commuter: 2300
     average_monthly_local_spending: "740.00"
     average_housing_spending: "900.00"
     spending_shares:

@@ -19,3 +19,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 ## [0.3.0] - Unreleased
 ### Added
 - Chapter 4 tourism subsystem with seasonal demand, four tourism sectors, fixed capacity, employment, taxes, leakage, dashboard indicators, reports, traces, scenarios, tests, and debugging guidance.
+
+## Unreleased — Chapter 5
+- Added a fictional university entity, aggregate students and employment, external/research funding, procurement, and seasonal enrollment.
+- Added enrollment-growth, research-expansion, and summer-session scenarios, dashboard/report/trace output, documentation, and reconciliation coverage.
