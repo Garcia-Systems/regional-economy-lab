@@ -141,3 +141,7 @@ The sources that actually enter this path are household local spending, visitor 
 The engine carries source labels through configured demand, transportation, utilities, shocks, payment completion, sector capacity, supply capacity, and recorded revenue. Deterministic largest-remainder allocation preserves integer cents. Recorded household, visitor, university, healthcare, and government source amounts sum exactly to recorded business revenue. Visitor categories are retained rather than reconstructed; institutional local procurement is demand, external procurement is an outflow, and descriptive budgets do not enter reconciled flows.
 
 The canonical sales-tax base is all recorded business revenue and tax is extracted during business allocation. The lodging-tax base is recorded visitor-derived lodging revenue and lodging tax is added to government collections.
+
+## CLI boundary
+
+The [CLI guide](cli.md) defines explicit orchestration commands. Handlers select existing simulations and reports; they do not derive economic values.

@@ -17,6 +17,6 @@ def test_documentation_references_and_mermaid_fences() -> None:
         text = path.read_text(encoding="utf-8")
         assert text.count("```mermaid") <= text.count("```") // 2
     readme = Path("README.md").read_text(encoding="utf-8")
-    assert "regional-sim baseline" in readme
-    assert "regional-sim tourism-season" in readme
+    assert "regional-sim run baseline" in readme
+    assert "regional-sim run tourism-season" in readme
     assert "regional-sim compare baseline tourism-season" in readme

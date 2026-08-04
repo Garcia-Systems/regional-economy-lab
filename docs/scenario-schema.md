@@ -74,3 +74,7 @@ Editable sources live in `scenarios/`; byte-identical installed resources live i
 rather than maintaining another list: every ID must be unique, present on both
 sides, byte-identical, catalogued, loadable, and constructible. Custom files are
 validated by the same schema and can be created from the laboratory templates.
+
+## CLI validation workflow
+
+Use `regional-sim scenario list` for bundled monthly IDs and `regional-sim scenario validate SCENARIO-OR-PATH` before `regional-sim custom run PATH`. Annual profiles and templates have separate catalogs; see the [CLI guide](cli.md).
